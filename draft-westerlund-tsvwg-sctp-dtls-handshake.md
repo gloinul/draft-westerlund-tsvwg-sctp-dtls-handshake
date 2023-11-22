@@ -197,13 +197,14 @@ and SCTP-AUTH {{RFC4895}}.
    exchange is needed or desired by either endpoint a new DTLS
    connection handshake is performed between the SCTP endpoints. A
    different key-id than currently used in the DTLS chunk are used to
-   indicate that this is a new handshake. When the handshake has
-   completed the DTLS in SCTP implementation can simply switch to use
-   this DTLS connection's key material in the DTLS chunk.  After a
-   short while (no longer than 2 min) to enable any outstanding
-   packets to drain from the network path between the endpoints the
-   old DTLS connection can be terminated and the key material for the
-   DTLS chunk deleted.
+   indicate that this is a new handshake. The key-id is sent as
+   pre-amble to any DTLS message sent as SCTP user message. When the
+   handshake has completed the DTLS in SCTP implementation can simply
+   switch to use this DTLS connection's key material in the DTLS
+   chunk.  After a short while (no longer than 2 min) to enable any
+   outstanding packets to drain from the network path between the
+   endpoints the old DTLS connection can be terminated and the key
+   material for the DTLS chunk deleted.
 
    The DTLS connection is free to send any alert, handshake message, or
    other non-application data to its peer at any point in time. Thus,
@@ -875,16 +876,17 @@ provide ephemeral key exchange.
    the DTLS handshake procedure is initiated by the endpoint that
    has initiated the SCTP association.
 
-   The DTLS endpoint will if necessary fragment the handshake into
-   multiple records each meeting the known or set MTU limit of the
-   path between SCTP endpoints. Each DTLS handshake message fragment
-   is sent as a SCTP user message on the same stream where each
-   message is configured for reliable and in-order delivery with the
-   DTLS-SCTP PPID.  The DTLS instance SHOULD NOT use DTLS
-   retransmission to repair any packet losses of handshake message
-   fragment. Note: If the DTLS implementation support configuring a
-   MTU larger than the actual IP MTU it could be used as SCTP provides
-   reliability and fragmentation.
+   The DTLS endpoint will send the DTLS message in one or more SCTP
+   user message depending if the DTLS endpoint fragments the message
+   or not. Each DTLS handshake message fragment is sent as a SCTP user
+   message on the same stream where each message is configured for
+   reliable and in-order delivery with the DTLS-SCTP PPID, and each
+   message fragement SHALL be prepended with a single byte containing
+   the DTLS connection ID value (0x00). The DTLS instance SHOULD NOT
+   use DTLS retransmission to repair any packet losses of handshake
+   message fragment. Note: If the DTLS implementation support
+   configuring a MTU larger than the actual IP MTU it could be used as
+   SCTP provides reliability and fragmentation.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
@@ -907,79 +909,18 @@ provide ephemeral key exchange.
    path between SCTP endpoints. Each DTLS handshake message fragment
    is sent as a SCTP user message on the same stream where each
    message is configured for reliable and in-order delivery with the
-   DTLS-SCTP PPID.  The DTLS instance SHOULD NOT use DTLS
-   retransmission to repair any packet losses of handshake message
-   fragment. Note: If the DTLS implementation support configuring a
-   MTU larger than the actual IP MTU it could be used as SCTP provides
-   reliability and fragmentation.
+   DTLS-SCTP PPID, and each message fragement SHALL be prepended with
+   a single byte containing the lower 8-bit of DTLS connection ID.
+   The DTLS instance SHOULD NOT use DTLS retransmission to repair any
+   packet losses of handshake message fragment. Note: If the DTLS
+   implementation support configuring a MTU larger than the actual IP
+   MTU it could be used as SCTP provides reliability and
+   fragmentation.
 
    If the DTLS handshake failed the SCTP association SHALL generate
    an ERROR chunk with the Error in Protection error cause, with
    extra error causes "Error During Protection Handshake".
 
-
-## Validation Against Downgrade Attacks
-
-   When the SCTP association has entered the PROTECTED state after the
-   DTLS handshake has completed, the protection against downgrade in
-   the negotiation of options is performed per
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The PVALID chunk will
-   sent as a DTLS protected DTLS chunk payload per
-   {{chunk-processing}}, thus protecting the plain text chunk.
-
-   If the validation completes successful the SCTP association will
-   enter ESTABLISHED state. ULP data exchanges can now happen and
-   will be protected together will all other SCTP packets.
-
-# Processing a DTLS Chunk {#chunk-processing}
-
-## Sending
-
-DTLS chunk sending happens when SCTP requires transferring control
-or DATA chunk(s) to the remote SCTP Endpoint.  For a proper handling, DCI
-shall be set to an established instance of DTLS connection.
-
-SCTP Chunk handler will create the payload of a legacy SCTP packet
-according to {{RFC9260}} and any used SCTP extensions. Such payload
-will assume a PMTU that is equal to the value computed by SCTP minus
-the size of the DTLS Chunk header and DTLS record and authentication
-tag overhead. It's up to SCTP Chunk Handler to implement all the SCTP
-rules for bundling and retransmission mechanism.  Once ready, the
-payload will be transferred to DTLS as a single array of bytes.
-
-Once DTLS has created the related DTLS record (or DTLS records), it
-will transfer the encrypted data as an array of bytes to DTLS chunk
-handler for encapsulation into a DTLS chunk and being forwarded to
-the SCTP header handler for transmission.
-
-The interface between SCTP and DTLS related to SCTP Payload will need
-to carefully evaluate the PMTU as seen by SCTP and DTLS so that each
-payload generated by SCTP Chunk Handler will not cause the finished
-SCTP packet to exceed the known path MTU unless it is a Path MTUD
-discovery packet.
-
-## Receiving
-
-When receiving an SCTP packet containing a DTLS Chunk it will
-contain an payload of protected SCTP control or data chunks. Since
-there's at most one DTLS Chunk per SCTP packet, the payload of that
-chunk will be transferred to the proper DTLS instance according to DCI
-for decryption and processing.
-
-As discussed in DTLS Chunk specification when receiving packets
-certain meta data will be needed to associate with the protected
-DTLS chunk payload for SCTP to correctly process it. This includes
-packet size, source IP and arrival interface, i.e. path information,
-and ECN bits.
-
-When DTLS processes a DTLS record with decryption and integrity
-verification and that contains application data, it will output the
-data as an array of bytes and transfer it back to the DTLS Handler
-that delivers it for SCTP chunk handling.
-
-SCTP Chunk handler will threat the array as the payload of an SCTP
-packet, thus it will extract all the chunks and handle them according
-to {{RFC9260}} and any supported extension.
 
 # Parallel DTLS Rekeying {#parallel-dtls}
 
