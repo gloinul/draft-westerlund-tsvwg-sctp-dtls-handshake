@@ -453,7 +453,7 @@ On the other perspective, DTLS 1.3 security best practice require frequent
 re-keying and it's anyhow not good to keep a DTLS 1.3 connection up for long time.
 DTLS 1.3 key manager is provided with the DTLS-SCTP PPID that can be
 exploited for re-keying but this also may not be sufficient for some use case
-requiring an high level of security (see {new-connections}).
+requiring an high level of security (see {{new-connections}}).
 It is recommended that the lifetime of a DTLS 1.3 connection being used
 in DTLS Chunk is kept under control and a DTLS 1.3 connection that is lasting
 too long to be replaced with a new one.
@@ -469,61 +469,6 @@ shall close the esiting DTLS 1.3 connection and instantiate a new one.
 The way DTLS 1.3 can be replaced is being set as an Option at
 Association Initialization.
 
-## DTLS operating modes {#dtls-options}
-
-This document specifies the operating modes
-of DTLS Chunks for DTLS1.3
-
-The following table applies.
-
-| Option | Operating mode | REFERENCE |
-| 0 | No reauthentication | RFC-To-Be |
-| 1 | Basic reauthentication | RFC-To-Be |
-| 2 | Dual DTLS connection | RFC-To-Be |
-{: #dtls-op-modes title="DTLS Operating Modes" cols="r l l"}
-
-The values specified above shall be used in the Protected Association
-parameter as Options as specified in
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}} and are registered with
-IANA below in {{iana-protection-options}}.
-
-Options are subject to negotiations, meaning that the options 0 and 1 are
-mandatory to be supported and not be handshaked, whilst option 2 mandates
-that both peers declare it. Since this possibility opens up for Downgrade attacks
-DTLS in SCTP provides the validation mechamism for preventing it.
-
-### No reauthentication option {#option-zero}
-
-The default for DTLS in SCTP is no periodic reauthentication, this is selected
-by setting the Options at zero. An endpoint that has set Options to zero
-will never initiate a new handshake for setting up a new DTLS Connection,
-but in case the peer will terminate the existing DTLS Connection and will
-initiate an handshake for creating a new one, it MUST support it.
-
-### Basic reauthentication option {#basic-reauthentication}
-
-The sctp endpoint that has been configured for periodic replacement
-of keys or DTLS Connection as described in {{dtls-replacement}}
-when the events for DTLS Replacement are reached will close the
-existing DTLS Connection and re-establish a new one.
-The handshake for closing the old DTLS connection and the one used for establishing
-the new DTLS connection will exploit plain DATA Chunks being identified with
-the DTLS-SCTP PPID.
-
-### Dual DTLS Connection option {#dual-dtls-connection}
-
-The sctp endpoint that has been configured for periodic replacement
-of keys or DTLS Connection as described in {{dtls-replacement}}
-can optionally choose to exploit dual DTLS connection, this will allow
-the Association not to experience any latency in the traffic during
-DTLS connection replacement.
-An SCTP Endpoint that has been configured for dual DTLS connection
-will only operate with a peer also supporting dual DTLS connection.
-If the peer hasn't set the dual DTLS connection option, it will revert
-to Basic reauthentication.
-When both peers support dual DTLS connection they will behave as described
-in {{parallel-dtls}}.
-
 
 # DTLS Usage of DTLS Chunk
 
@@ -535,7 +480,7 @@ in {{parallel-dtls}}.
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Type = 0x4x   |   Flags   |DCI|         Chunk Length          |
+| Type = 0x4x   |   DCI         |         Chunk Length          |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                                                               |
 |                            Payload                            |
@@ -547,24 +492,18 @@ in {{parallel-dtls}}.
 {: #sctp-dtls-chunk-structure title="DTLS Chunk Structure"}
 
    {: vspace="0"}
-   DCI: 2 bits (unsigned integer)
+   DCI: 8 bits (unsigned integer)
    : DTLS Connection Index is the
-   lower two bits of an DTLS Connection Index counter. This is a
+   lower eight bits of an DTLS Connection Index counter. This is a
    counter implemented in DTLS in SCTP that is used to identify which
    DTLS connection instance that is capable of processing any received
    packet. This counter is recommended to be 64-bit to guarantee no
    lifetime issues for the SCTP Association.
 
-   Flags: 6 bits
-   : Chunk Flag bits not currently used by DTLS in SCTP. They
-   MUST be set to zero (0) and MUST be ignored on reception. They MAY
-   be used in future updated specifications for DTLS in SCTP.
-
-   Payload: variable length
-   : One or more DTLS records. In cases more
+   Payload: variable length : One or more DTLS records. In cases more
    than one DTLS record is included all DTLS records except the last
-   MUST include a length field. Note that this matches what is specified in
-   DTLS 1.3 {{RFC9147}} will always include the length
+   MUST include a length field. Note that this matches what is
+   specified in DTLS 1.3 {{RFC9147}} will always include the length
    field in each record.
 
 # DTLS Chunk Integration
@@ -588,12 +527,11 @@ handshake.
 When entering PROTECTION PENDING state, DTLS will start the handshake
 according to {{dtls-handshake}}.
 
-DTLS being initialized for a new SCTP association
-will set the DCI counter = 0, which implies a DCI field value of 0,
-for the initial DTLS connection. The DTLS handshake messages are
-transmitted from this endpoint to the peer using DATA chunks with the
-PPID value set to DTLS-SCTP.
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+DTLS being initialized for a new SCTP association will set the DCI
+counter = 0, which implies a DCI field value of 0, for the initial
+DTLS connection. The DTLS handshake messages are transmitted from this
+endpoint to the peer using DATA chunks with the PPID value set to
+DTLS-SCTP {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
 
 When a successful handshake has been completed, DTLS protection operator
 will inform DTLS chunk Handler that will move SCTP State Machine
@@ -605,10 +543,10 @@ In the PROTECTED state the currently active DTLS connection is used
 for protection operation of the payload of SCTP chunks in each packet
 per below specification.  When necessary to meet requirements on
 periodic re-authentication of the peer and establishment of new
-forward secrecy keys, depending on the selected options {{dtls-options}}
-the existing DTLS 1.3 connection is being replaced with a new one
-by closing the existing connection and re-establishing a new one
-or a new parallel DTSL connection as further specified in {{parallel-dtls}}.
+forward secrecy keys, the existing DTLS 1.3 connection is being
+replaced with a new one by first opening a new parallel DTSL
+connection as further specified in {{parallel-dtls}} and then close
+the old DTLS connection.
 
 ### SHUTDOWN states
 
@@ -630,9 +568,8 @@ their related DCI.
 ### Add a New DTLS Connection {#add-dtls-connection}
 
 Either peer can add a new DTLS connection to the SCTP association at
-any time, but only one DTLS connection can exist at a time when
-option 1 is used and no more than 2 DTLS connections can exist at the same
-time when option 2 is used {{dtls-options}}.
+any time, but no more than 2 DTLS connections can exist at the same
+time.
 The new DCI value shall be the last active DCI increased by one
 modulo 4, this makes the attempt to create a new DTLS connection to
 use the same, known, value of DCI from both peers.  A new handshake
@@ -795,9 +732,6 @@ certificates. Clients and servers MUST NOT accept a change of identity
 during the setup of a new connections, but MAY accept negotiation of
 stronger algorithms and security parameters, which might be motivated
 by new attacks.
-
-If both peers have selected option 0 {{dtls-options}}, at expiration
-of a certificate the SCTP Association MUST be closed.
 
 Allowing new connections can enable denial-of-service attacks. The
 endpoints MUST limit the number of simultaneous connections to two.
