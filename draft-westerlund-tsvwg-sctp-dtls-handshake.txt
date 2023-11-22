@@ -113,23 +113,19 @@ Table of Contents
      6.1.  DTLS Handshake
        6.1.1.  Handshake of initial DTLS connection
        6.1.2.  Handshake of further DTLS connections
-     6.2.  Validation Against Downgrade Attacks
-   7.  Processing a DTLS Chunk
-     7.1.  Sending
-     7.2.  Receiving
-   8.  Parallel DTLS Rekeying
-     8.1.  Criteria for Rekeying
-     8.2.  Procedure for Rekeying
-     8.3.  Race Condition in Rekeying
-   9.  PMTU Discovery Considerations
-   10. Security Considerations
-     10.1.  General
-     10.2.  Privacy Considerations
-   11. IANA Consideration
-     11.1.  Protection Option Registration
-   12. References
-     12.1.  Normative References
-     12.2.  Informative References
+   7.  Parallel DTLS Rekeying
+     7.1.  Criteria for Rekeying
+     7.2.  Procedure for Rekeying
+     7.3.  Race Condition in Rekeying
+   8.  PMTU Discovery Considerations
+   9.  Security Considerations
+     9.1.  General
+     9.2.  Privacy Considerations
+   10. IANA Consideration
+     10.1.  Protection Option Registration
+   11. References
+     11.1.  Normative References
+     11.2.  Informative References
    Authors' Addresses
 
 1.  Introduction
@@ -228,8 +224,9 @@ Table of Contents
    is needed or desired by either endpoint a new DTLS connection
    handshake is performed between the SCTP endpoints.  A different key-
    id than currently used in the DTLS chunk are used to indicate that
-   this is a new handshake.  When the handshake has completed the DTLS
-   in SCTP implementation can simply switch to use this DTLS
+   this is a new handshake.  The key-id is sent as pre-amble to any DTLS
+   message sent as SCTP user message.  When the handshake has completed
+   the DTLS in SCTP implementation can simply switch to use this DTLS
    connection's key material in the DTLS chunk.  After a short while (no
    longer than 2 min) to enable any outstanding packets to drain from
    the network path between the endpoints the old DTLS connection can be
@@ -506,7 +503,7 @@ Table of Contents
    The values specified above shall be used in the Protected Association
    parameter as Options as specified in
    [I-D.westerlund-tsvwg-sctp-dtls-chunk] and are registered with IANA
-   below in Section 11.1.
+   below in Section 10.1.
 
    Options are subject to negotiations, meaning that the options 0 and 1
    are mandatory to be supported and not be handshaked, whilst option 2
@@ -544,7 +541,7 @@ Table of Contents
    also supporting dual DTLS connection.  If the peer hasn't set the
    dual DTLS connection option, it will revert to Basic
    reauthentication.  When both peers support dual DTLS connection they
-   will behave as described in Section 8.
+   will behave as described in Section 7.
 
 3.  DTLS Usage of DTLS Chunk
 
@@ -624,7 +621,7 @@ Table of Contents
    forward secrecy keys, depending on the selected options Section 2.2
    the existing DTLS 1.3 connection is being replaced with a new one by
    closing the existing connection and re-establishing a new one or a
-   new parallel DTSL connection as further specified in Section 8.
+   new parallel DTSL connection as further specified in Section 7.
 
 4.1.3.  SHUTDOWN states
 
@@ -888,15 +885,17 @@ Table of Contents
    handshake procedure is initiated by the endpoint that has initiated
    the SCTP association.
 
-   The DTLS endpoint will if necessary fragment the handshake into
-   multiple records each meeting the known or set MTU limit of the path
-   between SCTP endpoints.  Each DTLS handshake message fragment is sent
-   as a SCTP user message on the same stream where each message is
-   configured for reliable and in-order delivery with the DTLS-SCTP
-   PPID.  The DTLS instance SHOULD NOT use DTLS retransmission to repair
-   any packet losses of handshake message fragment.  Note: If the DTLS
-   implementation support configuring a MTU larger than the actual IP
-   MTU it could be used as SCTP provides reliability and fragmentation.
+   The DTLS endpoint will send the DTLS message in one or more SCTP user
+   message depending if the DTLS endpoint fragments the message or not.
+   Each DTLS handshake message fragment is sent as a SCTP user message
+   on the same stream where each message is configured for reliable and
+   in-order delivery with the DTLS-SCTP PPID, and each message fragement
+   SHALL be prepended with a single byte containing the DTLS connection
+   ID value (0x00).  The DTLS instance SHOULD NOT use DTLS
+   retransmission to repair any packet losses of handshake message
+   fragment.  Note: If the DTLS implementation support configuring a MTU
+   larger than the actual IP MTU it could be used as SCTP provides
+   reliability and fragmentation.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
@@ -919,8 +918,10 @@ Table of Contents
    between SCTP endpoints.  Each DTLS handshake message fragment is sent
    as a SCTP user message on the same stream where each message is
    configured for reliable and in-order delivery with the DTLS-SCTP
-   PPID.  The DTLS instance SHOULD NOT use DTLS retransmission to repair
-   any packet losses of handshake message fragment.  Note: If the DTLS
+   PPID, and each message fragement SHALL be prepended with a single
+   byte containing the lower 8-bit of DTLS connection ID.  The DTLS
+   instance SHOULD NOT use DTLS retransmission to repair any packet
+   losses of handshake message fragment.  Note: If the DTLS
    implementation support configuring a MTU larger than the actual IP
    MTU it could be used as SCTP provides reliability and fragmentation.
 
@@ -928,70 +929,7 @@ Table of Contents
    ERROR chunk with the Error in Protection error cause, with extra
    error causes "Error During Protection Handshake".
 
-6.2.  Validation Against Downgrade Attacks
-
-   When the SCTP association has entered the PROTECTED state after the
-   DTLS handshake has completed, the protection against downgrade in the
-   negotiation of options is performed per
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  The PVALID chunk will sent
-   as a DTLS protected DTLS chunk payload per Section 7, thus protecting
-   the plain text chunk.
-
-   If the validation completes successful the SCTP association will
-   enter ESTABLISHED state.  ULP data exchanges can now happen and will
-   be protected together will all other SCTP packets.
-
-7.  Processing a DTLS Chunk
-
-7.1.  Sending
-
-   DTLS chunk sending happens when SCTP requires transferring control or
-   DATA chunk(s) to the remote SCTP Endpoint.  For a proper handling,
-   DCI shall be set to an established instance of DTLS connection.
-
-   SCTP Chunk handler will create the payload of a legacy SCTP packet
-   according to [RFC9260] and any used SCTP extensions.  Such payload
-   will assume a PMTU that is equal to the value computed by SCTP minus
-   the size of the DTLS Chunk header and DTLS record and authentication
-   tag overhead.  It's up to SCTP Chunk Handler to implement all the
-   SCTP rules for bundling and retransmission mechanism.  Once ready,
-   the payload will be transferred to DTLS as a single array of bytes.
-
-   Once DTLS has created the related DTLS record (or DTLS records), it
-   will transfer the encrypted data as an array of bytes to DTLS chunk
-   handler for encapsulation into a DTLS chunk and being forwarded to
-   the SCTP header handler for transmission.
-
-   The interface between SCTP and DTLS related to SCTP Payload will need
-   to carefully evaluate the PMTU as seen by SCTP and DTLS so that each
-   payload generated by SCTP Chunk Handler will not cause the finished
-   SCTP packet to exceed the known path MTU unless it is a Path MTUD
-   discovery packet.
-
-7.2.  Receiving
-
-   When receiving an SCTP packet containing a DTLS Chunk it will contain
-   an payload of protected SCTP control or data chunks.  Since there's
-   at most one DTLS Chunk per SCTP packet, the payload of that chunk
-   will be transferred to the proper DTLS instance according to DCI for
-   decryption and processing.
-
-   As discussed in DTLS Chunk specification when receiving packets
-   certain meta data will be needed to associate with the protected DTLS
-   chunk payload for SCTP to correctly process it.  This includes packet
-   size, source IP and arrival interface, i.e. path information, and ECN
-   bits.
-
-   When DTLS processes a DTLS record with decryption and integrity
-   verification and that contains application data, it will output the
-   data as an array of bytes and transfer it back to the DTLS Handler
-   that delivers it for SCTP chunk handling.
-
-   SCTP Chunk handler will threat the array as the payload of an SCTP
-   packet, thus it will extract all the chunks and handle them according
-   to [RFC9260] and any supported extension.
-
-8.  Parallel DTLS Rekeying
+7.  Parallel DTLS Rekeying
 
    Rekeying in this specification is implemented by replacing the DTLS
    connection getting old with a new one.  This feature MAY exploit the
@@ -999,7 +937,7 @@ Table of Contents
    and remove DTLS connections during the lifetime of the SCTP
    Association.
 
-8.1.  Criteria for Rekeying
+7.1.  Criteria for Rekeying
 
    The criteria for rekeying may vary depending on the ULP requirement
    on security properties, chosen cipher suits etc.  Therefore it is
@@ -1018,7 +956,7 @@ Table of Contents
       DTLS 1.3 usage of the Key Update mechanism can generate new keys
       without forward secrecy properties.
 
-8.2.  Procedure for Rekeying
+7.2.  Procedure for Rekeying
 
    This specification allows up to 2 DTLS connection to be active at the
    same time for the current SCTP Association.  The following state
@@ -1069,7 +1007,7 @@ Table of Contents
    is moved from the old one, then the procedure for closing the old
    DTLS connection is initiated, see Section 4.2.2.
 
-8.3.  Race Condition in Rekeying
+7.3.  Race Condition in Rekeying
 
    A race condition may happen when both peer experience local AGING
    event at the same time and start creation of a new DTLS connection.
@@ -1079,7 +1017,7 @@ Table of Contents
    new DTLS connection.  And the race condition is solved as specified
    in Section 4.2.1.
 
-9.  PMTU Discovery Considerations
+8.  PMTU Discovery Considerations
 
    Due to the DTLS record limitation for application data SCTP MUST use
    2^14 as input to determine absolute maximum MTU when running PMTUD
@@ -1097,9 +1035,9 @@ Table of Contents
    configured to use for messages the DTLS implementation generates
    itself for signaling.
 
-10.  Security Considerations
+9.  Security Considerations
 
-10.1.  General
+9.1.  General
 
    The security considerations given in [RFC9147], [RFC6347], and
    [RFC9260] also apply to this document.  BCP 195 [RFC9325] [RFC8996]
@@ -1108,7 +1046,7 @@ Table of Contents
    implies that DTLS 1.0 SHALL NOT be supported and are therefore not
    defined.
 
-10.2.  Privacy Considerations
+9.2.  Privacy Considerations
 
    Although DTLS in SCTP provides privacy for the actual user message as
    well as almost all chunks, some fields are not confidentiality
@@ -1129,13 +1067,13 @@ Table of Contents
    to do dynamic key exfiltration and limits the amount of compromised
    data due to key compromise.
 
-11.  IANA Consideration
+10.  IANA Consideration
 
-   This document adds the three new entries listed in Section 11.1 into
+   This document adds the three new entries listed in Section 10.1 into
    the "DTLS Chunk Protection Option Identifiers" registry in the Stream
    Control Transmission Protocol (SCTP) Parameters grouping.
 
-11.1.  Protection Option Registration
+10.1.  Protection Option Registration
 
    IANA is requested to register two Protection Option Identifiers in
    the "DTLS Chunk Protection Option Identifiers" registry defined by
@@ -1154,9 +1092,9 @@ Table of Contents
 
                    Table 2: DTLS Chunk protection options
 
-12.  References
+11.  References
 
-12.1.  Normative References
+11.1.  Normative References
 
    [RFC4820]  Tuexen, M., Stewart, R., and P. Lei, "Padding Chunk and
               Parameter for the Stream Control Transmission Protocol
@@ -1202,7 +1140,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-12.2.  Informative References
+11.2.  Informative References
 
    [RFC3758]  Stewart, R., Ramalho, M., Xie, Q., Tuexen, M., and P.
               Conrad, "Stream Control Transmission Protocol (SCTP)
