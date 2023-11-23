@@ -361,10 +361,10 @@ in regard to SCTP and upper layer protocol"}
    * DTLS in SCTP implemented in operating system kernels will require
      that the DTLS implementation is split. Where the protection
      operations performed to create DTLS records needs to be
-     implemented in the kernel and have an appropriate API for seting
-     keying materia and manged the functions of the proteciton
-     operation. While the DTLS handshake is residing as an applcation
-     ontop of SCTP interface.
+     implemented in the kernel and have an appropriate API for setting
+     keying materia and managed the functions of the protection
+     operation. While the DTLS handshake is residing as an application
+     on top of SCTP interface.
 
    * DTLS in SCTP can use a DTLS implementation that does not rely on
      features from outside of the core protocol, where DTLS/SCTP
@@ -396,7 +396,7 @@ in regard to SCTP and upper layer protocol"}
    The conclusion of these implementation details is that DTLS
    in SCTP can use existing DTLS implementations, at least for user
    land SCTP implementation. It is not known if any DTLS 1.3 stack
-   exist that fully support the requirements in DTLS/SCTP. It is
+   exist that fully support the requirements of DTLS/SCTP. It is
    expected that a DTLS/SCTP implementation will have to also extend
    some DTLS implementation.
 
@@ -676,11 +676,11 @@ epoch N.
   it to the responder as a SCTP user message.
 
   4. When the first SCTP packet protected by epoch N+1 has been
-  received and succesfully decrypted by DTLS chunk the epoch N recive
+  received and succesfully decrypted by DTLS chunk the epoch N reception
   keys can be removed. Although to deal with network reordering, a
   delay is RECOMMENDED.
 
-This completest the key-update procedure.
+This completes the key-update procedure.
 
 Note that even if both endpoints runs the Initiator process the
 KeyUpdate will complete. The main difference is that step 3 may occur
@@ -695,7 +695,7 @@ The process for a responder to a peer initiating KeyUpdate.
   and installed into the DTLS chunk key store. A DTLS ACK message is
   generated and transmitted to the peer using a SCTP user message.
 
-  2. The responder initiates its own KeyUpdat by generating keys and
+  2. The responder initiates its own Key Update by generating keys and
   creating the KeyUpdate message. The send direction keys for epoch
   N+1 is installed but not enabled for use. The KeyUpdate message is
   transmitted to the peer using a SCTP user message.
@@ -708,7 +708,7 @@ The process for a responder to a peer initiating KeyUpdate.
   chunk key store.
 
   4. When the first SCTP packet protected by epoch N+1 has been
-  received and succesfully decrypted by DTLS chunk the epoch N recive
+  received and succesfully decrypted by DTLS chunk the epoch N reception
   keys can be removed. Although to deal with network reordering, a
   delay is RECOMMENDED.
 
@@ -834,8 +834,8 @@ by new attacks.
 Allowing new connections can enable denial-of-service attacks. The
 endpoints MUST limit the number of simultaneous connections to two.
 
-To force attackers to do dynamic key exfiltration and limits the
-amount of compromised data due to key compromise implementations MUST
+To force attackers to do dynamic key exfiltration and limit the
+amount of compromised data due to key compromise, implementations MUST
 have policies for how often to set up new connections with ephemeral
 key exchange such as ECDHE. Implementations SHOULD set up new
 connections frequently to force attackers to dynamic key
