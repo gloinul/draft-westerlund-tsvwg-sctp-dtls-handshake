@@ -1008,20 +1008,4 @@ due to key compromise.
 
 # IANA Consideration
 
-This document adds the three new entries listed in
-{{iana-protection-options}} into the "DTLS Chunk Protection
-Option Identifiers" registry in the Stream Control Transmission
-Protocol (SCTP) Parameters grouping.
-
-## Protection Option Registration {#iana-protection-options}
-
-IANA is requested to register two Protection Option Identifiers in the
-"DTLS Chunk Protection Option Identifiers" registry defined by
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The entries to be
-registered are provided in {{iana-protection-options-table}}.
-
-| ID VALUE | Name | Reference | Contact |
-| 0 | No reauthentication | RFC-To-Be | Authors |
-| 1 | Basic reauthentication | RFC-To-Be | Authors |
-| 2 | Dual DTLS connection | RFC-To-Be | Authors |
-{: #iana-protection-options-table title="DTLS Chunk protection options" cols="r l l l"}
+This document has no IANA considerations currently.
