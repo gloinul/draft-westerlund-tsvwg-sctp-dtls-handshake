@@ -632,6 +632,86 @@ send a DTLS close_notify. When DTLS closure for a DTLS connection is
 completed, the related DCI information in the DTLS chunk is released.
 
 
+## DTLS Key Update
+
+To perform a DTLS Key Update when using the DTLS chunk for protection
+the following process is performed. Either endpoint can trigger a DTLS
+key update when needed to update the key used. The DTLS key-update
+process is detailed in Section 8 of {{RFC9147}} including a example of
+the DTLS key update procedure. Note that in line with DTLS, and in
+contrast to TLS, DTLS in SCTP endpoints MUST NOT start using new epoch
+keys until the DTLS ACK has been recived. This as the user message
+tranmission of the KeyUpdate DTLS message occurs using one or more
+SCTP packets that are protected using epoch N keys. If the sender
+needs to retransmitt any SCTP packets and have switched to Epoch N+1
+the receiver will never receive the KeyUpdate DTLS message.
+
+Note: The below role describes the keys in realtion to the endpoint
+and traffic it will receive or send. This will have to be translated
+into client or server key depending on the role the endpoint has in
+the DTLS connection the KeyUpdate happens in.
+
+### Initiator
+
+The below assumes that the Intitiator (I) are currentnly using key
+epoch N.
+  1. The endpoint Initiates the a key update and generates the new key
+  for Epoch N+1. Epoch N+1 transmission key-materaial is set for the
+  current DCI and epoch N+1 but not yet enabled. DTLS generates DTLS
+  records containing the KeyUpdate DTLS message and update_requested,
+  which is then sent using SCTP user message ({{dtls-user-message}})
+  to the responder.
+
+  2. Initiator receives a DTLS user message containing the DTLS ACK
+  message acknowledging the reception of the KeyUpdate message sent in
+  step 1. The Initiator actives the new Epoch N+1 key in the DTLS
+  chunk for protection of future transmissions of SCTP packets. The
+  epoch N send direction key can be removed from the DTLS chunk key
+  store.
+
+  3. Initiator receives a DTLS user message with the Responder's
+  KeyUpdate message. The initator generates the recevie keys for epoch
+  N+1 using the received message and installs them in the DTLS chunks
+  key store. Then it generates a DTLS ACK for the KeyUpdate and sends
+  it to the responder as a SCTP user message.
+
+  4. When the first SCTP packet protected by epoch N+1 has been
+  received and succesfully decrypted by DTLS chunk the epoch N recive
+  keys can be removed. Although to deal with network reordering, a
+  delay is RECOMMENDED.
+
+This completest the key-update procedure.
+
+Note that even if both endpoints runs the Initiator process the
+KeyUpdate will complete. The main difference is that step 3 may occur
+before step 2 has happened.
+
+### Responder
+
+The process for a responder to a peer initiating KeyUpdate.
+
+  1. The responder receives an SCTP DTLS user message containing a
+  KeyUpdate message. The epoch N+1 keys reception keys are generated
+  and installed into the DTLS chunk key store. A DTLS ACK message is
+  generated and transmitted to the peer using a SCTP user message.
+
+  2. The responder initiates its own KeyUpdat by generating keys and
+  creating the KeyUpdate message. The send direction keys for epoch
+  N+1 is installed but not enabled for use. The KeyUpdate message is
+  transmitted to the peer using a SCTP user message.
+
+  3. The responder receives a DTLS user message containing the DTLS
+  ACK message acknowledging the reception of the KeyUpdate message
+  sent in step 2. The responder actives the new Epoch N+1 key in the
+  DTLS chunk for protection of future transmissions of SCTP
+  packets. The epoch N send direction key can be removed from the DTLS
+  chunk key store.
+
+  4. When the first SCTP packet protected by epoch N+1 has been
+  received and succesfully decrypted by DTLS chunk the epoch N recive
+  keys can be removed. Although to deal with network reordering, a
+  delay is RECOMMENDED.
+
 ## Error Cases
 
 As DTLS has its own error reporting mechanism by exchanging DTLS alert
