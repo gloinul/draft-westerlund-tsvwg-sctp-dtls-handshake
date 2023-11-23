@@ -117,7 +117,6 @@ Table of Contents
      9.1.  General
      9.2.  Privacy Considerations
    10. IANA Consideration
-     10.1.  Protection Option Registration
    11. References
      11.1.  Normative References
      11.2.  Informative References
@@ -991,28 +990,7 @@ Table of Contents
 
 10.  IANA Consideration
 
-   This document adds the three new entries listed in Section 10.1 into
-   the "DTLS Chunk Protection Option Identifiers" registry in the Stream
-   Control Transmission Protocol (SCTP) Parameters grouping.
-
-10.1.  Protection Option Registration
-
-   IANA is requested to register two Protection Option Identifiers in
-   the "DTLS Chunk Protection Option Identifiers" registry defined by
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  The entries to be registered
-   are provided in Table 1.
-
-        +==========+========================+===========+=========+
-        | ID VALUE | Name                   | Reference | Contact |
-        +==========+========================+===========+=========+
-        |        0 | No reauthentication    | RFC-To-Be | Authors |
-        +----------+------------------------+-----------+---------+
-        |        1 | Basic reauthentication | RFC-To-Be | Authors |
-        +----------+------------------------+-----------+---------+
-        |        2 | Dual DTLS connection   | RFC-To-Be | Authors |
-        +----------+------------------------+-----------+---------+
-
-                   Table 1: DTLS Chunk protection options
+   This document has no IANA considerations currently.
 
 11.  References
 
