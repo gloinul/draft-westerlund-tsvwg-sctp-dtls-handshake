@@ -409,7 +409,7 @@ in regard to SCTP and upper layer protocol"}
 
    Connection:
    : A DTLS connection. It is uniquely identified by a
-   connection identifier.
+   connection index.
 
    Stream:
    : A unidirectional stream of an SCTP association.  It is
@@ -474,7 +474,8 @@ DCI: 8 bits (unsigned integer)
    SCTP that is used to identify which DTLS connection instance that
    is capable of processing any received packet or DTLS message over
    an user message. This counter is recommended to be 64-bit to
-   guarantee no lifetime issues for the SCTP Association.
+   guarantee no lifetime issues for the SCTP Association. DCI is
+   unrelated to the DTLS Connection ID (CID) {{RFC9147}}.
 
 Payload: variable length
 
@@ -493,7 +494,7 @@ message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
 with the PPID set to DTLS-SCTP
 {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. Each user message DTLS SHALL
-be prepended with a single byte containing the DTLS connection ID
+be prepended with a single byte containing the DTLS connection index
 value. These user messages MAY contain one or more DTLS records. The
 SCTP stream ID used MAY be any stream ID that the ULP alreay uses, and
 if not know Stream 0. Note that all fragments of a handshake message
