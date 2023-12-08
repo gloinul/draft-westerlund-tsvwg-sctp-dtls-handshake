@@ -941,8 +941,8 @@ Initiator                                     Responder
     |<--[DATA(DTLS Server Hello ... Finished)]----+   |
     +---[DATA(DTLS Certificate ... Finished)]---->|   | DTLS
     |<-------------[DATA(DTLS ACK)]---------------+   +-----
-    +------------[DTLS CHUNK(PVALID)]------------>|   |
-    |<-----------[DTLS CHUNK(PVALID)]-------------+ -'
+    |<-----------[DTLS CHUNK(PVALID)]-------------+   |
+    +------------[DTLS CHUNK(PVALID)]------------>| -'
     |                                             |
     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|
     +<-------[DTLS CHUNK(DATA(APP DATA))]---------+
