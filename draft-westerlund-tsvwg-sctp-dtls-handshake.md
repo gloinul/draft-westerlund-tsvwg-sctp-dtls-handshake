@@ -928,6 +928,33 @@ provide ephemeral key exchange.
    selection of "Error During Protection Handshake" or "Timeout During
    Protection Handshake or Validation".
 
+~~~~~~~~~~~ aasvg
+
+Initiator                                     Responder
+    |                                             |
+    +--------------------[INIT]------------------>| -.
+    |<-----------------[INIT-ACK]-----------------+   | SCTP
+    +----------------[COOKIE ECHO]--------------->|   +-----
+    |<----------------[COOKIE ACK]----------------+ -'
+    |                                             |
+    +----------[DATA(DTLS Client Hello)]--------->| -.
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   |
+    +---[DATA(DTLS Certificate ... Finished)]---->|   | DTLS
+    |<-------------[DATA(DTLS ACK)]---------------+   +-----
+    +------------[DTLS CHUNK(PVALID)]------------>|   |
+    |<-----------[DTLS CHUNK(PVALID)]-------------+ -'
+    |                                             |
+    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|
+    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+
+
+~~~~~~~~~~~
+{: #sctp-DTLS-initial-dtls-connection title="Handshake of initial DTLS connection" artwork-align="center"}
+
+The {{sctp-DTLS-initial-dtls-connection}} shows a successfull
+handshake and highlits the different parts of the setup. DTLS
+handshake messages are transported by means of DATA Chunks
+with SCTP-DTLS PPID.
+
 ### Handshake of further DTLS connections
 
    When the SCTP Association has entered the ESTABLISHED state,
@@ -946,6 +973,24 @@ provide ephemeral key exchange.
    an ERROR chunk with the Error in Protection error cause, with
    extra error causes "Error During Protection Handshake".
 
+~~~~~~~~~~~ aasvg
+
+Initiator                                     Responder
+    |                                             |
+    +----------[DATA(DTLS Client Hello)]--------->|
+    |<--[DATA(DTLS Server Hello ... Finished)]----+
+    +---[DATA(DTLS Certificate ... Finished)]---->|
+    |<-------------[DATA(DTLS ACK)]---------------+
+    |                                             |
+
+~~~~~~~~~~~
+{: #sctp-DTLS-further-dtls-connection title="Handshake of further DTLS connection" artwork-align="center"}
+
+The {{sctp-DTLS-further-dtls-connection}} shows a successfull
+handshake of a further DTLS connection. Such connections can
+be initiated by any of the peers. Same as during the initial
+handshake, DTLS handshake messages are transported by means
+of DATA chunks with SCTP-DTLS PPID.
 
 # Parallel DTLS Rekeying {#parallel-dtls}
 
