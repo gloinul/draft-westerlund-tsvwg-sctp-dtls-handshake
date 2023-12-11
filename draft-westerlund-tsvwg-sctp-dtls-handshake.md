@@ -145,7 +145,7 @@ SCTP-AUTH {{RFC4895}}.
 
 
 
-## Protocol Overview
+## Protocol Overview {#protocol_overview}
 
    DTLS in SCTP is a key management specification for the SCTP DTLS
    1.3 chunk {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} that together
@@ -900,14 +900,39 @@ provide ephemeral key exchange.
    This section specifies how DTLS in SCTP is established
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
 
+   A DTLS in SCTP Association is built up with traffic
+   DTLS connection and Restart DTLS connection.
+
+   Traffic DTLS connection is established as part of initial
+   handshake (see {{initial_dtls_connection}}) whilst Restart
+   DTLS connection is established when Association is in
+   ESTABLISHED state and follows the procedure described in
+   {{further_dtls_connection}}.
+
 ## DTLS Handshake {#dtls-handshake}
 
-### Handshake of initial DTLS connection
+### Handshake of initial DTLS connection {#initial_dtls_connection}
+
+   The handshake of the initial DTLS connection is part of the
+   DTLS in SCTP Association initialization.
+   The initialization is split in three distinct phases:
+
+   * SCTP Handshake
+
+   * DTLS Handshake
+
+   * Validation
+
+   Moving towards next phase is possible only when the previous
+   phase handshake is completed.
+
+   SCTP Handshake is strictly compliant to {{RFC9260}}.
 
    As soon the SCTP Association has entered the SCTP state PROTECTION
    PENDING as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}
    the DTLS handshake procedure is initiated by the endpoint that
-   has initiated the SCTP association.
+   has initiated the SCTP association. The initial DTLS handshake
+   SHALL use CID = 0;
 
    The DTLS endpoint will send the DTLS message in one or more SCTP
    user message depending if the DTLS endpoint fragments the message
@@ -919,8 +944,11 @@ provide ephemeral key exchange.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
-   accepted then the SCTP association is informed that it can
-   move to the PROTECTED state.
+   accepted the Association is validated (see {{protocol_overview}})
+   by handshaking PVALID chunks inside DTLS CHUNK payload.
+
+   Once the Association has been validated, then the SCTP association
+   is informed that it can move to the PROTECTED state.
 
    If the DTLS handshake failed the SCTP association SHALL be aborted
    and an ERROR chunk with the Error in Protection error cause, with
@@ -931,21 +959,27 @@ provide ephemeral key exchange.
 ~~~~~~~~~~~ aasvg
 
 Initiator                                     Responder
-    |                                             |
-    +--------------------[INIT]------------------>| -.
+    |                                             | -.
+    +--------------------[INIT]------------------>|   |
     |<-----------------[INIT-ACK]-----------------+   | SCTP
     +----------------[COOKIE ECHO]--------------->|   +-----
-    |<----------------[COOKIE ACK]----------------+ -'
-    |                                             |
-    +----------[DATA(DTLS Client Hello)]--------->| -.
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   |
-    +---[DATA(DTLS Certificate ... Finished)]---->|   | DTLS
-    |<-------------[DATA(DTLS ACK)]---------------+   +-----
-    |<-----------[DTLS CHUNK(PVALID)]-------------+   |
-    +------------[DTLS CHUNK(PVALID)]------------>| -'
-    |                                             |
-    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|
-    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+
+    |<----------------[COOKIE ACK]----------------+   |
+    |                                             | -'
+    |                                             | -.
+    +----------[DATA(DTLS Client Hello)]--------->|   |
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | DTLS
+    +---[DATA(DTLS Certificate ... Finished)]---->|   +-----
+    |<-------------[DATA(DTLS ACK)]---------------+   |
+    |                                             | -'
+    |                                             | -.
+    |<-----------[DTLS CHUNK(PVALID)]-------------+   | VALIDATION
+    +------------[DTLS CHUNK(PVALID)]------------>|   +-----------
+    |                                             | -'
+    |                                             | -.
+    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
+    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
+    |                    ...                      |   |
+    |                    ...                      |   |
 
 ~~~~~~~~~~~
 {: #sctp-DTLS-initial-dtls-connection title="Handshake of initial DTLS connection" artwork-align="center"}
@@ -955,7 +989,7 @@ handshake and highlits the different parts of the setup. DTLS
 handshake messages are transported by means of DATA Chunks
 with SCTP-DTLS PPID.
 
-### Handshake of further DTLS connections
+### Handshake of further DTLS connections {#further_dtls_connection}
 
    When the SCTP Association has entered the ESTABLISHED state,
    each of the endpoint can initiate an DTLS handshake.
