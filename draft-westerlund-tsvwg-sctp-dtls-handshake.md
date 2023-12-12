@@ -895,6 +895,60 @@ connection.
 The PSK key exchange mode psk_ke MUST NOT be used as it does not
 provide ephemeral key exchange.
 
+# New Parameter Type {#new-parameter-type}
+
+This section defines the new parameter type that will be used during
+association restart. {{sctp-DTLS-restart-parameter}} illustrates
+the new parameter type.
+
+| Parameter Type | Parameter Name |
+| 0x80xx | DTLS Restart Connection Identifier |
+{: #sctp-DTLS-restart-parameter title="New INIT-ACK Parameter" cols="r l"}
+
+Note that the parameter format requires the receiver to ignore the
+parameter and continue processing if the parameter is not understood.
+This is accomplished (as described in {{RFC9260}}, Section 3.2.1.)  by
+the use of the upper bits of the parameter type.
+
+## DTLS Restart Connection Identifier {#restart-cid}
+
+This parameter is only used during an Association Restart in the
+INIT-ACK chunk to provide the Restart Initiator with the current
+DTLS Restart CID.
+
+~~~~~~~~~~~ aasvg
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|    Parameter Type = 0x80XX    |       Parameter Length        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|    Restart CID                |       Padding                 |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~~~~~~~~~~~
+{: #sctp-DTLS-restart-CID title="DTLS Restart Connection Identifier" artwork-align="center"}
+
+{: vspace="0"}
+Parameter Type: 16 bits (unsigned integer)
+: This value MUST be set to 0x80XX.
+
+Parameter Length: 16 bits (unsigned integer)
+: This value holds the length of the Options field in
+  bytes plus 4.
+
+Restart CID: 16 bits (unsigned integer)
+: This value is set by default to zero. When different than zero
+it contains the CID of the DTLS Restart connection to be used
+for the COOCKIE-ECHO/COOKIE-ACK Handshake.
+Permitted values are 0, DTLS-RESTART-0 and DTLS-RESTART-1
+When zero it indicates that Association Restart is not possible.
+
+Padding: 16 bits
+: The sender MUST pad the chunk with two all zero bytes
+  to make the chunk 32-bit aligned. The Padding MUST NOT be longer
+  than 2 bytes and it MUST be ignored by the receiver.
+
+RFC-Editor Note: Please replace 0x08XX with the act
+
 # Establishing DTLS in SCTP
 
    This section specifies how DTLS in SCTP is established
@@ -1025,6 +1079,98 @@ handshake of a further DTLS connection. Such connections can
 be initiated by any of the peers. Same as during the initial
 handshake, DTLS handshake messages are transported by means
 of DATA chunks with SCTP-DTLS PPID.
+
+## SCTP Association Restart {#sctp-restart}
+
+In order to achieve an Association Restart as described in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}},
+a safe DTLS connection dedicated to Restart SHALL exist and be available.
+
+### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
+
+As soon as the Association has reached the ESTABLISHED state, a DTLS Restart
+connection SHOULD be instantiated.
+The instantiation of the initial DTLS Restart connection follows the rules
+given in {{further_dtls_connection}} where the CID = DTLS-RESTART-0.
+
+It MAY exist a time gap where the Association is in ESTABLISHED state
+but no DTLS Restart connection exists yet. If a SCTP Restart procedure
+will be initiated during that time, it will fail and the Association
+will also fail.
+
+Once initiated, no traffic will be sent over the DTLS Restart connection
+so that both endpoints will know exactly the right DTLS record number that
+will be sent.
+
+### Handshake of further DTLS Restart connection {#further-dtls-restart-connection}
+
+After the initial DTLS Restart connection has been established, at least an
+active DTLS Restart connection shall exist in a known state.
+It is recommended that updating of DTLS Restart connection follows the same
+times and rules as the traffic DTLS connections and is implemented by following
+the rules described in {{parallel-dtls}}.
+
+### SCTP Association Restart Procedure {#sctp-assoc-restart-procedure}
+
+The DTLS in SCTP Association Restart is meant to preserve the security
+characteristics.
+Since a dedicated DTLS Connection is used for Restart, during INIT/INIT-ACK
+handshake the Responder communicates to the Initiator the CID to be used.
+
+In order the Association Restart to proceed both Initiator and Responder
+SHALL use the same CID for COOKIE-ECHO/COOKIE-ACK handshake, that implies
+that the Initiator must preserve the Key for that CID and that the Responder
+SHALL NOT change the Key for the CID during the Restart procedure.
+
+~~~~~~~~~~~ aasvg
+
+Initiator                                     Responder
+    |                                             | -.
+    +--------------------[INIT]------------------>|   | Plain SCTP
+    |<-----------------[INIT-ACK]-----------------+   +-----------
+    |                                             | -'
+    |                                             | -.
+    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Encrypted
+    |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +----------
+    |                                             | -'
+    |                                             | -.
+    +----------[DATA(DTLS Client Hello)]--------->|   |
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Restart CID
+    +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
+    |<-------------[DATA(DTLS ACK)]---------------+   |
+    |                                             | -'
+    |                                             | -.
+    +----------[DATA(DTLS Client Hello)]--------->|   |
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Traffic CID
+    +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
+    |<-------------[DATA(DTLS ACK)]---------------+   |
+    |                                             | -'
+    |                                             | -.
+    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
+    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
+    |                    ...                      |   |
+    |                    ...                      |   |
+
+~~~~~~~~~~~
+{: #sctp-assoc-restart-sequence title="SCTP Restart sequence for DTLS in SCTP" artwork-align="center"}
+
+The {{sctp-assoc-restart-sequence}} shows a successfull
+SCTP Association Restart.
+
+From procedure viewpoint the sequence is the following:
+
+- Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK with option Restart CID {{restart-cid}}
+
+- Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart CID
+
+- Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with the Key tied to the Restart CID
+
+- When User Data Traffic is moved on the new Traffic CID, a new Restart CID is handshaked and set for a future restart
+
+- User Data traffic is resumed on the Restart CID until Initiator and Responder succesfully handshake a new Traffic CID
+
+If a problem occurs before the new Restart CID has been handshaked, the Association cannot be Restarted, thus it's
+RECOMMENDED the new Restart CID to be handshaked as early as possible.
+
 
 # Parallel DTLS Rekeying {#parallel-dtls}
 
