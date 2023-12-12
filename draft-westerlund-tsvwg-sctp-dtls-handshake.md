@@ -1122,7 +1122,7 @@ SCTP Association Restart.
 
 From procedure viewpoint the sequence is the following:
 
-- Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK with option Restart CID {{restart-cid}}
+- Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK
 
 - Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart CID
 
