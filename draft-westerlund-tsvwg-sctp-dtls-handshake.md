@@ -475,7 +475,7 @@ DCI: 8 bits (unsigned integer)
    is capable of processing any received packet or DTLS message over
    an user message. This counter is recommended to be 64-bit to
    guarantee no lifetime issues for the SCTP Association. DCI is
-   unrelated to the DTLS Connection ID (CID) {{RFC9147}}.
+   unrelated to the DTLS Connection ID (DCI) {{RFC9147}}.
 
 Payload: variable length
 
@@ -932,7 +932,7 @@ provide ephemeral key exchange.
    PENDING as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}
    the DTLS handshake procedure is initiated by the endpoint that
    has initiated the SCTP association. The initial DTLS handshake
-   SHALL use CID = 0;
+   SHALL use DCI = 0;
 
    The DTLS endpoint will send the DTLS message in one or more SCTP
    user message depending if the DTLS endpoint fragments the message
@@ -1030,15 +1030,15 @@ of DATA chunks with SCTP-DTLS PPID.
 
 In order to achieve an Association Restart as described in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}},
 a safe DTLS connection dedicated to Restart SHALL exist and be available.
-Furthermore, both peers SHALL have safely stored both the current CID and the related key.
-Here we assume that CID and key survive the events leading to SCTP Restart request.
+Furthermore, both peers SHALL have safely stored both the current DCI and the related key.
+Here we assume that DCI and key survive the events leading to SCTP Restart request.
 
 ### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
 
 As soon as the Association has reached the ESTABLISHED state, a DTLS Restart
 connection SHOULD be instantiated.
 The instantiation of the initial DTLS Restart connection follows the rules
-given in {{further_dtls_connection}} where the CID = DTLS-RESTART-0.
+given in {{further_dtls_connection}} where the DCI = DTLS-RESTART-0.
 
 It MAY exist a time gap where the Association is in ESTABLISHED state
 but no DTLS Restart connection exists yet. If a SCTP Restart procedure
@@ -1057,16 +1057,16 @@ It is recommended that updating of DTLS Restart connection follows the same
 times and rules as the traffic DTLS connections and is implemented by following
 the rules described in {{parallel-dtls}}.
 
-DTLS Restart CID can either be DTLS-RESTART-0 or DTLS-RESTART-1, the
-value in use is the Current Restart CID whilst the other is the next Restart CID.
+DTLS Restart DCI can either be DTLS-RESTART-0 or DTLS-RESTART-1, the
+value in use is the Current Restart DCI whilst the other is the next Restart DCI.
 
 The handshake of further DTLS Restart Connection is sequenced as follows:
 
-- Perform the DTLS Handshake as described in {{further_dtls_connection}} on the next Restart CID
+- Perform the DTLS Handshake as described in {{further_dtls_connection}} on the next Restart DCI
 
 - The Responder will store the new key before sending DTLS ACK
 
-- The Initiator at reception of DTLS ACK will initiate closing the current Restart CID
+- The Initiator at reception of DTLS ACK will initiate closing the current Restart DCI
 
 - The Responder will reply to the DTLS Close and remove the old key
 
@@ -1078,12 +1078,12 @@ The handshake of further DTLS Restart Connection is sequenced as follows:
 The DTLS in SCTP Association Restart is meant to preserve the security
 characteristics.
 Since a dedicated DTLS Connection is used for Restart, during INIT/INIT-ACK
-handshake the Responder communicates to the Initiator the CID to be used.
+handshake the Responder communicates to the Initiator the DCI to be used.
 
 In order the Association Restart to proceed both Initiator and Responder
-SHALL use the same CID for COOKIE-ECHO/COOKIE-ACK handshake, that implies
-that the Initiator must preserve the Key for that CID and that the Responder
-SHALL NOT change the Key for the CID during the Restart procedure.
+SHALL use the same DCI for COOKIE-ECHO/COOKIE-ACK handshake, that implies
+that the Initiator must preserve the Key for that DCI and that the Responder
+SHALL NOT change the Key for the DCI during the Restart procedure.
 
 ~~~~~~~~~~~ aasvg
 
@@ -1098,13 +1098,13 @@ Initiator                                     Responder
     |                                             | -'
     |                                             | -.
     +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Traffic CID
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Traffic DCI
     +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
     |<-------------[DATA(DTLS ACK)]---------------+   |
     |                                             | -'
     |                                             | -.
     +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Restart CID
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Restart DCI
     +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
     |<-------------[DATA(DTLS ACK)]---------------+   |
     |                                             | -'
@@ -1124,18 +1124,18 @@ From procedure viewpoint the sequence is the following:
 
 - Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK
 
-- Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart CID
+- Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart DCI
 
-- Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with the Key tied to the Restart CID
+- Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with the Key tied to the Restart DCI
 
-- When User Data Traffic is moved on the new Traffic CID, a new Restart CID is handshaked and set for a future restart
+- When User Data Traffic is moved on the new Traffic DCI, a new Restart DCI is handshaked and set for a future restart
 
-- User Data traffic is resumed on the Restart CID until Initiator and Responder succesfully handshake a new Traffic CID
+- User Data traffic is resumed on the Restart DCI until Initiator and Responder succesfully handshake a new Traffic DCI
 
-User Data traffic MAY be initiated immediately after COOKIE-ECHO/COOKIE-ACK handshake using the current Restart CID,
-that is even before a new Traffic CID or a Restart CID have been handshaked.
-If a problem occurs before the new Restart CID has been handshaked, the Association cannot be Restarted, thus it's
-RECOMMENDED the new Restart CID to be handshaked as early as possible.
+User Data traffic MAY be initiated immediately after COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI,
+that is even before a new Traffic DCI or a Restart DCI have been handshaked.
+If a problem occurs before the new Restart DCI has been handshaked, the Association cannot be Restarted, thus it's
+RECOMMENDED the new Restart DCI to be handshaked as early as possible.
 
 
 # Parallel DTLS Rekeying {#parallel-dtls}
