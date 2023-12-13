@@ -411,9 +411,17 @@ in regard to SCTP and upper layer protocol"}
    : A DTLS connection. It is uniquely identified by a
    connection index.
 
+  Restart DCI:
+  : A variable known by both peers that holds the value
+  to be used as DCI during an SCTP Association Restart
+
    Stream:
    : A unidirectional stream of an SCTP association.  It is
    uniquely identified by a stream identifier.
+
+   Traffic DCI:
+   : A variable known by both peers that holds the value
+  to be used as DCI for User Data transport
 
 ## Abbreviations
 
@@ -469,13 +477,15 @@ in regard to SCTP and upper layer protocol"}
 
 DCI: 8 bits (unsigned integer)
 
-: DTLS Connection Index is the lower eight bits of an DTLS
-   Connection Index counter. This is a counter implemented in DTLS in
+: DTLS Connection Index is a value with the format uuuuuRnn where
+   u means bit unused/reserved, R indicates wheter the DCI is for
+   Restart purposes and nn are the lower two bits of an DTLS Connection
+   Index counter. This is a counter implemented in DTLS in
    SCTP that is used to identify which DTLS connection instance that
    is capable of processing any received packet or DTLS message over
-   an user message. This counter is recommended to be 64-bit to
-   guarantee no lifetime issues for the SCTP Association. DCI is
-   unrelated to the DTLS Connection ID (DCI) {{RFC9147}}.
+   an user message. This counter is recommended to be the lower part
+   of a larger variable.
+   DCI is unrelated to the DTLS Connection ID (DCI) {{RFC9147}}.
 
 Payload: variable length
 
@@ -517,12 +527,14 @@ MUST be sent with the same stream ID to ensure the in-order delivery.
 
 DCI: 8 bits (unsigned integer)
 
-: DTLS Connection Index is the lower eight bits of an DTLS
-   Connection Index counter. This is a counter implemented in DTLS in
+: DTLS Connection Index is a value with the format uuuuuRnn where
+   u means bit unused/reserved, R indicates wheter the DCI is for
+   Restart purposes and nn are the lower two bits of an DTLS Connection
+   Index counter. This is a counter implemented in DTLS in
    SCTP that is used to identify which DTLS connection instance that
    is capable of processing any received packet or DTLS message over
-   an user message. This counter is recommended to be 64-bit to
-   guarantee no lifetime issues for the SCTP Association.
+   an user message. This counter is recommended to be the lower part
+   of a larger variable.
 
 DTLS Message: variable length
 
@@ -553,7 +565,7 @@ is used for the initial DTLS handshake.
 When entering PROTECTION PENDING state, DTLS will start the handshake
 according to {{dtls-handshake}}.
 
-DTLS being initialized for a new SCTP association will set the DCI
+DTLS being initialized for a new SCTP association will set the Traffic DCI
 counter = 0, which implies a DCI field value of 0, for the initial
 DTLS connection. The DTLS handshake messages are transmitted from this
 endpoint to the peer using SCTP User message {{dtls-user-message}}
@@ -595,10 +607,11 @@ connections and their related DCI state in the DTLS chunk.
 ### Add a New DTLS Connection {#add-dtls-connection}
 
 Either peer can add a new DTLS connection to the SCTP association at
-any time, but no more than 2 DTLS connections can exist at the same
-time.  The new DCI value shall be the last active DCI increased by
-one. What is encoded in the DTLS chunk and DTLS user messages are the
-DCI value modulo 256. This makes the attempt to create a new DTLS
+any time, but no more than 4 DTLS connections can exist at the same
+time.  The new DCI value shall be the last active Traffic or Restart
+DCI increased by one.
+What is encoded in the DTLS chunk and DTLS user messages are the
+DCI value modulo 4. This makes the attempt to create a new DTLS
 connection to use the same, known, value of DCI from both peers.  A
 new handshake will be initiated by DTLS using the new DCI.  Details of
 the handshake are described in {{dtls-handshake}}.
@@ -611,7 +624,7 @@ previous DTLS connection shall be continued to be processed and the
 other dropped.
 
 When the handshake has been completed successfully, the new DTLS
-connection will be possible to use for traffic, if the handshake is
+connection will be possible to use, if the handshake is
 not completed successfully, the new DCI value will not be considered
 used and a next attempt will reuse that DCI.
 
@@ -1007,6 +1020,14 @@ with SCTP-DTLS PPID.
    an ERROR chunk with the Error in Protection error cause, with
    extra error causes "Error During Protection Handshake".
 
+   The DCI to be used for the handshake depends on the purpose
+   of the DTLS connection. If this DTLS connection is being used
+   for traffic purpose, DCI value is computed as the last active
+   Traffic DCI increased by one modulo 4.
+   If this DTLS connection is being used for Restart purpose
+   DCI value is computed as the last active Restart DCI increased
+   by one modulo 4 and setting R bit to 1.
+
 ~~~~~~~~~~~ aasvg
 
 Initiator                                     Responder
@@ -1030,15 +1051,16 @@ of DATA chunks with SCTP-DTLS PPID.
 
 In order to achieve an Association Restart as described in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}},
 a safe DTLS connection dedicated to Restart SHALL exist and be available.
-Furthermore, both peers SHALL have safely stored both the current DCI and the related key.
-Here we assume that DCI and key survive the events leading to SCTP Restart request.
+Furthermore, both peers SHALL have safely stored both the current Restart DCI and the related key.
+Here we assume that Restart DCI and key survive the events leading to SCTP Restart request.
 
 ### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
 
 As soon as the Association has reached the ESTABLISHED state, a DTLS Restart
 connection SHOULD be instantiated.
 The instantiation of the initial DTLS Restart connection follows the rules
-given in {{further_dtls_connection}} where the DCI = DTLS-RESTART-0.
+given in {{further_dtls_connection}} where the DCI = 0x40 (that is initial
+DCI = 0 and R bit = 1).
 
 It MAY exist a time gap where the Association is in ESTABLISHED state
 but no DTLS Restart connection exists yet. If a SCTP Restart procedure
@@ -1057,8 +1079,7 @@ It is recommended that updating of DTLS Restart connection follows the same
 times and rules as the traffic DTLS connections and is implemented by following
 the rules described in {{parallel-dtls}}.
 
-DTLS Restart DCI can either be DTLS-RESTART-0 or DTLS-RESTART-1, the
-value in use is the Current Restart DCI whilst the other is the next Restart DCI.
+The next DTLS Restart DCI is computed as described in {{add-dtls-connection}}.
 
 The handshake of further DTLS Restart Connection is sequenced as follows:
 
@@ -1077,13 +1098,11 @@ The handshake of further DTLS Restart Connection is sequenced as follows:
 
 The DTLS in SCTP Association Restart is meant to preserve the security
 characteristics.
-Since a dedicated DTLS Connection is used for Restart, during INIT/INIT-ACK
-handshake the Responder communicates to the Initiator the DCI to be used.
 
 In order the Association Restart to proceed both Initiator and Responder
-SHALL use the same DCI for COOKIE-ECHO/COOKIE-ACK handshake, that implies
+SHALL use the same Restart DCI for COOKIE-ECHO/COOKIE-ACK handshake, that implies
 that the Initiator must preserve the Key for that DCI and that the Responder
-SHALL NOT change the Key for the DCI during the Restart procedure.
+SHALL NOT change the Key for the Restart DCI during the Restart procedure.
 
 ~~~~~~~~~~~ aasvg
 
@@ -1181,8 +1200,10 @@ The following state machine applies.
 |          +---------+
 |          |  AGED   |  When in AGED state a
 |          +----+----+  new DTLS connection
-|               |       is added with a new DCI
-|      NEW DTLS |
+|               |       is added with a new Traffic DCI
+|      NEW DTLS |       Also a new connection for Restart
+|               |       SHOULD be added with a
+|               |       new Restart DCI
 |               V
 |          +---------+
 |          |   OLD   |  In OLD state there
@@ -1209,13 +1230,19 @@ The following state machine applies.
 
 Trigger for rekeying can either be a local AGING event, triggered by
 the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
-event, triggered by receiving a DTLS record on the DCI that would be
+event, triggered by receiving a DTLS record on the Traffic DCI that would be
 used for new DTLS connection. In such case a new DTLS connection
-shall be added according to {{add-dtls-connection}} with a new DCI.
+shall be added according to {{add-dtls-connection}} with a new Traffic DCI.
 
 As soon as the new DTLS connection completes handshaking, the traffic is moved
 from the old one, then the procedure for closing the old DTLS connection is
 initiated, see {{remove-dtls-connection}}.
+
+On Restart connection, trigger for rekeying can either be a local AGING event, triggered by
+the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
+event, triggered by receiving a DTLS record on the Restart DCI that would be
+used for new DTLS connection. In such case a new DTLS connection
+shall be added according to {{add-dtls-connection}} with a new Restart DCI.
 
 ## Race Condition in Rekeying
 
