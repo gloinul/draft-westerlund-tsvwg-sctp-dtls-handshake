@@ -412,16 +412,16 @@ in regard to SCTP and upper layer protocol"}
    connection index.
 
   Restart DCI:
-  : A variable known by both peers that holds the value
-  to be used as DCI during an SCTP Association Restart
+  : A DTLS connection index indicating a DTLS connection to be
+    used for an SCTP Association Restart
 
    Stream:
    : A unidirectional stream of an SCTP association.  It is
    uniquely identified by a stream identifier.
 
    Traffic DCI:
-   : A variable known by both peers that holds the value
-  to be used as DCI for User Data transport
+   : A DTLS Connection index indicating a DTLS connection used to
+     protect the regular SCTP traffic, i.e. not a restart DCI.
 
 ## Abbreviations
 
@@ -464,7 +464,7 @@ in regard to SCTP and upper layer protocol"}
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Type = 0x4x   |   DCI         |         Chunk Length          |
+| Type = 0x4x   |reserved |R|DCI|         Chunk Length          |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                                                               |
 |                            Payload                            |
@@ -475,12 +475,22 @@ in regard to SCTP and upper layer protocol"}
 ~~~~~~~~~~~
 {: #sctp-dtls-chunk-structure title="DTLS Chunk Structure"}
 
-DCI: 8 bits (unsigned integer)
+reserved: 5 bits
 
-: DTLS Connection Index is a value with the format uuuuuRnn where
-   u means bit unused/reserved, R indicates wheter the DCI is for
-   Restart purposes and nn are the lower two bits of an DTLS Connection
-   Index counter. This is a counter implemented in DTLS in
+: Reserved bits for future use. Sender MUST set these bits to 0 and
+  MUST be ignored on reception.
+
+R: 1 bit (boolean)
+
+: Restart indicator. If this bit is set this DTLS chunk is protected
+  with by an restart DTLS Connection with the index indicated by the
+  DCI. If not set, then a traffic DCI is indicated.
+
+DCI: 2 bits (unsigned integer)
+
+: DTLS Connection Index is the lower two bits of an DTLS Connection
+   Index counter for the traffic or restart DTLS connection index.
+   This is a counter implemented in DTLS in
    SCTP that is used to identify which DTLS connection instance that
    is capable of processing any received packet or DTLS message over
    an user message. This counter is recommended to be the lower part
@@ -514,7 +524,7 @@ MUST be sent with the same stream ID to ensure the in-order delivery.
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|   DCI         |                                               |
+|reserved |R|DCI|                                               |
 +-+-+-+-+-+-+-+-+                                               |
 |                                                               |
 |                            DTLS Message                       |
@@ -525,16 +535,28 @@ MUST be sent with the same stream ID to ensure the in-order delivery.
 ~~~~~~~~~~~
 {: #sctp-dtls-user-message title="DTLS User Message Structure"}
 
-DCI: 8 bits (unsigned integer)
+reserved: 5 bits
 
-: DTLS Connection Index is a value with the format uuuuuRnn where
-   u means bit unused/reserved, R indicates wheter the DCI is for
-   Restart purposes and nn are the lower two bits of an DTLS Connection
-   Index counter. This is a counter implemented in DTLS in
+: Reserved bits for future use. Sender MUST set these bits to 0 and
+  MUST be ignored on reception.
+
+R: 1 bit (boolean)
+
+: Restart indicator. If this bit is set this DTLS message is for the
+  restart DTLS Connection with the index indicated by the
+  DCI field. If not set, then a traffic DCI is indicated.
+
+DCI: 2 bits (unsigned integer)
+
+: DTLS Connection Index is the lower two bits of an DTLS Connection
+   Index counter for the traffic or restart DTLS connection index.
+   This is a counter implemented in DTLS in
    SCTP that is used to identify which DTLS connection instance that
    is capable of processing any received packet or DTLS message over
    an user message. This counter is recommended to be the lower part
    of a larger variable.
+   DCI is unrelated to the DTLS Connection ID {{RFC9147}}.
+
 
 DTLS Message: variable length
 
@@ -607,12 +629,12 @@ connections and their related DCI state in the DTLS chunk.
 ### Add a New DTLS Connection {#add-dtls-connection}
 
 Either peer can add a new DTLS connection to the SCTP association at
-any time, but no more than 4 DTLS connections can exist at the same
-time.  The new DCI value shall be the last active Traffic or Restart
-DCI increased by one.
+any time, but no more than 2 DTLS connections can exist at the same
+time per DTLS connection type (Traffic or Restart).  The new DCI
+value shall be the last active Traffic or Restart DCI increased by one.
 What is encoded in the DTLS chunk and DTLS user messages are the
 DCI value modulo 4. This makes the attempt to create a new DTLS
-connection to use the same, known, value of DCI from both peers.  A
+connection to use the same, known, value of DCI from either peer.  A
 new handshake will be initiated by DTLS using the new DCI.  Details of
 the handshake are described in {{dtls-handshake}}.
 
