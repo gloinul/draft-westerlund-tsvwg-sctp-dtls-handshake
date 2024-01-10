@@ -495,7 +495,7 @@ DCI: 2 bits (unsigned integer)
    is capable of processing any received packet or DTLS message over
    an user message. This counter is recommended to be the lower part
    of a larger variable.
-   DCI is unrelated to the DTLS Connection ID (DCI) {{RFC9147}}.
+   DCI is unrelated to the DTLS Connection ID (CID) {{RFC9147}}.
 
 Payload: variable length
 
@@ -587,16 +587,20 @@ is used for the initial DTLS handshake.
 When entering PROTECTION PENDING state, DTLS will start the handshake
 according to {{dtls-handshake}}.
 
-DTLS being initialized for a new SCTP association will set the Traffic DCI
-counter = 0, which implies a DCI field value of 0, for the initial
+DTLS being initialized for a new SCTP association will set the Traffic
+DCI counter = 0, which implies a DCI field value of 0, for the initial
 DTLS connection. The DTLS handshake messages are transmitted from this
 endpoint to the peer using SCTP User message {{dtls-user-message}}
 with the PPID value set to DTLS-SCTP
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. Note that in case of SCTP
+association restart, the negotiation of the new Traffic DTLS
+connection SHALL use a new Traffic DCI counter = 0 as the restarting
+SCTP endpoint may not know the old traffic DCI counter value for the
+last active DTLS connection.
 
-When a successful handshake has been completed, DTLS protection operator
-will inform DTLS chunk Handler that will move SCTP State Machine
-into PROTECTED state.
+When a successful handshake has been completed and the keying material
+is established for DTLS connection and set for the DCI the DTLS chunk
+Handler will move SCTP State Machine into PROTECTED state.
 
 ### PROTECTED state
 
@@ -691,12 +695,13 @@ the DTLS connection the KeyUpdate happens in.
 
 The below assumes that the Intitiator (I) are currentnly using key
 epoch N.
-  1. The endpoint Initiates the a key update and generates the new key
+
+  1. The endpoint Initiates the key update and generates the new key
   for Epoch N+1. Epoch N+1 transmission key-materaial is set for the
-  current DCI and epoch N+1 but not yet enabled. DTLS generates DTLS
-  records containing the KeyUpdate DTLS message and update_requested,
-  which is then sent using SCTP user message ({{dtls-user-message}})
-  to the responder.
+  current DCI and epoch N+1 but not yet enabled for use. DTLS
+  generates DTLS records containing the KeyUpdate DTLS message and
+  update_requested, which is then sent using SCTP user message
+  ({{dtls-user-message}}) to the responder.
 
   2. Initiator receives a DTLS user message containing the DTLS ACK
   message acknowledging the reception of the KeyUpdate message sent in
@@ -793,8 +798,7 @@ the error different paths can be the result:
 
    This document defines the usage of DTLS 1.3 {{RFC9147}}.
    Earlier versions of DTLS MUST NOT be used
-   (see {{RFC8996}}).  DTLS 1.3 is RECOMMENDED for security and
-   performance reasons.  It is expected that DTLS in SCTP as described in
+   (see {{RFC8996}}). It is expected that DTLS in SCTP as described in
    this document will work with future versions of DTLS.
 
    Only one version of DTLS MUST be used during the lifetime of an
@@ -910,7 +914,7 @@ padding. Use of DTLS padding hides this packet expansion from SCTP.
 
 ### DTLS 1.3
 
-DTLS 1.3 is preferred over DTLS 1.2 being a newer protocol that
+DTLS 1.3 is used instead of DTLS 1.2 being a newer protocol that
 addresses known vulnerabilities and only defines strong algorithms
 without known major weaknesses at the time of publication.
 
@@ -964,23 +968,25 @@ provide ephemeral key exchange.
    SCTP Handshake is strictly compliant to {{RFC9260}}.
 
    As soon the SCTP Association has entered the SCTP state PROTECTION
-   PENDING as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}
-   the DTLS handshake procedure is initiated by the endpoint that
-   has initiated the SCTP association. The initial DTLS handshake
-   SHALL use DCI = 0;
+   PENDING as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} the
+   DTLS handshake procedure is initiated by the endpoint that has
+   initiated the SCTP association. The initial DTLS handshake or as a
+   result of a SCTP association restart SHALL use DCI = 0;
 
    The DTLS endpoint will send the DTLS message in one or more SCTP
    user message depending if the DTLS endpoint fragments the message
    or not {{dtls-user-message}}.  The DTLS instance SHOULD NOT
    use DTLS retransmission to repair any packet losses of handshake
    message fragment. Note: If the DTLS implementation support
-   configuring a MTU larger than the actual IP MTU it could be used as
+   configuring a MTU larger than the actual IP MTU it MAY be used as
    SCTP provides reliability and fragmentation.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
-   accepted the Association is validated (see {{protocol_overview}})
-   by handshaking PVALID chunks inside DTLS CHUNK payload.
+   accepted the keying material is installed for the DTLS chunk. This
+   then triggers validated of the association establishment (see
+   {{protocol_overview}}) by handshaking PVALID chunks inside DTLS
+   CHUNK payload.
 
    Once the Association has been validated, then the SCTP association
    is informed that it can move to the PROTECTED state.
@@ -1071,37 +1077,44 @@ of DATA chunks with SCTP-DTLS PPID.
 
 ## SCTP Association Restart {#sctp-restart}
 
-In order to achieve an Association Restart as described in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}},
-a safe DTLS connection dedicated to Restart SHALL exist and be available.
-Furthermore, both peers SHALL have safely stored both the current Restart DCI and the related key.
-Here we assume that Restart DCI and key survive the events leading to SCTP Restart request.
+In order to achieve an Association Restart as described in
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a safe DTLS connection
+dedicated to Restart SHALL exist and be available.  Furthermore, both
+peers SHALL have safely stored both the current Restart DCI and the
+related keying material.  Here we assume that Restart DCI and keying
+material are maintained across the events leading to SCTP Restart
+request.
 
 ### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
 
-As soon as the Association has reached the ESTABLISHED state, a DTLS Restart
-connection SHOULD be instantiated.
-The instantiation of the initial DTLS Restart connection follows the rules
-given in {{further_dtls_connection}} where the DCI = 0x40 (that is initial
-DCI = 0 and R bit = 1).
+As soon as the Association has reached the PROTECTION_PENDING state, a
+DTLS Restart connection SHOULD be instantiated.  The instantiation of
+the initial DTLS Restart connection follows the rules given in
+{{further_dtls_connection}} where the DCI = 0x40 (that is initial DCI
+= 0 and R bit = 1). Unless a SCTP association restart has happened and
+the restart DCI has been used. In this case a new restart DTLS
+connection SHALL be established as soon as PROTECTION_PENDING state
+has been reached, using a restart DCI counter of the current + 1.
 
-It MAY exist a time gap where the Association is in ESTABLISHED state
+It MAY exist a time gap where the Association is in PROTECTED state
 but no DTLS Restart connection exists yet. If a SCTP Restart procedure
 will be initiated during that time, it will fail and the Association
 will also fail.
 
-Once initiated, no traffic will be sent over the DTLS Restart connection
-so that both endpoints will know exactly the right DTLS record number that
-will be sent.
+Once initiated, no traffic will be sent over the DTLS Restart
+connection so that both endpoints will know exactly the right DTLS
+record number that will be sent.
 
 ### Handshake of further DTLS Restart connection {#further-dtls-restart-connection}
 
-After the initial DTLS Restart connection has been established, at least an
-active DTLS Restart connection shall exist in a known state.
-It is recommended that updating of DTLS Restart connection follows the same
-times and rules as the traffic DTLS connections and is implemented by following
-the rules described in {{parallel-dtls}}.
+After the initial DTLS Restart connection has been established, at
+least an active DTLS Restart connection shall exist in a known state.
+It is recommended that updating of DTLS Restart connection follows the
+same times and rules as the traffic DTLS connections and is
+implemented by following the rules described in {{parallel-dtls}}.
 
-The next DTLS Restart DCI is computed as described in {{add-dtls-connection}}.
+The next DTLS Restart DCI is computed as described in
+{{add-dtls-connection}}.
 
 The handshake of further DTLS Restart Connection is sequenced as follows:
 
@@ -1165,18 +1178,27 @@ From procedure viewpoint the sequence is the following:
 
 - Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK
 
-- Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart DCI
+- Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key
+  tied to the Restart DCI
 
-- Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with the Key tied to the Restart DCI
+- Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with
+  the Key tied to the Restart DCI
 
-- When User Data Traffic is moved on the new Traffic DCI, a new Restart DCI is handshaked and set for a future restart
+- Initiator sends handshakes for new Traffic DTLS connnection as well
+  as new Restart DTLS connection. These DATA chunks will be protected
+  by the restart DCI.
 
-- User Data traffic is resumed on the Restart DCI until Initiator and Responder succesfully handshake a new Traffic DCI
+- When the handshake for the a new traffic DTLS connection has been
+  completed, i.e. VALIDATION has been reached the DCI used to protect
+  any SCTP chunks is switched from the restart DCI to the new traffic
+  DCI.
 
-User Data traffic MAY be initiated immediately after COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI,
-that is even before a new Traffic DCI or a Restart DCI have been handshaked.
-If a problem occurs before the new Restart DCI has been handshaked, the Association cannot be Restarted, thus it's
-RECOMMENDED the new Restart DCI to be handshaked as early as possible.
+User Data for any ULP traffic MAY be initiated immediately after
+COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI, that
+is even before a new Traffic DCI or a Restart DCI have been
+handshaked.  If a problem occurs before the new Restart DCI has been
+handshaked, the Association cannot be Restarted, thus it's RECOMMENDED
+the new Restart DCI to be handshaked as early as possible.
 
 
 # Parallel DTLS Rekeying {#parallel-dtls}
