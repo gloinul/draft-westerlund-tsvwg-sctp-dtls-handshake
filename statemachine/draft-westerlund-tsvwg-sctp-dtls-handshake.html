@@ -21,10 +21,10 @@ re-authentication and rekeying with ephemeral key exchange. This is
 intended as an alternative to using DTLS/SCTP   and
 SCTP-AUTH  . 
     " name="description">
-<meta content="xml2rfc 3.18.2" name="generator">
+<meta content="xml2rfc 3.19.0" name="generator">
 <meta content="draft-westerlund-tsvwg-sctp-dtls-handshake-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.18.2
+  xml2rfc 3.19.0
     Python 3.11.6
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -1036,11 +1036,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">DTLS in SCTP</td>
-<td class="right">December 2023</td>
+<td class="right">January 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 20 June 2024</td>
+<td class="center">Expires 13 July 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1053,12 +1053,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2023-12-18" class="published">18 December 2023</time>
+<time datetime="2024-01-10" class="published">10 January 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-06-20">20 June 2024</time></dd>
+<dd class="expires"><time datetime="2024-07-13">13 July 2024</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1125,7 +1125,7 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 June 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 13 July 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1134,7 +1134,7 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
 <a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
         </h2>
 <p id="section-boilerplate.2-1">
-            Copyright (c) 2023 IETF Trust and the persons identified as the
+            Copyright (c) 2024 IETF Trust and the persons identified as the
             document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.2-2">
             This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1938,7 +1938,7 @@ DCI. If not set, then a traffic DCI is indicated.<a href="#section-2-3.4.1" clas
  is capable of processing any received packet or DTLS message over
  an user message. This counter is recommended to be the lower part
  of a larger variable.
- DCI is unrelated to the DTLS Connection ID (DCI) <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-2-3.6.1" class="pilcrow">¶</a></p>
+ DCI is unrelated to the DTLS Connection ID (CID) <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-2-3.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-3.7">Payload: variable length</dt>
@@ -2099,15 +2099,19 @@ is used for the initial DTLS handshake.<a href="#section-4.1-1" class="pilcrow">
           </h4>
 <p id="section-4.1.1-1">When entering PROTECTION PENDING state, DTLS will start the handshake
 according to <a href="#dtls-handshake" class="auto internal xref">Section 6.1</a>.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-2">DTLS being initialized for a new SCTP association will set the Traffic DCI
-counter = 0, which implies a DCI field value of 0, for the initial
+<p id="section-4.1.1-2">DTLS being initialized for a new SCTP association will set the Traffic
+DCI counter = 0, which implies a DCI field value of 0, for the initial
 DTLS connection. The DTLS handshake messages are transmitted from this
 endpoint to the peer using SCTP User message <a href="#dtls-user-message" class="auto internal xref">Section 3</a>
 with the PPID value set to DTLS-SCTP
-<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-3">When a successful handshake has been completed, DTLS protection operator
-will inform DTLS chunk Handler that will move SCTP State Machine
-into PROTECTED state.<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
+<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. Note that in case of SCTP
+association restart, the negotiation of the new Traffic DTLS
+connection SHALL use a new Traffic DCI counter = 0 as the restarting
+SCTP endpoint may not know the old traffic DCI counter value for the
+last active DTLS connection.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-3">When a successful handshake has been completed and the keying material
+is established for DTLS connection and set for the DCI the DTLS chunk
+Handler will move SCTP State Machine into PROTECTED state.<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protected-state">
@@ -2222,34 +2226,36 @@ the DTLS connection the KeyUpdate happens in.<a href="#section-4.3-2" class="pil
 <a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-initiator" class="section-name selfRef">Initiator</a>
           </h4>
 <p id="section-4.3.1-1">The below assumes that the Intitiator (I) are currentnly using key
-epoch N.
-  1. The endpoint Initiates the a key update and generates the new key
-  for Epoch N+1. Epoch N+1 transmission key-materaial is set for the
-  current DCI and epoch N+1 but not yet enabled. DTLS generates DTLS
-  records containing the KeyUpdate DTLS message and update_requested,
-  which is then sent using SCTP user message (<a href="#dtls-user-message" class="auto internal xref">Section 3</a>)
-  to the responder.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+epoch N.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4.3.1-2">
 <li id="section-4.3.1-2.1">
-              <p id="section-4.3.1-2.1.1">Initiator receives a DTLS user message containing the DTLS ACK
+              <p id="section-4.3.1-2.1.1">The endpoint Initiates the key update and generates the new key
+  for Epoch N+1. Epoch N+1 transmission key-materaial is set for the
+  current DCI and epoch N+1 but not yet enabled for use. DTLS
+  generates DTLS records containing the KeyUpdate DTLS message and
+  update_requested, which is then sent using SCTP user message
+  (<a href="#dtls-user-message" class="auto internal xref">Section 3</a>) to the responder.<a href="#section-4.3.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-4.3.1-2.2">
+              <p id="section-4.3.1-2.2.1">Initiator receives a DTLS user message containing the DTLS ACK
   message acknowledging the reception of the KeyUpdate message sent in
   step 1. The Initiator actives the new Epoch N+1 key in the DTLS
   chunk for protection of future transmissions of SCTP packets. The
   epoch N send direction key can be removed from the DTLS chunk key
-  store.<a href="#section-4.3.1-2.1.1" class="pilcrow">¶</a></p>
+  store.<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-4.3.1-2.2">
-              <p id="section-4.3.1-2.2.1">Initiator receives a DTLS user message with the Responder's
+            <li id="section-4.3.1-2.3">
+              <p id="section-4.3.1-2.3.1">Initiator receives a DTLS user message with the Responder's
   KeyUpdate message. The initator generates the recevie keys for epoch
   N+1 using the received message and installs them in the DTLS chunks
   key store. Then it generates a DTLS ACK for the KeyUpdate and sends
-  it to the responder as a SCTP user message.<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
+  it to the responder as a SCTP user message.<a href="#section-4.3.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-4.3.1-2.3">
-              <p id="section-4.3.1-2.3.1">When the first SCTP packet protected by epoch N+1 has been
+            <li id="section-4.3.1-2.4">
+              <p id="section-4.3.1-2.4.1">When the first SCTP packet protected by epoch N+1 has been
   received and succesfully decrypted by DTLS chunk the epoch N reception
   keys can be removed. Although to deal with network reordering, a
-  delay is RECOMMENDED.<a href="#section-4.3.1-2.3.1" class="pilcrow">¶</a></p>
+  delay is RECOMMENDED.<a href="#section-4.3.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-4.3.1-3">This completes the key-update procedure.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
@@ -2360,8 +2366,7 @@ the error different paths can be the result:<a href="#section-4.4-2" class="pilc
         </h3>
 <p id="section-5.1-1">This document defines the usage of DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.
    Earlier versions of DTLS MUST NOT be used
-   (see <span>[<a href="#RFC8996" class="cite xref">RFC8996</a>]</span>).  DTLS 1.3 is RECOMMENDED for security and
-   performance reasons.  It is expected that DTLS in SCTP as described in
+   (see <span>[<a href="#RFC8996" class="cite xref">RFC8996</a>]</span>). It is expected that DTLS in SCTP as described in
    this document will work with future versions of DTLS.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-2">Only one version of DTLS MUST be used during the lifetime of an
    SCTP Association, meaning that the procedure for replacing the DTLS
@@ -2488,7 +2493,7 @@ padding. Use of DTLS padding hides this packet expansion from SCTP.<a href="#sec
           <h4 id="name-dtls-13">
 <a href="#section-5.2.5" class="section-number selfRef">5.2.5. </a><a href="#name-dtls-13" class="section-name selfRef">DTLS 1.3</a>
           </h4>
-<p id="section-5.2.5-1">DTLS 1.3 is preferred over DTLS 1.2 being a newer protocol that
+<p id="section-5.2.5-1">DTLS 1.3 is used instead of DTLS 1.2 being a newer protocol that
 addresses known vulnerabilities and only defines strong algorithms
 without known major weaknesses at the time of publication.<a href="#section-5.2.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.2.5-2">DTLS 1.3 requires rekeying before algorithm specific AEAD limits have
@@ -2552,21 +2557,23 @@ provide ephemeral key exchange.<a href="#section-5.2.5-4" class="pilcrow">¶</a>
    phase handshake is completed.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-4">SCTP Handshake is strictly compliant to <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span>.<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-5">As soon the SCTP Association has entered the SCTP state PROTECTION
-   PENDING as defined by <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>
-   the DTLS handshake procedure is initiated by the endpoint that
-   has initiated the SCTP association. The initial DTLS handshake
-   SHALL use DCI = 0;<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
+   PENDING as defined by <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span> the
+   DTLS handshake procedure is initiated by the endpoint that has
+   initiated the SCTP association. The initial DTLS handshake or as a
+   result of a SCTP association restart SHALL use DCI = 0;<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-6">The DTLS endpoint will send the DTLS message in one or more SCTP
    user message depending if the DTLS endpoint fragments the message
    or not <a href="#dtls-user-message" class="auto internal xref">Section 3</a>.  The DTLS instance SHOULD NOT
    use DTLS retransmission to repair any packet losses of handshake
    message fragment. Note: If the DTLS implementation support
-   configuring a MTU larger than the actual IP MTU it could be used as
+   configuring a MTU larger than the actual IP MTU it MAY be used as
    SCTP provides reliability and fragmentation.<a href="#section-6.1.1-6" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-7">If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
-   accepted the Association is validated (see <a href="#protocol_overview" class="auto internal xref">Section 1.2</a>)
-   by handshaking PVALID chunks inside DTLS CHUNK payload.<a href="#section-6.1.1-7" class="pilcrow">¶</a></p>
+   accepted the keying material is installed for the DTLS chunk. This
+   then triggers validated of the association establishment (see
+   <a href="#protocol_overview" class="auto internal xref">Section 1.2</a>) by handshaking PVALID chunks inside DTLS
+   CHUNK payload.<a href="#section-6.1.1-7" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-8">Once the Association has been validated, then the SCTP association
    is informed that it can move to the PROTECTED state.<a href="#section-6.1.1-8" class="pilcrow">¶</a></p>
 <p id="section-6.1.1-9">If the DTLS handshake failed the SCTP association SHALL be aborted
@@ -2769,27 +2776,33 @@ of DATA chunks with SCTP-DTLS PPID.<a href="#section-6.1.2-6" class="pilcrow">¶
         <h3 id="name-sctp-association-restart">
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-sctp-association-restart" class="section-name selfRef">SCTP Association Restart</a>
         </h3>
-<p id="section-6.2-1">In order to achieve an Association Restart as described in <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>,
-a safe DTLS connection dedicated to Restart SHALL exist and be available.
-Furthermore, both peers SHALL have safely stored both the current Restart DCI and the related key.
-Here we assume that Restart DCI and key survive the events leading to SCTP Restart request.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-1">In order to achieve an Association Restart as described in
+<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>, a safe DTLS connection
+dedicated to Restart SHALL exist and be available.  Furthermore, both
+peers SHALL have safely stored both the current Restart DCI and the
+related keying material.  Here we assume that Restart DCI and keying
+material are maintained across the events leading to SCTP Restart
+request.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <div id="init-dtls-restart-connection">
 <section id="section-6.2.1">
           <h4 id="name-handshake-of-initial-dtls-r">
 <a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-handshake-of-initial-dtls-r" class="section-name selfRef">Handshake of initial DTLS Restart connection</a>
           </h4>
-<p id="section-6.2.1-1">As soon as the Association has reached the ESTABLISHED state, a DTLS Restart
-connection SHOULD be instantiated.
-The instantiation of the initial DTLS Restart connection follows the rules
-given in <a href="#further_dtls_connection" class="auto internal xref">Section 6.1.2</a> where the DCI = 0x40 (that is initial
-DCI = 0 and R bit = 1).<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.2.1-2">It MAY exist a time gap where the Association is in ESTABLISHED state
+<p id="section-6.2.1-1">As soon as the Association has reached the PROTECTION_PENDING state, a
+DTLS Restart connection SHOULD be instantiated.  The instantiation of
+the initial DTLS Restart connection follows the rules given in
+<a href="#further_dtls_connection" class="auto internal xref">Section 6.1.2</a> where the DCI = 0x40 (that is initial DCI
+= 0 and R bit = 1). Unless a SCTP association restart has happened and
+the restart DCI has been used. In this case a new restart DTLS
+connection SHALL be established as soon as PROTECTION_PENDING state
+has been reached, using a restart DCI counter of the current + 1.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-2">It MAY exist a time gap where the Association is in PROTECTED state
 but no DTLS Restart connection exists yet. If a SCTP Restart procedure
 will be initiated during that time, it will fail and the Association
 will also fail.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.2.1-3">Once initiated, no traffic will be sent over the DTLS Restart connection
-so that both endpoints will know exactly the right DTLS record number that
-will be sent.<a href="#section-6.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-3">Once initiated, no traffic will be sent over the DTLS Restart
+connection so that both endpoints will know exactly the right DTLS
+record number that will be sent.<a href="#section-6.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="further-dtls-restart-connection">
@@ -2797,12 +2810,13 @@ will be sent.<a href="#section-6.2.1-3" class="pilcrow">¶</a></p>
           <h4 id="name-handshake-of-further-dtls-r">
 <a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-handshake-of-further-dtls-r" class="section-name selfRef">Handshake of further DTLS Restart connection</a>
           </h4>
-<p id="section-6.2.2-1">After the initial DTLS Restart connection has been established, at least an
-active DTLS Restart connection shall exist in a known state.
-It is recommended that updating of DTLS Restart connection follows the same
-times and rules as the traffic DTLS connections and is implemented by following
-the rules described in <a href="#parallel-dtls" class="auto internal xref">Section 7</a>.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.2.2-2">The next DTLS Restart DCI is computed as described in <a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a>.<a href="#section-6.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-1">After the initial DTLS Restart connection has been established, at
+least an active DTLS Restart connection shall exist in a known state.
+It is recommended that updating of DTLS Restart connection follows the
+same times and rules as the traffic DTLS connections and is
+implemented by following the rules described in <a href="#parallel-dtls" class="auto internal xref">Section 7</a>.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-2">The next DTLS Restart DCI is computed as described in
+<a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a>.<a href="#section-6.2.2-2" class="pilcrow">¶</a></p>
 <p id="section-6.2.2-3">The handshake of further DTLS Restart Connection is sequenced as follows:<a href="#section-6.2.2-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.2.2-4.1">
@@ -2976,22 +2990,31 @@ SCTP Association Restart.<a href="#section-6.2.3-4" class="pilcrow">¶</a></p>
               <p id="section-6.2.3-6.1.1">Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK<a href="#section-6.2.3-6.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.2.3-6.2">
-              <p id="section-6.2.3-6.2.1">Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key tied to the Restart DCI<a href="#section-6.2.3-6.2.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.3-6.2.1">Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key
+tied to the Restart DCI<a href="#section-6.2.3-6.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.2.3-6.3">
-              <p id="section-6.2.3-6.3.1">Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with the Key tied to the Restart DCI<a href="#section-6.2.3-6.3.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.3-6.3.1">Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with
+the Key tied to the Restart DCI<a href="#section-6.2.3-6.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.2.3-6.4">
-              <p id="section-6.2.3-6.4.1">When User Data Traffic is moved on the new Traffic DCI, a new Restart DCI is handshaked and set for a future restart<a href="#section-6.2.3-6.4.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.3-6.4.1">Initiator sends handshakes for new Traffic DTLS connnection as well
+as new Restart DTLS connection. These DATA chunks will be protected
+by the restart DCI.<a href="#section-6.2.3-6.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.2.3-6.5">
-              <p id="section-6.2.3-6.5.1">User Data traffic is resumed on the Restart DCI until Initiator and Responder succesfully handshake a new Traffic DCI<a href="#section-6.2.3-6.5.1" class="pilcrow">¶</a></p>
+              <p id="section-6.2.3-6.5.1">When the handshake for the a new traffic DTLS connection has been
+completed, i.e. VALIDATION has been reached the DCI used to protect
+any SCTP chunks is switched from the restart DCI to the new traffic
+DCI.<a href="#section-6.2.3-6.5.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-6.2.3-7">User Data traffic MAY be initiated immediately after COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI,
-that is even before a new Traffic DCI or a Restart DCI have been handshaked.
-If a problem occurs before the new Restart DCI has been handshaked, the Association cannot be Restarted, thus it's
-RECOMMENDED the new Restart DCI to be handshaked as early as possible.<a href="#section-6.2.3-7" class="pilcrow">¶</a></p>
+<p id="section-6.2.3-7">User Data for any ULP traffic MAY be initiated immediately after
+COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI, that
+is even before a new Traffic DCI or a Restart DCI have been
+handshaked.  If a problem occurs before the new Restart DCI has been
+handshaked, the Association cannot be Restarted, thus it's RECOMMENDED
+the new Restart DCI to be handshaked as early as possible.<a href="#section-6.2.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
