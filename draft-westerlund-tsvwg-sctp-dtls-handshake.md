@@ -296,7 +296,7 @@ in regard to SCTP and upper layer protocol"}
      prevent both duplicates from being delivered as well as
      preventing packets from outside the current window to be
      delivered. Thus, a stronger protection especially for non-DATA
-     chunk are provided and protects the SCTP stack from replayed or
+     chunk is provided and protects the SCTP stack from replayed or
      duplicated packets.
 
    * Encryption in DTLS/SCTP is only applied to ULP data. For DTLS in
@@ -316,11 +316,11 @@ in regard to SCTP and upper layer protocol"}
      believes it delivered and the receiver never gets it. This
      usually will result in the need to terminate the SCTP association
      to restart the ULP session to avoid any issues due to
-     inconsistencies. DTLS in SCTP is robust to discarding the DTLS
+     inconsistencies. DTLS in SCTP is robust in discarding the DTLS
      key-material after having switched to a new established DTLS
-     connection and its key-material. Any outstanding packets that
-     have not been decoded yet will simply be treated as lost between
-     the SCTP endpoints and SCTP's retransmission will retransmit any
+     connection and its key-material. Any outstanding packet that
+     has not been decoded yet will simply be treated as lost between
+     the SCTP endpoints, and SCTP's retransmission will retransmit any
      user message data that requires it. Also, the algorithm for when
      to discard a DTLS connection can be much simpler.
 
@@ -612,6 +612,15 @@ forward secrecy keys, the existing DTLS 1.3 connection is being
 replaced with a new one by first opening a new parallel DTSL
 connection as further specified in {{parallel-dtls}} and then close
 the old DTLS connection.
+
+When in PROTECTED state, DTLS in SCTP SHALL create at least one
+DTLS connection for Restart purposes. Such Restart connection
+is identified by a Restart DCI, that is based on a DCI counter
+independent from the traffic DCI.
+Whilst the first Restart DCI has value = 0, further Restart DCI
+will be increased using the same procedure than Traffic DCI
+and implementing the same parallel connection mechanism
+(see {{add-dtls-connection}} and {{remove-dtls-connection}}).
 
 ### SHUTDOWN states
 
@@ -1033,7 +1042,7 @@ with SCTP-DTLS PPID.
 ### Handshake of further DTLS connections {#further_dtls_connection}
 
    When the SCTP Association has entered the ESTABLISHED state,
-   each of the endpoint can initiate an DTLS handshake.
+   each of the endpoint can initiate a DTLS handshake.
 
    The DTLS endpoint will if necessary fragment the handshake into
    multiple records. Each DTLS handshake message fragment
@@ -1087,14 +1096,13 @@ request.
 
 ### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
 
-As soon as the Association has reached the PROTECTION_PENDING state, a
+As soon as the Association has reached the PROTECTED state, a
 DTLS Restart connection SHOULD be instantiated.  The instantiation of
 the initial DTLS Restart connection follows the rules given in
-{{further_dtls_connection}} where the DCI = 0x40 (that is initial DCI
-= 0 and R bit = 1). Unless a SCTP association restart has happened and
+{{further_dtls_connection}} where the DCI = 0 (that is initial DCI
+= 0) and R bit = 1. Unless a SCTP association restart has happened and
 the restart DCI has been used. In this case a new restart DTLS
-connection SHALL be established as soon as PROTECTION_PENDING state
-has been reached, using a restart DCI counter of the current + 1.
+connection SHALL be established using a restart DCI counter of the current + 1.
 
 It MAY exist a time gap where the Association is in PROTECTED state
 but no DTLS Restart connection exists yet. If a SCTP Restart procedure
@@ -1189,7 +1197,7 @@ From procedure viewpoint the sequence is the following:
   by the restart DCI.
 
 - When the handshake for the a new traffic DTLS connection has been
-  completed, i.e. VALIDATION has been reached the DCI used to protect
+  completed, the DCI used to protect
   any SCTP chunks is switched from the restart DCI to the new traffic
   DCI.
 
