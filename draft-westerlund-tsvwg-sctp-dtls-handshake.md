@@ -316,13 +316,14 @@ in regard to SCTP and upper layer protocol"}
      believes it delivered and the receiver never gets it. This
      usually will result in the need to terminate the SCTP association
      to restart the ULP session to avoid any issues due to
-     inconsistencies. DTLS in SCTP is robust in discarding the DTLS
-     key-material after having switched to a new established DTLS
-     connection and its key-material. Any outstanding packet that
-     has not been decoded yet will simply be treated as lost between
-     the SCTP endpoints, and SCTP's retransmission will retransmit any
-     user message data that requires it. Also, the algorithm for when
-     to discard a DTLS connection can be much simpler.
+     inconsistencies. DTLS in SCTP is robustly handling of any early
+     discard of the DTLS key-material after having switched to a new
+     established DTLS connection and its key-material. Any outstanding
+     packet that has not been decoded yet will simply be treated as
+     lost between the SCTP endpoints, and SCTP's retransmission will
+     retransmit any user message data that requires it. Also, the
+     algorithm for when to discard a DTLS connection can be much
+     simpler.
 
    * DTLS/SCTP rekeying can put restrictions on user message sizes
      unless the right APIs exist to the SCTP implementation to
@@ -577,14 +578,14 @@ with details related to the DTLS 1.3 integration with SCTP.
 
 DTLS in SCTP uses inband key-establishment, thus the DTLS handshake
 establishes shared keys with the remote peer. As soon as the SCTP
-State Machine enters PROTECTION PENDING state, DTLS in SCTP is
+State Machine enters PROTECTION INITILIZATION state, DTLS in SCTP is
 responsible for progressing to the PROTECTED state when DTLS handshake
 has completed. The DCI counter is initialized to the value zero that
 is used for the initial DTLS handshake.
 
-### PROTECTION PENDING state
+### PROTECTION INITILIZATION state
 
-When entering PROTECTION PENDING state, DTLS will start the handshake
+When entering PROTECTION INITILIZATION state, DTLS will start the handshake
 according to {{dtls-handshake}}.
 
 DTLS being initialized for a new SCTP association will set the Traffic
@@ -594,9 +595,17 @@ endpoint to the peer using SCTP User message {{dtls-user-message}}
 with the PPID value set to DTLS-SCTP
 {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. Note that in case of SCTP
 association restart, the negotiation of the new Traffic DTLS
-connection SHALL use a new Traffic DCI counter = 0 as the restarting
+connection SHALL still use a new Traffic DCI counter = 0 as the restarting
 SCTP endpoint may not know the old traffic DCI counter value for the
 last active DTLS connection.
+
+When in PROTECTION INITILIZATION state, DTLS in SCTP MAY create a DTLS
+connection for Restart purposes. Such Restart connection is identified
+by a Restart DCI, that is based on a DCI counter independent from the
+traffic DCI. Whilst the first Restart DCI has value = 0, further
+Restart DCI will be increased using the same procedure than Traffic
+DCI and implementing the same parallel connection mechanism (see
+{{add-dtls-connection}} and {{remove-dtls-connection}}).
 
 When a successful handshake has been completed and the keying material
 is established for DTLS connection and set for the DCI the DTLS chunk
@@ -613,14 +622,9 @@ replaced with a new one by first opening a new parallel DTSL
 connection as further specified in {{parallel-dtls}} and then close
 the old DTLS connection.
 
-When in PROTECTED state, DTLS in SCTP SHALL create at least one
-DTLS connection for Restart purposes. Such Restart connection
-is identified by a Restart DCI, that is based on a DCI counter
-independent from the traffic DCI.
-Whilst the first Restart DCI has value = 0, further Restart DCI
-will be increased using the same procedure than Traffic DCI
-and implementing the same parallel connection mechanism
-(see {{add-dtls-connection}} and {{remove-dtls-connection}}).
+When in PROTECTED state, DTLS in SCTP if it has not yet been done,
+SHALL create a DTLS connection for Restart purposes.
+
 
 ### SHUTDOWN states
 
@@ -951,10 +955,11 @@ provide ephemeral key exchange.
    A DTLS in SCTP Association is built up with traffic
    DTLS connection and Restart DTLS connection.
 
-   Traffic DTLS connection is established as part of initial
-   handshake (see {{initial_dtls_connection}}) whilst Restart
-   DTLS connection is established when Association is in
-   ESTABLISHED state and follows the procedure described in
+   Traffic DTLS connection is established as part of extra procedures
+   for the DTLS chunk initial handshake (see
+   {{initial_dtls_connection}}) whilst Restart DTLS connection may be
+   established when Association is in PROTECTION INITILIZATION state
+   or later, and follows the procedure described in
    {{further_dtls_connection}}.
 
 ## DTLS Handshake {#dtls-handshake}
@@ -977,7 +982,7 @@ provide ephemeral key exchange.
    SCTP Handshake is strictly compliant to {{RFC9260}}.
 
    As soon the SCTP Association has entered the SCTP state PROTECTION
-   PENDING as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} the
+   INITILIZATION as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} the
    DTLS handshake procedure is initiated by the endpoint that has
    initiated the SCTP association. The initial DTLS handshake or as a
    result of a SCTP association restart SHALL use DCI = 0;
@@ -1087,17 +1092,17 @@ of DATA chunks with SCTP-DTLS PPID.
 ## SCTP Association Restart {#sctp-restart}
 
 In order to achieve an Association Restart as described in
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a safe DTLS connection
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a safe connection
 dedicated to Restart SHALL exist and be available.  Furthermore, both
-peers SHALL have safely stored both the current Restart DCI and the
+peers SHALL have safely stored both the current Restart DCI value and the
 related keying material.  Here we assume that Restart DCI and keying
 material are maintained across the events leading to SCTP Restart
 request.
 
 ### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
 
-As soon as the Association has reached the PROTECTED state, a
-DTLS Restart connection SHOULD be instantiated.  The instantiation of
+As soon as the Association has reached the PROTECTED INITILIZATION state, a
+DTLS Restart connection MAY be instantiated.  The instantiation of
 the initial DTLS Restart connection follows the rules given in
 {{further_dtls_connection}} where the DCI = 0 (that is initial DCI
 = 0) and R bit = 1. Unless a SCTP association restart has happened and
@@ -1109,9 +1114,8 @@ but no DTLS Restart connection exists yet. If a SCTP Restart procedure
 will be initiated during that time, it will fail and the Association
 will also fail.
 
-Once initiated, no traffic will be sent over the DTLS Restart
-connection so that both endpoints will know exactly the right DTLS
-record number that will be sent.
+Once initiated, no traffic will be sent over the Restart DTLS
+connection so that both endpoints will have a known DTLS record state.
 
 ### Handshake of further DTLS Restart connection {#further-dtls-restart-connection}
 
@@ -1286,15 +1290,16 @@ event, triggered by receiving a DTLS record on the Traffic DCI that would be
 used for new DTLS connection. In such case a new DTLS connection
 shall be added according to {{add-dtls-connection}} with a new Traffic DCI.
 
-As soon as the new DTLS connection completes handshaking, the traffic is moved
-from the old one, then the procedure for closing the old DTLS connection is
-initiated, see {{remove-dtls-connection}}.
+As soon as the new DTLS connection completes handshaking, the traffic
+is moved from the old one, then the procedure for closing the old DTLS
+connection is initiated, see {{remove-dtls-connection}}.
 
-On Restart connection, trigger for rekeying can either be a local AGING event, triggered by
-the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
-event, triggered by receiving a DTLS record on the Restart DCI that would be
-used for new DTLS connection. In such case a new DTLS connection
-shall be added according to {{add-dtls-connection}} with a new Restart DCI.
+On Restart connection, trigger for rekeying can either be a local
+AGING event, triggered by the DTLS connection meeting the criteria for
+rekeying, or a REMOTE AGING event, triggered by receiving a DTLS
+record on the Restart DCI that would be used for new DTLS
+connection. In such case a new DTLS connection shall be added
+according to {{add-dtls-connection}} with a new Restart DCI.
 
 ## Race Condition in Rekeying
 
