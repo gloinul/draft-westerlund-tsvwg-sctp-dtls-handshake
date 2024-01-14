@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-11T00:56:40.993067+00:00",
+  "timestamp": "2024-01-14T01:00:46.188204+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -75,6 +75,34 @@
       "mergedBy": "gloinul",
       "mergeCommit": {
         "oid": "38fc2cf628e24ee246fe5589474fde65e3b9e4fb"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOKs0gD85j5YH6",
+      "title": "Further editorial and some restart behavior changes",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/2",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Result of a review. Changes so that restart DTLS connection handshake can happen in PROTECTION INITLIZATION. Fixes usage of state names.",
+      "createdAt": "2024-01-12T08:19:06Z",
+      "updatedAt": "2024-01-12T08:19:16Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "38fc2cf628e24ee246fe5589474fde65e3b9e4fb",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "statemachine",
+      "headRefOid": "5eb3e4eb33bc915101f72a0fde76fe776987224f",
+      "closedAt": "2024-01-12T08:19:13Z",
+      "mergedAt": "2024-01-12T08:19:13Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "063edfbf623528103d65527d8cce93edd304004f"
       },
       "comments": [],
       "reviews": []
