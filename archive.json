@@ -1,0 +1,111 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-03-21T00:54:00.465640+00:00",
+  "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOKs0gD85jsl9t",
+      "title": "New Restart procedures added and other editorial improvements. ",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/1",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-01-10T15:17:23Z",
+      "updatedAt": "2024-01-10T15:19:59Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "ce83b60a2f7b577380eb9ce16bf9cab6678cc11d",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "statemachine",
+      "headRefOid": "b1c8bc04541d5f6558c1c74bc33301e4e726152e",
+      "closedAt": "2024-01-10T15:17:30Z",
+      "mergedAt": "2024-01-10T15:17:30Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "38fc2cf628e24ee246fe5589474fde65e3b9e4fb"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOKs0gD85j5YH6",
+      "title": "Further editorial and some restart behavior changes",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/2",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Result of a review. Changes so that restart DTLS connection handshake can happen in PROTECTION INITLIZATION. Fixes usage of state names.",
+      "createdAt": "2024-01-12T08:19:06Z",
+      "updatedAt": "2024-01-12T08:19:16Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "38fc2cf628e24ee246fe5589474fde65e3b9e4fb",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "statemachine",
+      "headRefOid": "5eb3e4eb33bc915101f72a0fde76fe776987224f",
+      "closedAt": "2024-01-12T08:19:13Z",
+      "mergedAt": "2024-01-12T08:19:13Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "063edfbf623528103d65527d8cce93edd304004f"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
