@@ -1341,8 +1341,6 @@ the security of deployed services that use DTLS. BCP 195 MUST be
 followed which implies that DTLS 1.0 SHALL NOT be supported and are
 therefore not defined.
 
-DTLS replay protection MUST NOT be turned off. 
-
 ## Privacy Considerations
 
 Although DTLS in SCTP provides privacy for the actual user message as
