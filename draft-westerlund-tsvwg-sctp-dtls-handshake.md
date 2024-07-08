@@ -504,10 +504,7 @@ DCI: 2 bits (unsigned integer)
 
 Payload: variable length
 
-: One or more DTLS records. In cases more
-   than one DTLS record is included all DTLS records except the last
-   MUST include a length field. Note that this matches what is
-   specified in DTLS 1.3
+: One DTLS record.
 
 # DTLS messages over SCTP User Messages  {#dtls-user-message}
 
@@ -828,7 +825,7 @@ the error different paths can be the result:
 
 ### General
 
-   The DTLS Connection ID SHALL NOT be included in the DTLS records as
+   The DTLS Connection ID SHOULD NOT be included in the DTLS records as
    it is not needed, the DTLS chunk indicates which DTLS connection
    the DTLS records are intended for using the DCI bits. Avoiding
    overhead and addition implementation requirements on DTLS
