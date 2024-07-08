@@ -39,6 +39,7 @@ informative:
   I-D.ietf-tls-rfc8446bis:
   I-D.ietf-tsvwg-dtls-over-sctp-bis:
   I-D.ietf-uta-rfc6125bis:
+  I-D.mattsson-tls-super-jumbo-record-limit:
 
   ANSSI-DAT-NT-003:
     target: <https://www.ssi.gouv.fr/uploads/2015/09/NT_IPsec_EN.pdf>
@@ -78,7 +79,7 @@ normative:
        name: Claudio Porfiri
        org: Ericsson
        email: claudio.porfiri@ericsson.com
-    date: June 2023
+    date: Jul 2024
 
 
 --- abstract
@@ -92,8 +93,8 @@ association with in-band DTLS based key-management and mutual
 authentication of the peers. The specification is enabling very
 long-lived sessions of weeks and months and supports mutual
 re-authentication and rekeying with ephemeral key exchange. This is
-intended as an alternative to using DTLS/SCTP {{RFC6083}} and
-SCTP-AUTH {{RFC4895}}.
+intended as an alternative to using DTLS/SCTP (RFC6083) and
+SCTP-AUTH (RFC4895).
 
 --- middle
 
@@ -141,7 +142,7 @@ SCTP-AUTH {{RFC4895}}.
    * User messages of any size.
 
    * SCTP Packets with a protected set of chunks up to a size of
-     2<sup>14</sup> bytes.
+     2<sup>14</sup> (16384) bytes.
 
 
 
@@ -163,12 +164,13 @@ SCTP-AUTH {{RFC4895}}.
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With succesful handshake and
    authentication of the peer the key material is configured for the
-   DTLS 1.3 chunk. From that point until re-authenticaiton or
-   rekeying needs to occurr the DTLS chunk will protect the SCTP
-   packets. Now that the DTLS connection has been established PVALID
-   chunks are exchanged to verify that no downgrade attack between
-   differnet protection solutions has occurred. To prevent
-   manipulation, the PVALID chunks are sent encapsulated in DTLS chunks.
+   DTLS 1.3 chunk. From that point until re-authenticaiton or rekeying
+   needs to occurr the DTLS chunk will protect the SCTP packets. When
+   the DTLS connection has been established and the DTLS Chunk
+   configured with keys the PVALID chunk is exchanged to verify that
+   no downgrade attack between any offered protection solutions has
+   occurred. To prevent manipulation, the PVALID chunks are sent
+   encapsulated in DTLS chunks.
 
    Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
@@ -186,7 +188,7 @@ SCTP-AUTH {{RFC4895}}.
    on ports and VTAG in the common header. In that association context
    for the DTLS chunk the DTLS Connection Index (DCI) is used to look
    up the key-material from the one DTLS connection used to
-   authenticate the peer and establish this key-materail. Using the
+   authenticate the peer and establish this key-material. Using the
    identified key-material and context the content of the DTLS chunk
    is attempted to be processed, including replay protection,
    decryption, and integrity checking. And if decryption and integrity
@@ -277,7 +279,7 @@ in regard to SCTP and upper layer protocol"}
 
    * Limited overhead on a per packet basis, with 4 bytes for the
      DTLS chunk plus the DTLS record overhead. The DTLS
-     overhead is dependent on the DTLS version.
+     overhead is dependent on the DTLS version and cipher suit.
 
    * Support of SCTP packet plain text payload sizes up to
      2<sup>14</sup> bytes.
@@ -305,7 +307,7 @@ in regard to SCTP and upper layer protocol"}
      will be encrypted. This, makes protocol attacks harder as a
      third-party attacker will have less insight into SCTP protocol
      state. Also, protocol header information likes PPIDs will also be
-     encrypted, which makes targeted attacks harder but also make
+     encrypted, which makes targeted attacks harder but may also make
      management and debugging harder.
 
    * DTLS/SCTP Rekeying is complicated and require advanced API or
@@ -341,23 +343,26 @@ in regard to SCTP and upper layer protocol"}
 
    * A known limitation is that DTLS in SCTP does not support more
      than 2<sup>14</sup> bytes of chunks per SCTP packet. If the DTLS
-     implementation does not support the maximum DTLS record size the
+     implementation does not support the full DTLS record size the
      maximum supported packet size might be even lower. However, this
      value needs to be compared to the supported MTU of IP, and are
      thus in reality often not an actual limitation. Only for some
      special deployments or over loopback may this limitation be
-     visible.
+     visible. Also if the proposed extension to (D)TLS record sizes
+     {{I-D.mattsson-tls-super-jumbo-record-limit}} are published and
+     implemented this extension could be used to achieve full IP MTU
+     (64k).
 
    There are several significant differences in regard to
    implementation between the two realizations.
 
-   * DTLS in SCTP do requires the DTLS chunk to be implemented in
-     the SCTP stack implementation, and not as an adaptation layer
-     above the SCTP stack which DTLS/SCTP instead requires. This has
-     some extra challenges for operating system level
+   * DTLS in SCTP do requires the DTLS chunk to be implemented in the
+     SCTP stack implementation, and not as an adaptation layer above
+     the SCTP stack which DTLS/SCTP instead requires. This has some
+     extra challenges for operating system level
      implementations. However, as some updates anyway will be required
-     to support the corrected SCTP-AUTH the implementation burden is
-     likely similar in this regard.
+     to support the updated SCTP-AUTH specficiation the implementation
+     burden is likely similar in this regard.
 
    * DTLS in SCTP implemented in operating system kernels will require
      that the DTLS implementation is split. Where the protection
