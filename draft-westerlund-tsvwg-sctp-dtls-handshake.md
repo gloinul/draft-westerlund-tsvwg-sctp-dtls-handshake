@@ -1050,8 +1050,9 @@ with SCTP-DTLS PPID.
 
 ### Handshake of further DTLS connections {#further_dtls_connection}
 
-   When the SCTP Association has entered the ESTABLISHED state,
-   each of the endpoint can initiate a DTLS handshake.
+   When the SCTP Association has entered the PROTECTED state, each of
+   the endpoint can initiate a DTLS handshake for rekeying when
+   necessary of the traffic or restart DTLS connections.
 
    The DTLS endpoint will if necessary fragment the handshake into
    multiple records. Each DTLS handshake message fragment
@@ -1201,13 +1202,12 @@ From procedure viewpoint the sequence is the following:
   the Key tied to the Restart DCI
 
 - Initiator sends handshakes for new Traffic DTLS connnection as well
-  as new Restart DTLS connection. These DATA chunks will be protected
-  by the restart DCI.
+  as new Restart DTLS connection.
 
 - When the handshake for the a new traffic DTLS connection has been
   completed, the DCI used to protect
   any SCTP chunks is switched from the restart DCI to the new traffic
-  DCI.
+  DCI enabling the Validation and transit to PROTECTED state.
 
 User Data for any ULP traffic MAY be initiated immediately after
 COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI, that
@@ -1322,12 +1322,13 @@ Due to the DTLS record limitation for application data SCTP MUST use
 2<sup>14</sup> as input to determine absolute maximum MTU when running
 PMTUD and using DTLS in SCTP.
 
-The implementor shall take care of DTLS 1.3 record overhead. This
-so that SCTP PMTUD can take this into consideration and ensure that
-produced packets that are not PMTUD probes does not become oversized.
-This may require updating during the SCTP associations lifetime due to
-future handshakes affecting cipher suit in use, or changes to record layer
-configurations.
+The implementor needs to handle the DTLS 1.3 record overhead. SCTP
+PMTUD needs to include both the DTLS record as well as the DTLS chunk
+overhead in this consideration and ensure that produced packets,
+especially those that are not PMTUD probes do not become oversized.
+The DTLS record size may change during the SCTP associations lifetime
+due to future handshakes affecting cipher suit in use, or changes to
+record layer configurations.
 
 Note that this implies that DTLS 1.3 is expected to
 accept application data payloads of potentially larger sizes than what
