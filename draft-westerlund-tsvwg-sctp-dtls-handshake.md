@@ -462,9 +462,9 @@ in regard to SCTP and upper layer protocol"}
 
 # DTLS usage of DTLS Chunk
 
-   DTLS in SCTP uses the DTLS chunk in the following way. Fields
-   not discussed are used as specified in
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+   DTLS in SCTP uses the DTLS chunk as specified in
+   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The chunk if just
+   repeated here for the reader's convience.
 
 ~~~~~~~~~~~ aasvg
  0                   1                   2                   3
@@ -483,13 +483,12 @@ in regard to SCTP and upper layer protocol"}
 
 reserved: 5 bits
 
-: Reserved bits for future use. Sender MUST set these bits to 0 and
-  MUST be ignored on reception.
+: Reserved bits for future use.
 
 R: 1 bit (boolean)
 
 : Restart indicator. If this bit is set this DTLS chunk is protected
-  with by an restart DTLS Connection with the index indicated by the
+  with an restart DTLS Connection with the index indicated by the
   DCI. If not set, then a traffic DCI is indicated.
 
 DCI: 2 bits (unsigned integer)
@@ -513,18 +512,19 @@ Payload: variable length
 # DTLS messages over SCTP User Messages  {#dtls-user-message}
 
 DTLS messages that are not DTLS records containing protected SCTP
-chunk payloads will be sent using SCTP user message using format
+chunk payloads will be sent as SCTP user messages using the format
 defined below. A DTLS handshake message may be fragmented by DTLS to a
 set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
 with the PPID set to DTLS-SCTP
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. Each user message DTLS SHALL
-be prepended with a single byte containing the DTLS connection index
-value. These user messages MAY contain one or more DTLS records. The
-SCTP stream ID used MAY be any stream ID that the ULP alreay uses, and
-if not know Stream 0. Note that all fragments of a handshake message
-MUST be sent with the same stream ID to ensure the in-order delivery.
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The SCTP user message is
+created by having each DTLS message prepended with a single byte
+containing the Restar flag and DTLS connection index value. These user
+messages MAY contain one or more DTLS records. The SCTP stream ID used
+MAY be any stream ID that the ULP alreay uses, and if not know Stream
+0. Note that all fragments of a handshake message MUST be sent with
+the same stream ID to ensure the in-order delivery.
 
 ~~~~~~~~~~~ aasvg
  0                   1                   2                   3
@@ -612,9 +612,10 @@ Restart DCI will be increased using the same procedure than Traffic
 DCI and implementing the same parallel connection mechanism (see
 {{add-dtls-connection}} and {{remove-dtls-connection}}).
 
-When a successful handshake has been completed and the keying material
-is established for DTLS connection and set for the DCI the DTLS chunk
-Handler will move SCTP State Machine into PROTECTED state.
+When a successful handshake for the traffic DCI = 0 has been completed
+and the keying material is established for DTLS connection and set for
+the DCI the DTLS chunk Handler will perform validation and then move
+SCTP State Machine into PROTECTED state.
 
 ### PROTECTED state
 
@@ -623,7 +624,7 @@ for protection operation of the payload of SCTP chunks in each packet
 per below specification.  When necessary to meet requirements on
 periodic re-authentication of the peer and establishment of new
 forward secrecy keys, the existing DTLS 1.3 connection is being
-replaced with a new one by first opening a new parallel DTSL
+replaced with a new one by first opening a new parallel DTLS
 connection as further specified in {{parallel-dtls}} and then close
 the old DTLS connection.
 
@@ -638,9 +639,9 @@ to be shutdown the DTLS connection is kept and continues to protect
 the SCTP packet payloads through the shutdown process.
 
 When the association reaches the CLOSED state as part of the SCTP
-association closing process all DTLS connections that existed are
-terminated without further transmissions, i.e. DTLS close_notify is
-not transmitted.
+association closing process all DTLS connections existing (traffic and
+restart) for this association are terminated without further
+transmissions, i.e. DTLS close_notify is not transmitted.
 
 
 ## DTLS Connection Handling {#dtls-connection-handling}
@@ -670,7 +671,7 @@ other dropped.
 When the handshake has been completed successfully, the new DTLS
 connection will be possible to use, if the handshake is
 not completed successfully, the new DCI value will not be considered
-used and a next attempt will reuse that DCI.
+used and a next DTLS handshake attempt will reuse that DCI.
 
 ### Remove an existing DTLS Connection {#remove-dtls-connection}
 
@@ -698,11 +699,9 @@ key update when needed to update the key used. The DTLS key-update
 process is detailed in Section 8 of {{RFC9147}} including a example of
 the DTLS key update procedure. Note that in line with DTLS, and in
 contrast to TLS, DTLS in SCTP endpoints MUST NOT start using new epoch
-keys until the DTLS ACK has been recived. This as the user message
-tranmission of the KeyUpdate DTLS message occurs using one or more
-SCTP packets that are protected using epoch N keys. If the sender
-needs to retransmitt any SCTP packets and have switched to Epoch N+1
-the receiver will never receive the KeyUpdate DTLS message.
+keys until the DTLS ACK has been recived. This to avoid being unable
+to process any DTLS chunk due to the key-update in case of network
+packet reordering or usage of multiple paths.
 
 Note: The below role describes the keys in realtion to the endpoint
 and traffic it will receive or send. This will have to be translated
@@ -915,7 +914,7 @@ SCTP.
 Both SCTP and DTLS contains mechanisms to padd SCTP payloads, and DTLS
 records respectively. If padding of SCTP packets are desired to hide
 actual message sizes it RECOMMEDED to use the SCTP Padding Chunck
-{{RFC4820}} to generate a consisted SCTP payload size. Support of this
+{{RFC4820}} to generate a consistent SCTP payload size. Support of this
 chunk is only required on the sender side. However, if the PAD chunk
 is not supported DTLS padding MAY be used.
 
