@@ -1946,10 +1946,7 @@ DCI. If not set, then a traffic DCI is indicated.<a href="#section-2-3.4.1" clas
         <dd class="break"></dd>
 <dt id="section-2-3.7">Payload: variable length</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.8">
-          <p id="section-2-3.8.1">One or more DTLS records. In cases more
- than one DTLS record is included all DTLS records except the last
- MUST include a length field. Note that this matches what is
- specified in DTLS 1.3<a href="#section-2-3.8.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.8.1">One DTLS record.<a href="#section-2-3.8.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -2397,7 +2394,7 @@ the error different paths can be the result:<a href="#section-4.4-2" class="pilc
           <h4 id="name-general">
 <a href="#section-5.2.1" class="section-number selfRef">5.2.1. </a><a href="#name-general" class="section-name selfRef">General</a>
           </h4>
-<p id="section-5.2.1-1">The DTLS Connection ID SHALL NOT be included in the DTLS records as
+<p id="section-5.2.1-1">The DTLS Connection ID SHOULD NOT be included in the DTLS records as
    it is not needed, the DTLS chunk indicates which DTLS connection
    the DTLS records are intended for using the DCI bits. Avoiding
    overhead and addition implementation requirements on DTLS
