@@ -18,13 +18,13 @@ association with in-band DTLS based key-management and mutual
 authentication of the peers. The specification is enabling very
 long-lived sessions of weeks and months and supports mutual
 re-authentication and rekeying with ephemeral key exchange. This is
-intended as an alternative to using DTLS/SCTP   and
-SCTP-AUTH  . 
+intended as an alternative to using DTLS/SCTP (RFC6083) and
+SCTP-AUTH (RFC4895). 
     " name="description">
-<meta content="xml2rfc 3.21.0" name="generator">
+<meta content="xml2rfc 3.22.0" name="generator">
 <meta content="draft-westerlund-tsvwg-sctp-dtls-handshake-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.21.0
+  xml2rfc 3.22.0
     Python 3.12.3
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -34,9 +34,8 @@ SCTP-AUTH  .
     platformdirs 4.2.2
     pycountry 22.3.5
     PyYAML 6.0.1
-    requests 2.31.0
+    requests 2.32.3
     setuptools 69.5.1
-    six 1.16.0
     wcwidth 0.2.13
 -->
 <link href="draft-westerlund-tsvwg-sctp-dtls-handshake.xml" rel="alternate" type="application/rfc+xml">
@@ -1036,11 +1035,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">DTLS in SCTP</td>
-<td class="right">June 2024</td>
+<td class="right">July 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 22 December 2024</td>
+<td class="center">Expires 9 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1053,12 +1052,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-06-20" class="published">20 June 2024</time>
+<time datetime="2024-07-08" class="published">8 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-12-22">22 December 2024</time></dd>
+<dd class="expires"><time datetime="2025-01-09">9 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1088,8 +1087,8 @@ association with in-band DTLS based key-management and mutual
 authentication of the peers. The specification is enabling very
 long-lived sessions of weeks and months and supports mutual
 re-authentication and rekeying with ephemeral key exchange. This is
-intended as an alternative to using DTLS/SCTP <span>[<a href="#RFC6083" class="cite xref">RFC6083</a>]</span> and
-SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+intended as an alternative to using DTLS/SCTP (RFC6083) and
+SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1125,7 +1124,7 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 22 December 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1393,7 +1392,7 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
 </li>
           <li class="normal" id="section-1.1-4.8">
             <p id="section-1.1-4.8.1">SCTP Packets with a protected set of chunks up to a size of
-2<sup>14</sup> bytes.<a href="#section-1.1-4.8.1" class="pilcrow">¶</a></p>
+2<sup>14</sup> (16384) bytes.<a href="#section-1.1-4.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1418,12 +1417,13 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With succesful handshake and
    authentication of the peer the key material is configured for the
-   DTLS 1.3 chunk. From that point until re-authenticaiton or
-   rekeying needs to occurr the DTLS chunk will protect the SCTP
-   packets. Now that the DTLS connection has been established PVALID
-   chunks are exchanged to verify that no downgrade attack between
-   differnet protection solutions has occurred. To prevent
-   manipulation, the PVALID chunks are sent encapsulated in DTLS chunks.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+   DTLS 1.3 chunk. From that point until re-authenticaiton or rekeying
+   needs to occurr the DTLS chunk will protect the SCTP packets. When
+   the DTLS connection has been established and the DTLS Chunk
+   configured with keys the PVALID chunk is exchanged to verify that
+   no downgrade attack between any offered protection solutions has
+   occurred. To prevent manipulation, the PVALID chunks are sent
+   encapsulated in DTLS chunks.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
    start sending data over the SCTP association. From this point all
@@ -1439,7 +1439,7 @@ SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a hre
    on ports and VTAG in the common header. In that association context
    for the DTLS chunk the DTLS Connection Index (DCI) is used to look
    up the key-material from the one DTLS connection used to
-   authenticate the peer and establish this key-materail. Using the
+   authenticate the peer and establish this key-material. Using the
    identified key-material and context the content of the DTLS chunk
    is attempted to be processed, including replay protection,
    decryption, and integrity checking. And if decryption and integrity
@@ -1588,7 +1588,7 @@ for an unprotected SCTP association.<a href="#section-1.3-2.7.1" class="pilcrow"
           <li class="normal" id="section-1.3-2.8">
             <p id="section-1.3-2.8.1">Limited overhead on a per packet basis, with 4 bytes for the
 DTLS chunk plus the DTLS record overhead. The DTLS
-overhead is dependent on the DTLS version.<a href="#section-1.3-2.8.1" class="pilcrow">¶</a></p>
+overhead is dependent on the DTLS version and cipher suit.<a href="#section-1.3-2.8.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.9">
             <p id="section-1.3-2.9.1">Support of SCTP packet plain text payload sizes up to
@@ -1622,7 +1622,7 @@ established state and the initial DTLS handshake has compeleted
 will be encrypted. This, makes protocol attacks harder as a
 third-party attacker will have less insight into SCTP protocol
 state. Also, protocol header information likes PPIDs will also be
-encrypted, which makes targeted attacks harder but also make
+encrypted, which makes targeted attacks harder but may also make
 management and debugging harder.<a href="#section-1.3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-1.3.1-2.3">
@@ -1662,25 +1662,28 @@ extensions that affects how user messages are handled.<a href="#section-1.3.1-2.
             <li class="normal" id="section-1.3.1-2.6">
               <p id="section-1.3.1-2.6.1">A known limitation is that DTLS in SCTP does not support more
 than 2<sup>14</sup> bytes of chunks per SCTP packet. If the DTLS
-implementation does not support the maximum DTLS record size the
+implementation does not support the full DTLS record size the
 maximum supported packet size might be even lower. However, this
 value needs to be compared to the supported MTU of IP, and are
 thus in reality often not an actual limitation. Only for some
 special deployments or over loopback may this limitation be
-visible.<a href="#section-1.3.1-2.6.1" class="pilcrow">¶</a></p>
+visible. Also if the proposed extension to (D)TLS record sizes
+<span>[<a href="#I-D.mattsson-tls-super-jumbo-record-limit" class="cite xref">I-D.mattsson-tls-super-jumbo-record-limit</a>]</span> are published and
+implemented this extension could be used to achieve full IP MTU
+(64k).<a href="#section-1.3.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-1.3.1-3">There are several significant differences in regard to
    implementation between the two realizations.<a href="#section-1.3.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1.3.1-4.1">
-              <p id="section-1.3.1-4.1.1">DTLS in SCTP do requires the DTLS chunk to be implemented in
-the SCTP stack implementation, and not as an adaptation layer
-above the SCTP stack which DTLS/SCTP instead requires. This has
-some extra challenges for operating system level
+              <p id="section-1.3.1-4.1.1">DTLS in SCTP do requires the DTLS chunk to be implemented in the
+SCTP stack implementation, and not as an adaptation layer above
+the SCTP stack which DTLS/SCTP instead requires. This has some
+extra challenges for operating system level
 implementations. However, as some updates anyway will be required
-to support the corrected SCTP-AUTH the implementation burden is
-likely similar in this regard.<a href="#section-1.3.1-4.1.1" class="pilcrow">¶</a></p>
+to support the updated SCTP-AUTH specficiation the implementation
+burden is likely similar in this regard.<a href="#section-1.3.1-4.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-1.3.1-4.2">
               <p id="section-1.3.1-4.2.1">DTLS in SCTP implemented in operating system kernels will require
@@ -1842,9 +1845,9 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
       <h2 id="name-dtls-usage-of-dtls-chunk">
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-dtls-usage-of-dtls-chunk" class="section-name selfRef">DTLS usage of DTLS Chunk</a>
       </h2>
-<p id="section-2-1">DTLS in SCTP uses the DTLS chunk in the following way. Fields
-   not discussed are used as specified in
-   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-1">DTLS in SCTP uses the DTLS chunk as specified in
+   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. The chunk if just
+   repeated here for the reader's convience.<a href="#section-2-1" class="pilcrow">¶</a></p>
 <span id="name-dtls-chunk-structure"></span><div id="sctp-dtls-chunk-structure">
 <figure id="figure-2">
         <div id="section-2-2.1">
@@ -1919,14 +1922,13 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
 <span class="break"></span><dl class="dlParallel" id="section-2-3">
         <dt id="section-2-3.1">reserved: 5 bits</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.2">
-          <p id="section-2-3.2.1">Reserved bits for future use. Sender MUST set these bits to 0 and
-MUST be ignored on reception.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.2.1">Reserved bits for future use.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-2-3.3">R: 1 bit (boolean)</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.4">
           <p id="section-2-3.4.1">Restart indicator. If this bit is set this DTLS chunk is protected
-with by an restart DTLS Connection with the index indicated by the
+with an restart DTLS Connection with the index indicated by the
 DCI. If not set, then a traffic DCI is indicated.<a href="#section-2-3.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
@@ -1959,18 +1961,19 @@ DCI. If not set, then a traffic DCI is indicated.<a href="#section-2-3.4.1" clas
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dtls-messages-over-sctp-use" class="section-name selfRef">DTLS messages over SCTP User Messages</a>
       </h2>
 <p id="section-3-1">DTLS messages that are not DTLS records containing protected SCTP
-chunk payloads will be sent using SCTP user message using format
+chunk payloads will be sent as SCTP user messages using the format
 defined below. A DTLS handshake message may be fragmented by DTLS to a
 set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
 with the PPID set to DTLS-SCTP
-<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. Each user message DTLS SHALL
-be prepended with a single byte containing the DTLS connection index
-value. These user messages MAY contain one or more DTLS records. The
-SCTP stream ID used MAY be any stream ID that the ULP alreay uses, and
-if not know Stream 0. Note that all fragments of a handshake message
-MUST be sent with the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. The SCTP user message is
+created by having each DTLS message prepended with a single byte
+containing the Restar flag and DTLS connection index value. These user
+messages MAY contain one or more DTLS records. The SCTP stream ID used
+MAY be any stream ID that the ULP alreay uses, and if not know Stream
+0. Note that all fragments of a handshake message MUST be sent with
+the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <span id="name-dtls-user-message-structure"></span><div id="sctp-dtls-user-message">
 <figure id="figure-3">
         <div id="section-3-2.1">
@@ -2117,9 +2120,10 @@ traffic DCI. Whilst the first Restart DCI has value = 0, further
 Restart DCI will be increased using the same procedure than Traffic
 DCI and implementing the same parallel connection mechanism (see
 <a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a> and <a href="#remove-dtls-connection" class="auto internal xref">Section 4.2.2</a>).<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-4">When a successful handshake has been completed and the keying material
-is established for DTLS connection and set for the DCI the DTLS chunk
-Handler will move SCTP State Machine into PROTECTED state.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-4">When a successful handshake for the traffic DCI = 0 has been completed
+and the keying material is established for DTLS connection and set for
+the DCI the DTLS chunk Handler will perform validation and then move
+SCTP State Machine into PROTECTED state.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protected-state">
@@ -2132,7 +2136,7 @@ for protection operation of the payload of SCTP chunks in each packet
 per below specification.  When necessary to meet requirements on
 periodic re-authentication of the peer and establishment of new
 forward secrecy keys, the existing DTLS 1.3 connection is being
-replaced with a new one by first opening a new parallel DTSL
+replaced with a new one by first opening a new parallel DTLS
 connection as further specified in <a href="#parallel-dtls" class="auto internal xref">Section 7</a> and then close
 the old DTLS connection.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.1.2-2">When in PROTECTED state, DTLS in SCTP if it has not yet been done,
@@ -2148,9 +2152,9 @@ SHALL create a DTLS connection for Restart purposes.<a href="#section-4.1.2-2" c
 to be shutdown the DTLS connection is kept and continues to protect
 the SCTP packet payloads through the shutdown process.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.1.3-2">When the association reaches the CLOSED state as part of the SCTP
-association closing process all DTLS connections that existed are
-terminated without further transmissions, i.e. DTLS close_notify is
-not transmitted.<a href="#section-4.1.3-2" class="pilcrow">¶</a></p>
+association closing process all DTLS connections existing (traffic and
+restart) for this association are terminated without further
+transmissions, i.e. DTLS close_notify is not transmitted.<a href="#section-4.1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2185,7 +2189,7 @@ other dropped.<a href="#section-4.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.2.1-3">When the handshake has been completed successfully, the new DTLS
 connection will be possible to use, if the handshake is
 not completed successfully, the new DCI value will not be considered
-used and a next attempt will reuse that DCI.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+used and a next DTLS handshake attempt will reuse that DCI.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="remove-dtls-connection">
@@ -2221,11 +2225,9 @@ key update when needed to update the key used. The DTLS key-update
 process is detailed in Section 8 of <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> including a example of
 the DTLS key update procedure. Note that in line with DTLS, and in
 contrast to TLS, DTLS in SCTP endpoints MUST NOT start using new epoch
-keys until the DTLS ACK has been recived. This as the user message
-tranmission of the KeyUpdate DTLS message occurs using one or more
-SCTP packets that are protected using epoch N keys. If the sender
-needs to retransmitt any SCTP packets and have switched to Epoch N+1
-the receiver will never receive the KeyUpdate DTLS message.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+keys until the DTLS ACK has been recived. This to avoid being unable
+to process any DTLS chunk due to the key-update in case of network
+packet reordering or usage of multiple paths.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.3-2">Note: The below role describes the keys in realtion to the endpoint
 and traffic it will receive or send. This will have to be translated
 into client or server key depending on the role the endpoint has in
@@ -2485,7 +2487,7 @@ SCTP.<a href="#section-5.2.3-4" class="pilcrow">¶</a></p>
 <p id="section-5.2.4-1">Both SCTP and DTLS contains mechanisms to padd SCTP payloads, and DTLS
 records respectively. If padding of SCTP packets are desired to hide
 actual message sizes it RECOMMEDED to use the SCTP Padding Chunck
-<span>[<a href="#RFC4820" class="cite xref">RFC4820</a>]</span> to generate a consisted SCTP payload size. Support of this
+<span>[<a href="#RFC4820" class="cite xref">RFC4820</a>]</span> to generate a consistent SCTP payload size. Support of this
 chunk is only required on the sender side. However, if the PAD chunk
 is not supported DTLS padding MAY be used.<a href="#section-5.2.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.2.4-2">It needs to be noted that independent if SCTP padding or DTLS padding
@@ -2709,8 +2711,9 @@ with SCTP-DTLS PPID.<a href="#section-6.1.1-11" class="pilcrow">¶</a></p>
           <h4 id="name-handshake-of-further-dtls-c">
 <a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-handshake-of-further-dtls-c" class="section-name selfRef">Handshake of further DTLS connections</a>
           </h4>
-<p id="section-6.1.2-1">When the SCTP Association has entered the ESTABLISHED state,
-   each of the endpoint can initiate a DTLS handshake.<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.2-1">When the SCTP Association has entered the PROTECTED state, each of
+   the endpoint can initiate a DTLS handshake for rekeying when
+   necessary of the traffic or restart DTLS connections.<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.1.2-2">The DTLS endpoint will if necessary fragment the handshake into
    multiple records. Each DTLS handshake message fragment
    is sent as a SCTP user message <a href="#dtls-user-message" class="auto internal xref">Section 3</a>.
@@ -3008,14 +3011,13 @@ the Key tied to the Restart DCI<a href="#section-6.2.3-6.3.1" class="pilcrow">¶
 </li>
             <li class="normal" id="section-6.2.3-6.4">
               <p id="section-6.2.3-6.4.1">Initiator sends handshakes for new Traffic DTLS connnection as well
-as new Restart DTLS connection. These DATA chunks will be protected
-by the restart DCI.<a href="#section-6.2.3-6.4.1" class="pilcrow">¶</a></p>
+as new Restart DTLS connection.<a href="#section-6.2.3-6.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-6.2.3-6.5">
               <p id="section-6.2.3-6.5.1">When the handshake for the a new traffic DTLS connection has been
 completed, the DCI used to protect
 any SCTP chunks is switched from the restart DCI to the new traffic
-DCI.<a href="#section-6.2.3-6.5.1" class="pilcrow">¶</a></p>
+DCI enabling the Validation and transit to PROTECTED state.<a href="#section-6.2.3-6.5.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.2.3-7">User Data for any ULP traffic MAY be initiated immediately after
@@ -3249,12 +3251,13 @@ as specified in <a href="#add-dtls-connection" class="auto internal xref">Sectio
 <p id="section-8-1">Due to the DTLS record limitation for application data SCTP MUST use
 2<sup>14</sup> as input to determine absolute maximum MTU when running
 PMTUD and using DTLS in SCTP.<a href="#section-8-1" class="pilcrow">¶</a></p>
-<p id="section-8-2">The implementor shall take care of DTLS 1.3 record overhead. This
-so that SCTP PMTUD can take this into consideration and ensure that
-produced packets that are not PMTUD probes does not become oversized.
-This may require updating during the SCTP associations lifetime due to
-future handshakes affecting cipher suit in use, or changes to record layer
-configurations.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-2">The implementor needs to handle the DTLS 1.3 record overhead. SCTP
+PMTUD needs to include both the DTLS record as well as the DTLS chunk
+overhead in this consideration and ensure that produced packets,
+especially those that are not PMTUD probes do not become oversized.
+The DTLS record size may change during the SCTP associations lifetime
+due to future handshakes affecting cipher suit in use, or changes to
+record layer configurations.<a href="#section-8-2" class="pilcrow">¶</a></p>
 <p id="section-8-3">Note that this implies that DTLS 1.3 is expected to
 accept application data payloads of potentially larger sizes than what
 it configured to use for messages the DTLS implementation generates
@@ -3348,7 +3351,7 @@ due to key compromise.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
 <dd class="break"></dd>
 <dt id="I-D.westerlund-tsvwg-sctp-dtls-chunk">[I-D.westerlund-tsvwg-sctp-dtls-chunk]</dt>
         <dd>
-<span class="refAuthor">Westerlund, M.</span>, <span class="refAuthor">Preuß Mattsson, J.</span>, and <span class="refAuthor">C. Porfiri</span>, <span class="refTitle">"Stream Control Transmission Protocol (SCTP) DTLS chunk"</span>, <time datetime="2023-06" class="refDate">June 2023</time>, <span>&lt;<a href="https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/">https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/</a>&gt;</span>. </dd>
+<span class="refAuthor">Westerlund, M.</span>, <span class="refAuthor">Preuß Mattsson, J.</span>, and <span class="refAuthor">C. Porfiri</span>, <span class="refTitle">"Stream Control Transmission Protocol (SCTP) DTLS chunk"</span>, <time datetime="2024-07" class="refDate">July 2024</time>, <span>&lt;<a href="https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/">https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -3394,6 +3397,10 @@ due to key compromise.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
 <dt id="I-D.ietf-uta-rfc6125bis">[I-D.ietf-uta-rfc6125bis]</dt>
         <dd>
 <span class="refAuthor">Saint-Andre, P.</span> and <span class="refAuthor">R. Salz</span>, <span class="refTitle">"Service Identity in TLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-uta-rfc6125bis-15</span>, <time datetime="2023-08-10" class="refDate">10 August 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-uta-rfc6125bis-15">https://datatracker.ietf.org/doc/html/draft-ietf-uta-rfc6125bis-15</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.mattsson-tls-super-jumbo-record-limit">[I-D.mattsson-tls-super-jumbo-record-limit]</dt>
+        <dd>
+<span class="refAuthor">Mattsson, J. P.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">M. Tüxen</span>, <span class="refTitle">"Large Record Sizes for TLS and DTLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-mattsson-tls-super-jumbo-record-limit-02</span>, <time datetime="2024-03-04" class="refDate">4 March 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-mattsson-tls-super-jumbo-record-limit-02">https://datatracker.ietf.org/doc/html/draft-mattsson-tls-super-jumbo-record-limit-02</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ANSSI-DAT-NT-003">[ANSSI-DAT-NT-003]</dt>
       <dd>
