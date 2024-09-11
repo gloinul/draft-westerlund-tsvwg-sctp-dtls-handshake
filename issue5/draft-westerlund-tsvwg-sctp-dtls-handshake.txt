@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 9 January 2025                                         Ericsson
-                                                             8 July 2024
+Expires: 15 March 2025                                          Ericsson
+                                                       11 September 2024
 
 
      Datagram Transport Layer Security (DTLS) in the Stream Control
@@ -59,7 +59,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 January 2025.
+   This Internet-Draft will expire on 15 March 2025.
 
 Copyright Notice
 
@@ -1184,6 +1184,12 @@ Table of Contents
    RECOMMENDED the new Restart DCI to be handshaked as early as
    possible.
 
+   Note that, different than the initial Association establishment, the
+   ULP traffic is permitted immediately after the COOKIE-ECHO/COOKIE-ACK
+   handshake, the reason is due to the validation being already
+   performed initially thus the Association goes directly into PROTECTED
+   state.
+
 7.  Parallel DTLS Rekeying
 
    Rekeying in this specification is implemented by replacing the DTLS
@@ -1433,11 +1439,11 @@ Table of Contents
 
    [I-D.mattsson-tls-super-jumbo-record-limit]
               Mattsson, J. P., Tschofenig, H., and M. Tüxen, "Large
-              Record Sizes for TLS and DTLS", Work in Progress,
-              Internet-Draft, draft-mattsson-tls-super-jumbo-record-
-              limit-02, 4 March 2024,
+              Record Sizes for TLS and DTLS with Reduced Overhead", Work
+              in Progress, Internet-Draft, draft-mattsson-tls-super-
+              jumbo-record-limit-05, 5 September 2024,
               <https://datatracker.ietf.org/doc/html/draft-mattsson-tls-
-              super-jumbo-record-limit-02>.
+              super-jumbo-record-limit-05>.
 
    [ANSSI-DAT-NT-003]
               Agence nationale de la sécurité des systèmes
