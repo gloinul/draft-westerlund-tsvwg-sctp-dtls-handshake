@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-10T01:06:19.199968+00:00",
+  "timestamp": "2024-09-12T01:06:04.464612+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -74,11 +74,13 @@
       "state": "OPEN",
       "author": "gloinul",
       "authorAssociation": "OWNER",
-      "assignees": [],
+      "assignees": [
+        "teiclap"
+      ],
       "labels": [],
       "body": "In case of restart after the cookie-echo/cookie-ack exchange one have protection and the assocaition state machine for the DTLS chunk can go to protected immediately as it has a DCI that works. This minimizes session outage impact also. But it needs to clearer described to match normal state procedures. \r\n",
       "createdAt": "2024-07-08T15:58:53Z",
-      "updatedAt": "2024-07-08T15:58:53Z",
+      "updatedAt": "2024-09-10T13:17:11Z",
       "closedAt": null,
       "comments": []
     },
@@ -90,11 +92,13 @@
       "state": "OPEN",
       "author": "gloinul",
       "authorAssociation": "OWNER",
-      "assignees": [],
+      "assignees": [
+        "teiclap"
+      ],
       "labels": [],
       "body": "Currently DTLS connections may be closed already in Established state, but only under very specific conditions, and may in practice not be needed at all. For example a restart likely result in transition to protected (see #5), and thus it is really only happening in protected and after a new traffic DCI is in place.\r\n\r\nText improvements needed. ",
       "createdAt": "2024-07-08T16:02:22Z",
-      "updatedAt": "2024-07-08T16:02:22Z",
+      "updatedAt": "2024-09-10T13:19:33Z",
       "closedAt": null,
       "comments": []
     }
@@ -181,6 +185,58 @@
       "mergeCommit": {
         "oid": "a71db574712cfdcc284bbf3d097f512980d116c5"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOKs0gD857JZZI",
+      "title": "Fixed Issue #5 - Restart goes to PROTECTED at once",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/7",
+      "state": "OPEN",
+      "author": "teiclap",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-11T11:20:35Z",
+      "updatedAt": "2024-09-11T11:20:36Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "7fa7e921bbabfcadf362bcdabc398161c8e7680c",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "issue5",
+      "headRefOid": "053fbe26fb6a8c1b2b8767520e27acdf76844329",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOKs0gD857J5ij",
+      "title": "Removal of DCI improved for issue #6",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/8",
+      "state": "OPEN",
+      "author": "teiclap",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-09-11T12:22:33Z",
+      "updatedAt": "2024-09-11T12:22:34Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "7fa7e921bbabfcadf362bcdabc398161c8e7680c",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "issue6",
+      "headRefOid": "2da38c42a5fb386d29853b977cf0372282b80cfc",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
