@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-03T01:09:31.877774+00:00",
+  "timestamp": "2024-10-06T01:14:18.404906+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -200,13 +200,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-09-11T11:20:35Z",
-      "updatedAt": "2024-09-11T11:20:36Z",
+      "updatedAt": "2024-10-04T08:32:18Z",
       "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
       "baseRefName": "main",
       "baseRefOid": "7fa7e921bbabfcadf362bcdabc398161c8e7680c",
       "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
       "headRefName": "issue5",
-      "headRefOid": "053fbe26fb6a8c1b2b8767520e27acdf76844329",
+      "headRefOid": "6e7347177639ba94bd4d148b312fb6258f4a638d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
