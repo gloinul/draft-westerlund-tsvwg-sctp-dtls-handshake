@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 20 March 2025                                          Ericsson
-                                                       16 September 2024
+Expires: 17 April 2025                                          Ericsson
+                                                         14 October 2024
 
 
      Datagram Transport Layer Security (DTLS) in the Stream Control
@@ -59,7 +59,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 March 2025.
+   This Internet-Draft will expire on 17 April 2025.
 
 Copyright Notice
 
@@ -1183,6 +1183,11 @@ Table of Contents
    handshaked, the Association cannot be Restarted, thus it's
    RECOMMENDED the new Restart DCI to be handshaked as early as
    possible.
+
+   Note that, different than the initial Association establishment, the
+   ULP traffic is permitted immediately after the COOKIE-ECHO/COOKIE-ACK
+   handshake, the reason is that the validation has already been
+   performed prior to the restart DCI was created.
 
 7.  Parallel DTLS Rekeying
 
