@@ -1213,6 +1213,11 @@ handshaked.  If a problem occurs before the new Restart DCI has been
 handshaked, the Association cannot be Restarted, thus it's RECOMMENDED
 the new Restart DCI to be handshaked as early as possible.
 
+Note that, different than the initial Association establishment,
+the ULP traffic is permitted immediately after the
+COOKIE-ECHO/COOKIE-ACK handshake, the reason is that the
+validation has already been performed prior to the restart DCI was 
+created.
 
 # Parallel DTLS Rekeying {#parallel-dtls}
 
