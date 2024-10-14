@@ -697,15 +697,19 @@ should take care of the DTLS connection removal in details.
 The initial DTLS connection exists as soon as Association reaches
 the PROTECTED state. As long as one DCI only exists, that DTLS
 connection SHALL NOT be removed as it won't be possible for the
-Association to proceed further. In general a DTLS connection
-can be removed when there's at least another active DTLS connection
-that can be used for DTLS 1.3 negotiation. In case the DTLS connection
-is removed and no useable DCI exist for DTLS 1.3 negotiation,
-the Association SHALL be ABORTED.
+Association to proceed further. In such case the implementation
+SHALL take care of instantiating all the needed DCI and provide
+them valid keys in order to reach a condition where failure in
+the current DCI, or in any alternative DCI, won't cause a deadlock.
+In general a DTLS connection can be removed when there's at least
+another active DTLS connection with valid keys that can be used
+for negotiating further DTLS DTLS 1.3 connections. 
+In case the DTLS connection is removed and no useable DCI exist
+for DTLS 1.3 negotiation, the Association SHALL be ABORTED.
 
 It is up to the implementation to guarantee that at least one
-available DCI exists at any time, for avoiding that undesired
-DTLS connection closure causes the Association abortion.
+available DCI and a spare DCI exists at any time, for avoiding
+that undesired DTLS connection closure causes the Association abortion.
 
 ## DTLS Key Update
 
