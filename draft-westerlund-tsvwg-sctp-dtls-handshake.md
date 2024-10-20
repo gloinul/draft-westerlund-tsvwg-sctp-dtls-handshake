@@ -908,7 +908,7 @@ connections frequently to force attackers to dynamic key
 extraction. E.g., at least every hour and every 100 GB of data which
 is a common policy for IPsec [ANSSI-DAT-NT-003]. See
 [I-D.ietf-tls-rfc8446bis] for a more detailed discussion on key
-compromise and key exfiltration in (D)TLS. As explained in
+compromise and key exfiltration in (D)TLS. As recommended in
 {{KTH-NCSA}}, resumption can be used to chain the connections,
 increasing security by forcing an adversary to break them in sequence.
 
