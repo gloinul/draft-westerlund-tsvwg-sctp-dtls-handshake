@@ -51,6 +51,17 @@ informative:
         ins: Agence nationale de la sécurité des systèmes d'information
     date: August 2015
 
+  KTH-NCSA:
+    target: "http://kth.diva-portal.org/smash/get/diva2:1902626/FULLTEXT01.pdf"
+    title: "On factoring integers, and computing discrete logarithms and orders, quantumly"
+    seriesinfo:
+      "KTH, School of Electrical Engineering and Computer Science (EECS), Computer Science, Theoretical Computer Science, TCS. Swedish NCSA, Swedish Armed Forces."
+    author:
+      -
+       ins: M. Ekerå
+       name: Martin Ekerå
+    date: October 2024
+
 normative:
   RFC4820:
   RFC6347:
@@ -877,7 +888,8 @@ destination IP addresses.
 
 ### New Connections {#new-connections}
 
-Implementations MUST set up new DTLS connections before any of the
+Implementations MUST set up a new DTLS connection using a full handshake
+before any of the
 certificates expire. It is RECOMMENDED that all negotiated and
 exchanged parameters are the same except for the timestamps in the
 certificates. Clients and servers MUST NOT accept a change of identity
@@ -896,12 +908,15 @@ connections frequently to force attackers to dynamic key
 extraction. E.g., at least every hour and every 100 GB of data which
 is a common policy for IPsec [ANSSI-DAT-NT-003]. See
 [I-D.ietf-tls-rfc8446bis] for a more detailed discussion on key
-compromise and key exfiltration in (D)TLS.
+compromise and key exfiltration in (D)TLS. As explained in
+{{KTH-NCSC}}, resumption can be used to chain the connections,
+increasing security by forcing an adversary to break them in sequence.
 
 For many DTLS in SCTP deployments the SCTP association is expected to
 have a very long lifetime of months or even years. For associations
 with such long lifetimes there is a need to frequently re-authenticate
-both client and server by setting up new connections. TLS Certificate
+both client and server by setting up a new connection using a full
+handshake. TLS Certificate
 lifetimes significantly shorter than a year are common which is
 shorter than many expected SCTP associations protected by DTLS in
 SCTP.
