@@ -909,7 +909,7 @@ extraction. E.g., at least every hour and every 100 GB of data which
 is a common policy for IPsec [ANSSI-DAT-NT-003]. See
 [I-D.ietf-tls-rfc8446bis] for a more detailed discussion on key
 compromise and key exfiltration in (D)TLS. As explained in
-{{KTH-NCSC}}, resumption can be used to chain the connections,
+{{KTH-NCSA}}, resumption can be used to chain the connections,
 increasing security by forcing an adversary to break them in sequence.
 
 For many DTLS in SCTP deployments the SCTP association is expected to
