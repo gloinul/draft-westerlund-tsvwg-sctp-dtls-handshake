@@ -698,6 +698,29 @@ PROTECTED and ESTABLISHED state is done by having the DTLS connection
 send a DTLS close_notify. When DTLS closure for a DTLS connection is
 completed, the related DCI information in the DTLS chunk is released.
 
+### Considerations about removal of DTLS Connections {#removal_dtls_consideration}
+
+Removal of a DTLS connection may happen under circonmstances as
+described above in {{remove-dtls-connection}} in different states
+of the Association. This section describes how the implementation
+should take care of the DTLS connection removal in details.
+
+The initial DTLS connection exists as soon as Association reaches
+the PROTECTED state. As long as one DCI only exists, that DTLS
+connection SHALL NOT be removed as it won't be possible for the
+Association to proceed further. In such case the implementation
+SHALL take care of instantiating all the needed DCI and provide
+them valid keys in order to reach a condition where failure in
+the current DCI, or in any alternative DCI, won't cause a deadlock.
+In general a DTLS connection can be removed when there's at least
+another active DTLS connection with valid keys that can be used
+for negotiating further DTLS DTLS 1.3 connections. 
+In case the DTLS connection is removed and no useable DCI exist
+for DTLS 1.3 negotiation, the Association SHALL be ABORTED.
+
+It is up to the implementation to guarantee that at least one
+available DCI and a spare DCI exists at any time, for avoiding
+that undesired DTLS connection closure causes the Association abortion.
 
 ## DTLS Key Update
 
