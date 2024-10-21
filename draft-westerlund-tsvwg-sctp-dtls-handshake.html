@@ -1415,18 +1415,18 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-1.2-2">In a SCTP association where DTLS 1.3 Chunk usage has been
    negotiated in the SCTP INIT and INIT-ACK, to initilize and
    authenticate the peer the DTLS handshake is exchanged as SCTP user
-   messages with a DTLS-SCTP PPID (see section 10.6 of
+   messages with the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
    <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>) until an initial DTLS
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With succesful handshake and
    authentication of the peer the key material is configured for the
-   DTLS 1.3 chunk. From that point until re-authenticaiton or rekeying
-   needs to occurr the DTLS chunk will protect the SCTP packets. When
-   the DTLS connection has been established and the DTLS Chunk
-   configured with keys the PVALID chunk is exchanged to verify that
-   no downgrade attack between any offered protection solutions has
-   occurred. To prevent manipulation, the PVALID chunks are sent
-   encapsulated in DTLS chunks.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+   DTLS 1.3 chunk. From that point until SCTP association termination
+   the DTLS chunk will protect the SCTP packets. When the DTLS
+   connection has been established and the DTLS Chunk configured with
+   keys the PVALID chunk is exchanged to verify that no downgrade
+   attack between any offered protection solutions has occurred. To
+   prevent manipulation, the PVALID chunks are sent encapsulated in
+   DTLS chunks.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
    start sending data over the SCTP association. From this point all
@@ -1466,7 +1466,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    other non-application data to its peer at any point in time. Thus,
    enabling DTLS 1.3 Key Updates for example.
    All DTLS message will be sent by means of SCTP user messages
-   with DTLS-SCTP PPID as specified in
+   with the DTLS Chunk Key-Management Messages PPID as specified in
    <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
 <span id="name-dtls-in-sctp-layer-in-regar"></span><div id="overview-layering">
 <figure id="figure-1">
@@ -1755,8 +1755,8 @@ is not an issue.<a href="#section-1.3.1-4.3.2.5.1" class="pilcrow">¶</a></p>
           <dd class="break"></dd>
 <dt id="section-1.4-2.3">Connection:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.4">
-            <p id="section-1.4-2.4.1">A DTLS connection. It is uniquely identified by a
-   connection index.<a href="#section-1.4-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.4.1">A DTLS connection. It is uniquely identified by a DTLS
+   connection index (DCI).<a href="#section-1.4-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-1.4-2.5">Restart DCI:</dt>
@@ -1966,10 +1966,10 @@ defined below. A DTLS handshake message may be fragmented by DTLS to a
 set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
-with the PPID set to DTLS-SCTP
+with the PPID set to DTLS Chunk Key-Management Messages
 <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. The SCTP user message is
 created by having each DTLS message prepended with a single byte
-containing the Restar flag and DTLS connection index value. These user
+containing the Restart flag and DTLS connection index value. These user
 messages MAY contain one or more DTLS records. The SCTP stream ID used
 MAY be any stream ID that the ULP alreay uses, and if not know Stream
 0. Note that all fragments of a handshake message MUST be sent with
@@ -2084,7 +2084,8 @@ DCI field. If not set, then a traffic DCI is indicated.<a href="#section-3-3.4.1
       </h2>
 <p id="section-4-1">The <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span> contains a high-level
 description of the basic DTLS in SCTP architecture, this section deals
-with details related to the DTLS 1.3 integration with SCTP.<a href="#section-4-1" class="pilcrow">¶</a></p>
+with details related to the DTLS 1.3 inband key-establishment
+integration with SCTP.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <div id="state-machine">
 <section id="section-4.1">
         <h3 id="name-state-machine">
@@ -2107,7 +2108,7 @@ according to <a href="#dtls-handshake" class="auto internal xref">Section 6.1</a
 DCI counter = 0, which implies a DCI field value of 0, for the initial
 DTLS connection. The DTLS handshake messages are transmitted from this
 endpoint to the peer using SCTP User message <a href="#dtls-user-message" class="auto internal xref">Section 3</a>
-with the PPID value set to DTLS-SCTP
+with the PPID value set to DTLS Chunk Key-Management Messages
 <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. Note that in case of SCTP
 association restart, the negotiation of the new Traffic DTLS
 connection SHALL still use a new Traffic DCI counter = 0 as the restarting
@@ -2122,8 +2123,9 @@ DCI and implementing the same parallel connection mechanism (see
 <a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a> and <a href="#remove-dtls-connection" class="auto internal xref">Section 4.2.2</a>).<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-4.1.1-4">When a successful handshake for the traffic DCI = 0 has been completed
 and the keying material is established for DTLS connection and set for
-the DCI the DTLS chunk Handler will perform validation and then move
-SCTP State Machine into PROTECTED state.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
+the DCI the DTLS chunk Handler will move to the VALIDATION state and
+perform validation and then move SCTP State Machine into PROTECTED
+state.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protected-state">
@@ -2217,7 +2219,7 @@ completed, the related DCI information in the DTLS chunk is released.<a href="#s
           <h4 id="name-considerations-about-remova">
 <a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-considerations-about-remova" class="section-name selfRef">Considerations about removal of DTLS Connections</a>
           </h4>
-<p id="section-4.2.3-1">Removal of a DTLS connection may happen under circonmstances as
+<p id="section-4.2.3-1">Removal of a DTLS connection may happen under circumstances as
 described above in <a href="#remove-dtls-connection" class="auto internal xref">Section 4.2.2</a> in different states
 of the Association. This section describes how the implementation
 should take care of the DTLS connection removal in details.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
@@ -2293,7 +2295,7 @@ epoch N.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
               <p id="section-4.3.1-2.4.1">When the first SCTP packet protected by epoch N+1 has been
   received and succesfully decrypted by DTLS chunk the epoch N reception
   keys can be removed. Although to deal with network reordering, a
-  delay is RECOMMENDED.<a href="#section-4.3.1-2.4.1" class="pilcrow">¶</a></p>
+  delay of no more than 2 minutes are RECOMMENDED.<a href="#section-4.3.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-4.3.1-3">This completes the key-update procedure.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
@@ -2333,7 +2335,7 @@ before step 2 has happened.<a href="#section-4.3.1-4" class="pilcrow">¶</a></p>
               <p id="section-4.3.2-2.4.1">When the first SCTP packet protected by epoch N+1 has been
   received and succesfully decrypted by DTLS chunk the epoch N reception
   keys can be removed. Although to deal with network reordering, a
-  delay is RECOMMENDED.<a href="#section-4.3.2-2.4.1" class="pilcrow">¶</a></p>
+  delay of no more than 2 minutes are RECOMMENDED.<a href="#section-4.3.2-2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </section>
@@ -2733,7 +2735,7 @@ provide ephemeral key exchange.<a href="#section-5.2.5-4" class="pilcrow">¶</a>
 <p id="section-6.1.1-11">The <a href="#sctp-DTLS-initial-dtls-connection" class="auto internal xref">Figure 4</a> shows a successfull
 handshake and highlits the different parts of the setup. DTLS
 handshake messages are transported by means of DATA Chunks
-with SCTP-DTLS PPID.<a href="#section-6.1.1-11" class="pilcrow">¶</a></p>
+with the DTLS Chunk Key-Management Messages PPID.<a href="#section-6.1.1-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="further_dtls_connection">
@@ -2810,7 +2812,7 @@ with SCTP-DTLS PPID.<a href="#section-6.1.1-11" class="pilcrow">¶</a></p>
 handshake of a further DTLS connection. Such connections can
 be initiated by any of the peers. Same as during the initial
 handshake, DTLS handshake messages are transported by means
-of DATA chunks with SCTP-DTLS PPID.<a href="#section-6.1.2-6" class="pilcrow">¶</a></p>
+of DATA chunks with the DTLS Chunk Key-Management Messages PPID.<a href="#section-6.1.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
