@@ -714,7 +714,7 @@ them valid keys in order to reach a condition where failure in
 the current DCI, or in any alternative DCI, won't cause a deadlock.
 In general a DTLS connection can be removed when there's at least
 another active DTLS connection with valid keys that can be used
-for negotiating further DTLS DTLS 1.3 connections. 
+for negotiating further DTLS DTLS 1.3 connections.
 In case the DTLS connection is removed and no useable DCI exist
 for DTLS 1.3 negotiation, the Association SHALL be ABORTED.
 
