@@ -1407,7 +1407,7 @@ Table of Contents
    [I-D.westerlund-tsvwg-sctp-dtls-chunk]
               Westerlund, M., Preuß Mattsson, J., and C. Porfiri,
               "Stream Control Transmission Protocol (SCTP) DTLS chunk",
-              July 2024,
+              October 2024,
               <https://datatracker.ietf.orghttps://datatracker.ietf.org/
               doc/draft-westerlund-tsvwg-sctp-dtls-chunk/>.
 
