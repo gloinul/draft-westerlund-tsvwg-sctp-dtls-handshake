@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 17 April 2025                                          Ericsson
-                                                         14 October 2024
+Expires: 24 April 2025                                          Ericsson
+                                                         21 October 2024
 
 
      Datagram Transport Layer Security (DTLS) in the Stream Control
@@ -59,7 +59,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 April 2025.
+   This Internet-Draft will expire on 24 April 2025.
 
 Copyright Notice
 
@@ -861,13 +861,13 @@ Table of Contents
 
 5.2.3.  New Connections
 
-   Implementations MUST set up new DTLS connections before any of the
-   certificates expire.  It is RECOMMENDED that all negotiated and
-   exchanged parameters are the same except for the timestamps in the
-   certificates.  Clients and servers MUST NOT accept a change of
-   identity during the setup of a new connections, but MAY accept
-   negotiation of stronger algorithms and security parameters, which
-   might be motivated by new attacks.
+   Implementations MUST set up a new DTLS connection using a full
+   handshake before any of the certificates expire.  It is RECOMMENDED
+   that all negotiated and exchanged parameters are the same except for
+   the timestamps in the certificates.  Clients and servers MUST NOT
+   accept a change of identity during the setup of a new connections,
+   but MAY accept negotiation of stronger algorithms and security
+   parameters, which might be motivated by new attacks.
 
    Allowing new connections can enable denial-of-service attacks.  The
    endpoints MUST limit the number of simultaneous connections to two.
@@ -880,15 +880,18 @@ Table of Contents
    extraction.  E.g., at least every hour and every 100 GB of data which
    is a common policy for IPsec [ANSSI-DAT-NT-003].  See
    [I-D.ietf-tls-rfc8446bis] for a more detailed discussion on key
-   compromise and key exfiltration in (D)TLS.
+   compromise and key exfiltration in (D)TLS.  As recommended in
+   [KTH-NCSA], resumption can be used to chain the connections,
+   increasing security by forcing an adversary to break them in
+   sequence.
 
    For many DTLS in SCTP deployments the SCTP association is expected to
    have a very long lifetime of months or even years.  For associations
    with such long lifetimes there is a need to frequently re-
-   authenticate both client and server by setting up new connections.
-   TLS Certificate lifetimes significantly shorter than a year are
-   common which is shorter than many expected SCTP associations
-   protected by DTLS in SCTP.
+   authenticate both client and server by setting up a new connection
+   using a full handshake.  TLS Certificate lifetimes significantly
+   shorter than a year are common which is shorter than many expected
+   SCTP associations protected by DTLS in SCTP.
 
 5.2.4.  Padding of DTLS Records
 
@@ -1450,6 +1453,14 @@ Table of Contents
               IPsec", ANSSI Technical Report DAT-NT-003 , August 2015,
               <<https://www.ssi.gouv.fr/uploads/2015/09/
               NT_IPsec_EN.pdf>>.
+
+   [KTH-NCSA] Ekerå, M., "On factoring integers, and computing discrete
+              logarithms and orders, quantumly", KTH, School of
+              Electrical Engineering and Computer Science (EECS),
+              Computer Science, Theoretical Computer Science, TCS.
+              Swedish NCSA, Swedish Armed Forces. , October 2024,
+              <http://kth.diva-portal.org/smash/get/diva2:1902626/
+              FULLTEXT01.pdf>.
 
 Authors' Addresses
 
