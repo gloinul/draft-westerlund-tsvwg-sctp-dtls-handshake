@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-20T01:15:23.522332+00:00",
+  "timestamp": "2024-10-22T01:10:33.245038+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -89,7 +89,7 @@
       "id": "I_kwDOKs0gD86O0Fi7",
       "title": "Clarify in which states one can perform DTLS close.",
       "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/issues/6",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gloinul",
       "authorAssociation": "OWNER",
       "assignees": [
@@ -98,9 +98,40 @@
       "labels": [],
       "body": "Currently DTLS connections may be closed already in Established state, but only under very specific conditions, and may in practice not be needed at all. For example a restart likely result in transition to protected (see #5), and thus it is really only happening in protected and after a new traffic DCI is in place.\r\n\r\nText improvements needed. ",
       "createdAt": "2024-07-08T16:02:22Z",
-      "updatedAt": "2024-09-10T13:19:33Z",
-      "closedAt": null,
+      "updatedAt": "2024-10-21T16:33:58Z",
+      "closedAt": "2024-10-21T16:33:58Z",
       "comments": []
+    },
+    {
+      "number": 10,
+      "id": "I_kwDOKs0gD86bABnV",
+      "title": "Explain difference between full handshake and resumption",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/issues/10",
+      "state": "CLOSED",
+      "author": "emanjon",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The current text handles full authentication and resumption as equal but there are differences.\r\n- A full handshake is needed for certificate-based reauthentication, which is a must as soon as one of the certificates expire and is replaced.\r\n- Resumption has slightly different rekeying properties as it chains connections together.\r\n",
+      "createdAt": "2024-10-20T13:47:01Z",
+      "updatedAt": "2024-10-21T06:54:33Z",
+      "closedAt": "2024-10-21T06:54:33Z",
+      "comments": [
+        {
+          "author": "emanjon",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#9",
+          "createdAt": "2024-10-20T13:47:12Z",
+          "updatedAt": "2024-10-20T13:47:12Z"
+        },
+        {
+          "author": "emanjon",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#9 merged to main, which closes this issue.",
+          "createdAt": "2024-10-21T06:54:33Z",
+          "updatedAt": "2024-10-21T06:54:33Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -221,24 +252,151 @@
       "id": "PR_kwDOKs0gD857J5ij",
       "title": "Removal of DCI improved for issue #6",
       "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/8",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "teiclap",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2024-09-11T12:22:33Z",
-      "updatedAt": "2024-10-14T14:35:02Z",
+      "updatedAt": "2024-10-21T12:10:11Z",
       "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
       "baseRefName": "main",
       "baseRefOid": "7fa7e921bbabfcadf362bcdabc398161c8e7680c",
       "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
       "headRefName": "issue6",
       "headRefOid": "9fbd90da2f91a4c43c69e52202c25d23af858062",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-10-21T12:10:11Z",
+      "mergedAt": "2024-10-21T12:10:11Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "8829902d07c9a92bc65a26e4930d824e30e0d73a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOKs0gD86N7aZn",
+          "commit": {
+            "abbreviatedOid": "9fbd90d"
+          },
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-21T07:28:00Z",
+          "updatedAt": "2024-10-21T07:28:00Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOKs0gD85_OCYo",
+      "title": "Full handshake and resumption",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/9",
+      "state": "MERGED",
+      "author": "emanjon",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Full handshake and resumption",
+      "createdAt": "2024-10-20T10:25:10Z",
+      "updatedAt": "2024-10-21T06:53:51Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "d41b67635df54828267755439f29baa4445b2282",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "Full-handshake-and-resumption",
+      "headRefOid": "d0792006f700b1de81e66ab27b3888202702fad6",
+      "closedAt": "2024-10-21T06:53:51Z",
+      "mergedAt": "2024-10-21T06:53:51Z",
+      "mergedBy": "emanjon",
+      "mergeCommit": {
+        "oid": "f86b57b05ce524dd5a8a86e5f3b08aa7658d3f3a"
+      },
+      "comments": [
+        {
+          "author": "emanjon",
+          "authorAssociation": "COLLABORATOR",
+          "body": "- Added \"Full Handshake\" in two places that talk about reauthentiction.\r\n- Added a sentence explaining that resumption and full handshake has slightly different rekeying properties (connection chaining).",
+          "createdAt": "2024-10-20T10:38:51Z",
+          "updatedAt": "2024-10-20T10:38:51Z"
+        },
+        {
+          "author": "emanjon",
+          "authorAssociation": "COLLABORATOR",
+          "body": "#10",
+          "createdAt": "2024-10-20T13:47:28Z",
+          "updatedAt": "2024-10-20T13:47:28Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOKs0gD86N67He",
+          "commit": {
+            "abbreviatedOid": "d079200"
+          },
+          "author": "teiclap",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-21T06:26:46Z",
+          "updatedAt": "2024-10-21T06:26:46Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKs0gD86N67Ya",
+          "commit": {
+            "abbreviatedOid": "d079200"
+          },
+          "author": "teiclap",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-21T06:27:32Z",
+          "updatedAt": "2024-10-21T06:27:32Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOKs0gD86N68Sy",
+          "commit": {
+            "abbreviatedOid": "d079200"
+          },
+          "author": "teiclap",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-10-21T06:30:01Z",
+          "updatedAt": "2024-10-21T06:30:01Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOKs0gD85_WTnL",
+      "title": "Updated PPID value name. Some editorial corrections. ",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/11",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\u2026ys should not be kept around more than 2 minutes.",
+      "createdAt": "2024-10-21T16:32:56Z",
+      "updatedAt": "2024-10-21T16:33:29Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "cd86b0fb8a5bdaf42bd93625a10781b4caa1efe6",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "mw-me",
+      "headRefOid": "fb8d240847ef79a08de17d4f7112eaff0122d3e1",
+      "closedAt": "2024-10-21T16:33:29Z",
+      "mergedAt": "2024-10-21T16:33:28Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "916cd3bda02eb3c840cf101b267ca03b8768effc"
+      },
       "comments": [],
       "reviews": []
     }
