@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-22T01:10:33.245038+00:00",
+  "timestamp": "2024-10-24T01:09:40.320855+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -384,7 +384,7 @@
       "labels": [],
       "body": "\u2026ys should not be kept around more than 2 minutes.",
       "createdAt": "2024-10-21T16:32:56Z",
-      "updatedAt": "2024-10-21T16:33:29Z",
+      "updatedAt": "2024-10-22T08:12:17Z",
       "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
       "baseRefName": "main",
       "baseRefOid": "cd86b0fb8a5bdaf42bd93625a10781b4caa1efe6",
@@ -398,7 +398,21 @@
         "oid": "916cd3bda02eb3c840cf101b267ca03b8768effc"
       },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOKs0gD86OF6CR",
+          "commit": {
+            "abbreviatedOid": "fb8d240"
+          },
+          "author": "teiclap",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "In my opinion \r\n\"delay of no more than 2 minutes are RECOMMENDED\"\r\nshould be\r\n\"delay of no more than 2 minutes is RECOMMENDED\"",
+          "createdAt": "2024-10-22T04:57:49Z",
+          "updatedAt": "2024-10-22T04:57:49Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
