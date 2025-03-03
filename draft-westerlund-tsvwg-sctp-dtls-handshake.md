@@ -1377,6 +1377,27 @@ accept application data payloads of potentially larger sizes than what
 it configured to use for messages the DTLS implementation generates
 itself for signaling.
 
+# Implementation Considerations
+
+For each DTLS connection, there are certain crypto state infomration
+that needs to be handled thread safe to avoid nonce re-use and correct
+replay protection. This arises as the key materials for DTLS epoch=3
+and higher are shared between the DTLS chunk and the DTLS handshake
+parts.
+
+This issue is primarily for implementations of SCTP implementation and
+thus the DTLS chunk implementation resides in kernel space, and the
+DTLS handshake resides in user space. For user space implementations
+where both DTLS handshake messages and SCTP message protection can
+directly call the same DTLS implementation instance the issue is
+avoided.
+
+Different implementation strategies do exists for the kernel
+implementations but likely have some impact on the DTLS implementation
+itself as the DTLS record protection processing either need to synchronize
+over state variables, alternatively use the DTLS Chunk protection operation
+using an extended DTLS Chunk API {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+
 # Security Considerations
 
 ## General
