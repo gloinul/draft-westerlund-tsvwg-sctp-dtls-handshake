@@ -21,11 +21,11 @@ re-authentication and rekeying with ephemeral key exchange. This is
 intended as an alternative to using DTLS/SCTP (RFC6083) and
 SCTP-AUTH (RFC4895). 
     " name="description">
-<meta content="xml2rfc 3.25.0" name="generator">
+<meta content="xml2rfc 3.28.0" name="generator">
 <meta content="draft-westerlund-tsvwg-sctp-dtls-handshake-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.25.0
-    Python 3.12.8
+  xml2rfc 3.28.0
+    Python 3.12.9
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
@@ -446,7 +446,7 @@ dl {
     margin-bottom: 0;
   }
 }
-dl > dt {
+dl:not(.dlNewline) > dt {
   float: left;
   margin-right: 2ch;
   min-width: 8ch;
@@ -1055,11 +1055,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">DTLS in SCTP</td>
-<td class="right">January 2025</td>
+<td class="right">March 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 12 July 2025</td>
+<td class="center">Expires 4 September 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1072,12 +1072,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-01-08" class="published">8 January 2025</time>
+<time datetime="2025-03-03" class="published">3 March 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-07-12">12 July 2025</time></dd>
+<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1144,7 +1144,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 12 July 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1330,32 +1330,35 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-pmtu-discovery-consideratio" class="internal xref">PMTU Discovery Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
-                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-general-2" class="internal xref">General</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
-                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-implementation-consideratio" class="internal xref">Implementation Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-consideration" class="internal xref">IANA Consideration</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
-                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-general-2" class="internal xref">General</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
-                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
 </li>
             </ul>
 </li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-consideration" class="internal xref">IANA Consideration</a></p>
+</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -3321,66 +3324,89 @@ it configured to use for messages the DTLS implementation generates
 itself for signaling.<a href="#section-8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="security-considerations">
+<div id="implementation-considerations">
 <section id="section-9">
+      <h2 id="name-implementation-consideratio">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
+      </h2>
+<p id="section-9-1">For each DTLS connection, there are certain crypto state infomration
+that needs to be handled thread safe to avoid nonce re-use and correct
+replay protection. This arises as the key materials for DTLS epoch=3
+and higher are shared between the DTLS chunk and the DTLS handshake
+parts.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">This issue is primarily for implementations of SCTP implementation and
+thus the DTLS chunk implementation resides in kernel space, and the
+DTLS handshake resides in user space. For user space implementations
+where both DTLS handshake messages and SCTP message protection can
+directly call the same DTLS implementation instance the issue is
+avoided.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-3">Different implementation strategies do exists for the kernel
+implementations but likely have some impact on the DTLS implementation
+itself as the DTLS record protection processing either need to synchronize
+over state variables, alternatively use the DTLS Chunk protection operation
+using an extended DTLS Chunk API <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-9-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-10">
       <h2 id="name-security-considerations">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
 <div id="general-1">
-<section id="section-9.1">
+<section id="section-10.1">
         <h3 id="name-general-2">
-<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-general-2" class="section-name selfRef">General</a>
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-general-2" class="section-name selfRef">General</a>
         </h3>
-<p id="section-9.1-1">The security considerations given in <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>, <span>[<a href="#RFC6347" class="cite xref">RFC6347</a>]</span>, and
+<p id="section-10.1-1">The security considerations given in <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>, <span>[<a href="#RFC6347" class="cite xref">RFC6347</a>]</span>, and
 <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span> also apply to this document. BCP 195 <span>[<a href="#RFC9325" class="cite xref">RFC9325</a>]</span>
           <span>[<a href="#RFC8996" class="cite xref">RFC8996</a>]</span> provides recommendations and requirements for improving
 the security of deployed services that use DTLS. BCP 195 MUST be
 followed which implies that DTLS 1.0 SHALL NOT be supported and are
-therefore not defined.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+therefore not defined.<a href="#section-10.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="privacy-considerations">
-<section id="section-9.2">
+<section id="section-10.2">
         <h3 id="name-privacy-considerations">
-<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
         </h3>
-<p id="section-9.2-1">Although DTLS in SCTP provides privacy for the actual user message as
+<p id="section-10.2-1">Although DTLS in SCTP provides privacy for the actual user message as
 well as almost all chunks, some fields are not confidentiality
 protected.  In addition to the DTLS record header, the SCTP common
 header and the DTLS chunk header are not confidentiality
 protected. An attacker can correlate DTLS connections over the same
-SCTP association using the SCTP common header.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2-2">To provide identity protection it is RECOMMENDED that DTLS in SCTP is
+SCTP association using the SCTP common header.<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<p id="section-10.2-2">To provide identity protection it is RECOMMENDED that DTLS in SCTP is
 used with certificate-based authentication in DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> and
 to not reuse tickets.  DTLS 1.3 with external PSK
-authentication does not provide identity protection.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
-<p id="section-9.2-3">By mandating ephemeral key exchange and cipher suites with
+authentication does not provide identity protection.<a href="#section-10.2-2" class="pilcrow">¶</a></p>
+<p id="section-10.2-3">By mandating ephemeral key exchange and cipher suites with
 confidentiality DTLS in SCTP effectively mitigate many forms of
 passive pervasive monitoring.  By recommending implementations to
 frequently set up new DTLS connections with (EC)DHE force attackers to
 do dynamic key exfiltration and limits the amount of compromised data
-due to key compromise.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
+due to key compromise.<a href="#section-10.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="iana-consideration">
-<section id="section-10">
+<section id="section-11">
       <h2 id="name-iana-consideration">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-consideration" class="section-name selfRef">IANA Consideration</a>
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-consideration" class="section-name selfRef">IANA Consideration</a>
       </h2>
-<p id="section-10-1">This document has no IANA considerations currently.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-11-1">This document has no IANA considerations currently.<a href="#section-11-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-combined-references">
-<section id="section-11">
+<section id="section-12">
       <h2 id="name-references">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
 <div id="sec-normative-references">
-<section id="section-11.1">
+<section id="section-12.1">
         <h3 id="name-normative-references">
-<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
 <dt id="RFC4820">[RFC4820]</dt>
@@ -3423,9 +3449,9 @@ due to key compromise.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-informative-references">
-<section id="section-11.2">
+<section id="section-12.2">
         <h3 id="name-informative-references">
-<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
 <dt id="RFC3758">[RFC3758]</dt>
@@ -3446,7 +3472,7 @@ due to key compromise.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
 <dd class="break"></dd>
 <dt id="I-D.ietf-tls-rfc8446bis">[I-D.ietf-tls-rfc8446bis]</dt>
         <dd>
-<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-rfc8446bis-11</span>, <time datetime="2024-09-14" class="refDate">14 September 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8446bis-11">https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8446bis-11</a>&gt;</span>. </dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-rfc8446bis-12</span>, <time datetime="2025-02-17" class="refDate">17 February 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8446bis-12">https://datatracker.ietf.org/doc/html/draft-ietf-tls-rfc8446bis-12</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-tsvwg-dtls-over-sctp-bis">[I-D.ietf-tsvwg-dtls-over-sctp-bis]</dt>
         <dd>
