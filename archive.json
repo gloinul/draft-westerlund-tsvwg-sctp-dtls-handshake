@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T01:16:03.055577+00:00",
+  "timestamp": "2025-03-04T01:12:56.636619+00:00",
   "repo": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
   "labels": [
     {
@@ -413,6 +413,34 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDOKs0gD86NLqLO",
+      "title": "Added Implementation considerations.",
+      "url": "https://github.com/gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake/pull/12",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-03-03T17:01:04Z",
+      "updatedAt": "2025-03-03T17:01:37Z",
+      "baseRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "baseRefName": "main",
+      "baseRefOid": "f4bcc500a3252ecd691284babf5242e3bae311a3",
+      "headRepository": "gloinul/draft-westerlund-tsvwg-sctp-dtls-handshake",
+      "headRefName": "mw-edits-122",
+      "headRefOid": "05ba2cf6987d4011e1e86ffd6d9b6393b0d68d16",
+      "closedAt": "2025-03-03T17:01:37Z",
+      "mergedAt": "2025-03-03T17:01:37Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "78e806734e146d08a805e1323494932d1182e7a9"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
