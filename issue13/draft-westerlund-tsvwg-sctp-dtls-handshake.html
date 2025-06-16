@@ -21,21 +21,21 @@ re-authentication and rekeying with ephemeral key exchange. This is
 intended as an alternative to using DTLS/SCTP (RFC6083) and
 SCTP-AUTH (RFC4895). 
     " name="description">
-<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="xml2rfc 3.28.1" name="generator">
 <meta content="draft-westerlund-tsvwg-sctp-dtls-handshake-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.0
-    Python 3.12.9
+  xml2rfc 3.28.1
+    Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.5
-    lxml 5.3.0
-    platformdirs 4.3.6
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.3.8
     pycountry 24.6.1
     PyYAML 6.0.2
-    requests 2.32.3
-    setuptools 70.3.0
+    requests 2.32.4
+    setuptools 80.9.0
     wcwidth 0.2.13
 -->
 <link href="draft-westerlund-tsvwg-sctp-dtls-handshake.xml" rel="alternate" type="application/rfc+xml">
@@ -1055,11 +1055,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">DTLS in SCTP</td>
-<td class="right">March 2025</td>
+<td class="right">June 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 4 September 2025</td>
+<td class="center">Expires 18 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1072,12 +1072,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-03" class="published">3 March 2025</time>
+<time datetime="2025-06-16" class="published">16 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-18">18 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1144,7 +1144,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 18 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1433,9 +1433,17 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    utilizes all parts of DTLS 1.3 for the security functions like key
    exchange, authentication, encryption, integrity protection, and
    replay protection. All key management message exchange happens
-   inband over the SCTP assocation. The basic functionalities and how
-   things are related are described below.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
-<p id="section-1.2-2">In a SCTP association where DTLS 1.3 Chunk usage has been
+   inband over the SCTP assocation.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">In this document we use the terms DTLS Key context for indicating a
+   Key, derived from a DTLS connection, and all relevant data that needs
+   to be provided to the Protection Operator for DTLS encryption and
+   decryption.  DTLS Key context includes Keys for sending and receiving,
+   replay window, last used sequence number. Each DTLS key context are
+   associated with a four value tuple identifying the context, consisting
+   of SCTP Association, the restart indicator, the DTLS Connection ID (if
+   used), an the DTLS epoch.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">The basic functionalities and how things are related is described below.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">In a SCTP association where DTLS 1.3 Chunk usage has been
    negotiated in the SCTP INIT and INIT-ACK, to initilize and
    authenticate the peer the DTLS handshake is exchanged as SCTP user
    messages with the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
@@ -1446,55 +1454,49 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    DTLS 1.3 chunk. From that point until SCTP association termination
    the DTLS chunk will protect the SCTP packets. When the DTLS
    connection has been established and the DTLS Chunk configured with
-   keys the PVALID chunk is exchanged to verify that no downgrade
+   DTLS Key context the PVALID chunk is exchanged to verify that no downgrade
    attack between any offered protection solutions has occurred. To
    prevent manipulation, the PVALID chunks are sent encapsulated in
-   DTLS chunks.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
-<p id="section-1.2-3">Assuming that the PVALID validation is successful the SCTP
+   DTLS chunks.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+<p id="section-1.2-5">Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
    start sending data over the SCTP association. From this point all
    chunks will be protected by encapsulating them in
    DTLS chunks as defined in <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.
    The DTLS chunk protects all of the SCTP Chunks to be sent in a SCTP
-   packet. Using the selected key-material the DTLS Protection
+   packet. Using the current DTLS Key context the DTLS Protection
    operator protects the plain text producing a DTLS Record that is
    encapsualted in the DTLS chunk and the transmitted as a SCTP packet
-   with a common header.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.2-4">In the receiving SCTP endpoint each incoming SCTP packet on any of
+   with a common header.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
+<p id="section-1.2-6">In the receiving SCTP endpoint each incoming SCTP packet on any of
    its interfaces and ports are matched to the SCTP association based
-   on ports and VTAG in the common header. In that association context
-   for the DTLS chunk the DTLS Connection Index (DCI) is used to look
-   up the key-material from the one DTLS connection used to
-   authenticate the peer and establish this key-material. Using the
-   identified key-material and context the content of the DTLS chunk
+   on ports and VTAG in the common header. Using the
+   current DTLS Key context the content of the DTLS chunk
    is attempted to be processed, including replay protection,
    decryption, and integrity checking. And if decryption and integrity
    verification was successful the produced plain text of one or more
    SCTP chunks are provided for normal SCTP processing in the
    identified SCTP association along with associated per-packet meta
-   data such as path received on, original packet size, and ECN bits.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
-<p id="section-1.2-5">When mutual re-authentication or rekeying with ephemeral key
+   data such as path received on, original packet size, and ECN bits.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+<p id="section-1.2-7">When mutual re-authentication or rekeying with ephemeral key
    exchange is needed or desired by either endpoint a new DTLS
-   connection handshake is performed between the SCTP endpoints. A
-   different DCI than currently used in the DTLS chunk are used to
-   indicate that this is a new handshake. The DCI is sent as pre-amble
-   to any DTLS message sent as SCTP user message. When the handshake
+   connection handshake is performed between the SCTP endpoints
+   and a new DTLS Key context is created. When the handshake
    has completed the DTLS in SCTP implementation can simply switch to
-   use this DTLS connection's key-material in the DTLS chunk.  After a
+   use the new DTLS Key context in the DTLS chunk.  After a
    short while (no longer than 2 min) to enable any outstanding
    packets to drain from the network path between the endpoints the
-   old DTLS connection can be terminated and the key-material deleted
-   from the DTLS chunk's key store.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
-<p id="section-1.2-6">The DTLS connection is free to send any alert, handshake message, or
+   old DTLS Key context can be deleted from the DTLS chunk's key store.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
+<p id="section-1.2-8">The DTLS connection is free to send any alert, handshake message, or
    other non-application data to its peer at any point in time. Thus,
    enabling DTLS 1.3 Key Updates for example.
    All DTLS message will be sent by means of SCTP user messages
    with the DTLS Chunk Key-Management Messages PPID as specified in
-   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
 <span id="name-dtls-in-sctp-layer-in-regar"></span><div id="overview-layering">
 <figure id="figure-1">
-          <div id="section-1.2-7.1">
-            <div class="alignLeft art-svg artwork" id="section-1.2-7.1.1">
+          <div id="section-1.2-9.1">
+            <div class="alignLeft art-svg artwork" id="section-1.2-9.1.1">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="352" width="496" viewBox="0 0 496 352" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,336" fill="none" stroke="black"></path>
                 <path d="M 136,32 L 136,96" fill="none" stroke="black"></path>
@@ -1558,7 +1560,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                   <text x="304" y="308">Protected</text>
                   <text x="376" y="308">Payload</text>
                 </g>
-              </svg><a href="#section-1.2-7.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-1.2-9.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
@@ -1661,8 +1663,8 @@ believes it delivered and the receiver never gets it. This
 usually will result in the need to terminate the SCTP association
 to restart the ULP session to avoid any issues due to
 inconsistencies. DTLS in SCTP is robustly handling of any early
-discard of the DTLS key-material after having switched to a new
-established DTLS connection and its key-material. Any outstanding
+discard of the DTLS Key context after having switched to a new
+established DTLS Key context. Any outstanding
 packet that has not been decoded yet will simply be treated as
 lost between the SCTP endpoints, and SCTP's retransmission will
 retransmit any user message data that requires it. Also, the
@@ -1703,7 +1705,7 @@ implemented this extension could be used to achieve full IP MTU
    implementation between the two realizations.<a href="#section-1.3.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1.3.1-4.1">
-              <p id="section-1.3.1-4.1.1">DTLS in SCTP do requires the DTLS chunk to be implemented in the
+              <p id="section-1.3.1-4.1.1">DTLS in SCTP do require the DTLS chunk to be implemented in the
 SCTP stack implementation, and not as an adaptation layer above
 the SCTP stack which DTLS/SCTP instead requires. This has some
 extra challenges for operating system level
@@ -1716,7 +1718,7 @@ burden is likely similar in this regard.<a href="#section-1.3.1-4.1.1" class="pi
 that the DTLS implementation is split. Where the protection
 operations performed to create DTLS records needs to be
 implemented in the kernel and have an appropriate API for setting
-keying materia and managed the functions of the protection
+DTLS Key context and managed the functions of the protection
 operation. While the DTLS handshake is residing as an application
 on top of SCTP interface.<a href="#section-1.3.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
@@ -1778,26 +1780,32 @@ is not an issue.<a href="#section-1.3.1-4.3.2.5.1" class="pilcrow">¶</a></p>
           <dd class="break"></dd>
 <dt id="section-1.4-2.3">Connection:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.4">
-            <p id="section-1.4-2.4.1">A DTLS connection. It is uniquely identified by a DTLS
-   connection index (DCI).<a href="#section-1.4-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.4.1">A DTLS connection.<a href="#section-1.4-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.5">Restart DCI:</dt>
+<dt id="section-1.4-2.5">DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.6">
-            <p id="section-1.4-2.6.1">A DTLS connection index indicating a DTLS connection to be
-used for an SCTP Association Restart<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.6.1">A Key, derived from a DTLS connection, and all relevant data that needs
+   to be provided to the Protection Operator for DTLS encryption and
+   decryption.<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.7">Stream:</dt>
+<dt id="section-1.4-2.7">Restart DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.8">
-            <p id="section-1.4-2.8.1">A unidirectional stream of an SCTP association.  It is
-   uniquely identified by a stream identifier.<a href="#section-1.4-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.8.1">A DTLS Key context to be
+used for an SCTP Association Restart<a href="#section-1.4-2.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.9">Traffic DCI:</dt>
+<dt id="section-1.4-2.9">Stream:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.10">
-            <p id="section-1.4-2.10.1">A DTLS Connection index indicating a DTLS connection used to
-protect the regular SCTP traffic, i.e. not a restart DCI.<a href="#section-1.4-2.10.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.10.1">A unidirectional stream of an SCTP association.  It is
+   uniquely identified by a stream identifier.<a href="#section-1.4-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.4-2.11">Traffic DTLS Key context:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.4-2.12">
+            <p id="section-1.4-2.12.1">A DTLS Key context used to
+    protect the regular SCTP traffic, i.e. not a restart DTLS Key context.<a href="#section-1.4-2.12.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1814,9 +1822,9 @@ protect the regular SCTP traffic, i.e. not a restart DCI.<a href="#section-1.4-2
             <p id="section-1.5-1.2.1">Authenticated Encryption with Associated Data<a href="#section-1.5-1.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.5-1.3">DCI:</dt>
+<dt id="section-1.5-1.3">DKC:</dt>
           <dd style="margin-left: 1.5em" id="section-1.5-1.4">
-            <p id="section-1.5-1.4.1">DTLS Connection Index<a href="#section-1.5-1.4.1" class="pilcrow">¶</a></p>
+            <p id="section-1.5-1.4.1">DTLS Key Context<a href="#section-1.5-1.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-1.5-1.5">DTLS:</dt>
@@ -1881,8 +1889,7 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="528" viewBox="0 0 528 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
               <path d="M 8,64 L 8,192" fill="none" stroke="black"></path>
               <path d="M 136,64 L 136,96" fill="none" stroke="black"></path>
-              <path d="M 216,64 L 216,96" fill="none" stroke="black"></path>
-              <path d="M 232,64 L 232,96" fill="none" stroke="black"></path>
+              <path d="M 248,64 L 248,96" fill="none" stroke="black"></path>
               <path d="M 264,64 L 264,96" fill="none" stroke="black"></path>
               <path d="M 264,160 L 264,192" fill="none" stroke="black"></path>
               <path d="M 520,64 L 520,192" fill="none" stroke="black"></path>
@@ -1931,8 +1938,7 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
                 <text x="64" y="84">=</text>
                 <text x="92" y="84">0x4x</text>
                 <text x="172" y="84">reserved</text>
-                <text x="224" y="84">R</text>
-                <text x="248" y="84">DCI</text>
+                <text x="256" y="84">R</text>
                 <text x="360" y="84">Chunk</text>
                 <text x="412" y="84">Length</text>
                 <text x="264" y="132">Payload</text>
@@ -1946,7 +1952,7 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
         </figcaption></figure>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-2-3">
-        <dt id="section-2-3.1">reserved: 5 bits</dt>
+        <dt id="section-2-3.1">reserved: 7 bits</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.2">
           <p id="section-2-3.2.1">Reserved bits for future use.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
 </dd>
@@ -1954,25 +1960,13 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
 <dt id="section-2-3.3">R: 1 bit (boolean)</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.4">
           <p id="section-2-3.4.1">Restart indicator. If this bit is set this DTLS chunk is protected
-with an restart DTLS Connection with the index indicated by the
-DCI. If not set, then a traffic DCI is indicated.<a href="#section-2-3.4.1" class="pilcrow">¶</a></p>
+with an restart DTLS Key context. If not set, then a traffic
+DTLS Key context is indicated.<a href="#section-2-3.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-2-3.5">DCI: 2 bits (unsigned integer)</dt>
+<dt id="section-2-3.5">Payload: variable length</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.6">
-          <p id="section-2-3.6.1">DTLS Connection Index is the lower two bits of an DTLS Connection
- Index counter for the traffic or restart DTLS connection index.
- This is a counter implemented in DTLS in
- SCTP that is used to identify which DTLS connection instance that
- is capable of processing any received packet or DTLS message over
- an user message. This counter is recommended to be the lower part
- of a larger variable.
- DCI is unrelated to the DTLS Connection ID (CID) <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-2-3.6.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-2-3.7">Payload: variable length</dt>
-        <dd style="margin-left: 1.5em" id="section-2-3.8">
-          <p id="section-2-3.8.1">One DTLS record.<a href="#section-2-3.8.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.6.1">One DTLS record.<a href="#section-2-3.6.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1990,9 +1984,7 @@ set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
 with the PPID set to DTLS Chunk Key-Management Messages
-<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. The SCTP user message is
-created by having each DTLS message prepended with a single byte
-containing the Restart flag and DTLS connection index value. These user
+<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. These user
 messages MAY contain one or more DTLS records. The SCTP stream ID used
 MAY be any stream ID that the ULP alreay uses, and if not know Stream
 0. Note that all fragments of a handshake message MUST be sent with
@@ -2001,17 +1993,13 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
 <figure id="figure-3">
         <div id="section-3-2.1">
           <div class="alignLeft art-svg artwork" id="section-3-2.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="528" viewBox="0 0 528 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-              <path d="M 8,64 L 8,192" fill="none" stroke="black"></path>
-              <path d="M 88,64 L 88,96" fill="none" stroke="black"></path>
-              <path d="M 104,64 L 104,96" fill="none" stroke="black"></path>
-              <path d="M 136,64 L 136,96" fill="none" stroke="black"></path>
-              <path d="M 264,160 L 264,192" fill="none" stroke="black"></path>
-              <path d="M 520,64 L 520,160" fill="none" stroke="black"></path>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="192" width="528" viewBox="0 0 528 192" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,64 L 8,176" fill="none" stroke="black"></path>
+              <path d="M 264,144 L 264,176" fill="none" stroke="black"></path>
+              <path d="M 520,64 L 520,144" fill="none" stroke="black"></path>
               <path d="M 8,64 L 520,64" fill="none" stroke="black"></path>
-              <path d="M 8,96 L 136,96" fill="none" stroke="black"></path>
-              <path d="M 264,160 L 520,160" fill="none" stroke="black"></path>
-              <path d="M 8,192 L 264,192" fill="none" stroke="black"></path>
+              <path d="M 264,144 L 520,144" fill="none" stroke="black"></path>
+              <path d="M 8,176 L 264,176" fill="none" stroke="black"></path>
               <g class="text">
                 <text x="16" y="36">0</text>
                 <text x="176" y="36">1</text>
@@ -2049,11 +2037,8 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
                 <text x="480" y="52">9</text>
                 <text x="496" y="52">0</text>
                 <text x="512" y="52">1</text>
-                <text x="44" y="84">reserved</text>
-                <text x="96" y="84">R</text>
-                <text x="120" y="84">DCI</text>
-                <text x="252" y="132">DTLS</text>
-                <text x="304" y="132">Message</text>
+                <text x="252" y="116">DTLS</text>
+                <text x="304" y="116">Message</text>
               </g>
             </svg><a href="#section-3-2.1.1" class="pilcrow">¶</a>
 </div>
@@ -2063,38 +2048,13 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
         </figcaption></figure>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-3-3">
-        <dt id="section-3-3.1">reserved: 5 bits</dt>
+        <dt id="section-3-3.1">DTLS Message: variable length</dt>
         <dd style="margin-left: 1.5em" id="section-3-3.2">
-          <p id="section-3-3.2.1">Reserved bits for future use. Sender MUST set these bits to 0 and
-MUST be ignored on reception.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-3.3">R: 1 bit (boolean)</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.4">
-          <p id="section-3-3.4.1">Restart indicator. If this bit is set this DTLS message is for the
-restart DTLS Connection with the index indicated by the
-DCI field. If not set, then a traffic DCI is indicated.<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-3.5">DCI: 2 bits (unsigned integer)</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.6">
-          <p id="section-3-3.6.1">DTLS Connection Index is the lower two bits of an DTLS Connection
- Index counter for the traffic or restart DTLS connection index.
- This is a counter implemented in DTLS in
- SCTP that is used to identify which DTLS connection instance that
- is capable of processing any received packet or DTLS message over
- an user message. This counter is recommended to be the lower part
- of a larger variable.
- DCI is unrelated to the DTLS Connection ID <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-3-3.6.1" class="pilcrow">¶</a></p>
-</dd>
-        <dd class="break"></dd>
-<dt id="section-3-3.7">DTLS Message: variable length</dt>
-        <dd style="margin-left: 1.5em" id="section-3-3.8">
-          <p id="section-3-3.8.1">One or more DTLS records. In cases more
+          <p id="section-3-3.2.1">One or more DTLS records. In cases more
  than one DTLS record is included all DTLS records except the last
  MUST include a length field. Note that this matches what is
  specified in DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> will always include the length
- field in each record.<a href="#section-3-3.8.1" class="pilcrow">¶</a></p>
+ field in each record.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -2118,8 +2078,7 @@ integration with SCTP.<a href="#section-4-1" class="pilcrow">¶</a></p>
 establishes shared keys with the remote peer. As soon as the SCTP
 State Machine enters PROTECTION INITILIZATION state, DTLS in SCTP is
 responsible for progressing to the PROTECTED state when DTLS handshake
-has completed. The DCI counter is initialized to the value zero that
-is used for the initial DTLS handshake.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+has completed.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <div id="protection-initilization-state">
 <section id="section-4.1.1">
           <h4 id="name-protection-initilization-st">
@@ -2127,28 +2086,12 @@ is used for the initial DTLS handshake.<a href="#section-4.1-1" class="pilcrow">
           </h4>
 <p id="section-4.1.1-1">When entering PROTECTION INITILIZATION state, DTLS will start the handshake
 according to <a href="#dtls-handshake" class="auto internal xref">Section 6.1</a>.<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-2">DTLS being initialized for a new SCTP association will set the Traffic
-DCI counter = 0, which implies a DCI field value of 0, for the initial
-DTLS connection. The DTLS handshake messages are transmitted from this
-endpoint to the peer using SCTP User message <a href="#dtls-user-message" class="auto internal xref">Section 3</a>
-with the PPID value set to DTLS Chunk Key-Management Messages
-<span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. Note that in case of SCTP
-association restart, the negotiation of the new Traffic DTLS
-connection SHALL still use a new Traffic DCI counter = 0 as the restarting
-SCTP endpoint may not know the old traffic DCI counter value for the
-last active DTLS connection.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-3">When in PROTECTION INITILIZATION state, DTLS in SCTP MAY create a DTLS
-connection for Restart purposes. Such Restart connection is identified
-by a Restart DCI, that is based on a DCI counter independent from the
-traffic DCI. Whilst the first Restart DCI has value = 0, further
-Restart DCI will be increased using the same procedure than Traffic
-DCI and implementing the same parallel connection mechanism (see
-<a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a> and <a href="#remove-dtls-connection" class="auto internal xref">Section 4.2.2</a>).<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-4">When a successful handshake for the traffic DCI = 0 has been completed
-and the keying material is established for DTLS connection and set for
-the DCI the DTLS chunk Handler will move to the VALIDATION state and
+<p id="section-4.1.1-2">When a successful handshake has been completed, the Traffic DTLS Key Context
+and the Restart DTLS Key Context will be created by deriving the
+keys from the DTLS connection.
+At that point the DTLS chunk Handler will move to the VALIDATION state and
 perform validation and then move SCTP State Machine into PROTECTED
-state.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
+state.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protected-state">
