@@ -1240,14 +1240,6 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
                 <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-dtls-key-update" class="internal xref">DTLS Key Update</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
-                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-initiator" class="internal xref">Initiator</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
-                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-responder" class="internal xref">Responder</a></p>
-</li>
-                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
                 <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-error-cases" class="internal xref">Error Cases</a></p>
@@ -2107,8 +2099,6 @@ forward secrecy keys, the existing DTLS 1.3 connection is being
 replaced with a new one by first opening a new parallel DTLS
 connection as further specified in <a href="#parallel-dtls" class="auto internal xref">Section 7</a> and then close
 the old DTLS connection.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-2">When in PROTECTED state, DTLS in SCTP if it has not yet been done,
-SHALL create a DTLS connection for Restart purposes.<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="shutdown-states">
@@ -2133,7 +2123,7 @@ transmissions, i.e. DTLS close_notify is not transmitted.<a href="#section-4.1.3
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-dtls-connection-handling" class="section-name selfRef">DTLS Connection Handling</a>
         </h3>
 <p id="section-4.2-1">It's up to DTLS key-establishment function to manage the DTLS
-connections and their related DCI state in the DTLS chunk.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+connections and their related DTLS Key Context in the DTLS chunk.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <div id="add-dtls-connection">
 <section id="section-4.2.1">
           <h4 id="name-add-a-new-dtls-connection">
@@ -2141,13 +2131,7 @@ connections and their related DCI state in the DTLS chunk.<a href="#section-4.2-
           </h4>
 <p id="section-4.2.1-1">Either peer can add a new DTLS connection to the SCTP association at
 any time, but no more than 2 DTLS connections can exist at the same
-time per DTLS connection type (Traffic or Restart).  The new DCI
-value shall be the last active Traffic or Restart DCI increased by one.
-What is encoded in the DTLS chunk and DTLS user messages are the
-DCI value modulo 4. This makes the attempt to create a new DTLS
-connection to use the same, known, value of DCI from either peer.  A
-new handshake will be initiated by DTLS using the new DCI.  Details of
-the handshake are described in <a href="#dtls-handshake" class="auto internal xref">Section 6.1</a>.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+time. Details of the handshake are described in <a href="#dtls-handshake" class="auto internal xref">Section 6.1</a>.<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.1-2">As either endpoint can initiate a DTLS handshake at the same time,
 either endpoint may receive a DTLS ClientHello message when it has
 sent its own ClientHello. In this case the ClientHello from the
@@ -2156,8 +2140,7 @@ previous DTLS connection shall be continued to be processed and the
 other dropped.<a href="#section-4.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.2.1-3">When the handshake has been completed successfully, the new DTLS
 connection will be possible to use, if the handshake is
-not completed successfully, the new DCI value will not be considered
-used and a next DTLS handshake attempt will reuse that DCI.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
+not completed successfully, a next DTLS handshake attempt will be tried.<a href="#section-4.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="remove-dtls-connection">
@@ -2167,9 +2150,9 @@ used and a next DTLS handshake attempt will reuse that DCI.<a href="#section-4.2
           </h4>
 <p id="section-4.2.2-1">A DTLS connection is removed when a
 newer DTLS connection is in use. It is RECOMMENDED to not initiate
-removal until at least one SCTP packet protected by the new DTLS
-connection has been received, and any transmitted packets protected
-using the new DTLS connection has been acknowledge, alternatively one
+removal until at least one SCTP packet protected by the new DTLS Key Context
+has been received, and any transmitted packets protected
+using the new DTLS Key Context has been acknowledge, alternatively one
 Maximum Segment Lifetime (120 seconds) has passed since the last SCTP
 packet protected by the old DTLS connection was transmitted.<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.2-2">Either peers can initialize the removal of a DTLS connection from the
@@ -2177,7 +2160,7 @@ current SCTP association when needed when a new have been established.
 The closing of the DTLS connection when the SCTP association is in
 PROTECTED and ESTABLISHED state is done by having the DTLS connection
 send a DTLS close_notify. When DTLS closure for a DTLS connection is
-completed, the related DCI information in the DTLS chunk is released.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+completed, the related DTLS Key Context in the DTLS chunk are released.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="removal_dtls_consideration">
@@ -2190,20 +2173,17 @@ described above in <a href="#remove-dtls-connection" class="auto internal xref">
 of the Association. This section describes how the implementation
 should take care of the DTLS connection removal in details.<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-2">The initial DTLS connection exists as soon as Association reaches
-the PROTECTED state. As long as one DCI only exists, that DTLS
-connection SHALL NOT be removed as it won't be possible for the
-Association to proceed further. In such case the implementation
-SHALL take care of instantiating all the needed DCI and provide
-them valid keys in order to reach a condition where failure in
-the current DCI, or in any alternative DCI, won't cause a deadlock.
-In general a DTLS connection can be removed when there's at least
-another active DTLS connection with valid keys that can be used
+the PROTECTED state. As long as one DTLS connection only exists,
+that DTLS connection SHALL NOT be removed as it won't be possible for the
+Association to proceed further.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-3">In general a DTLS connection can be removed when there's at least
+another active DTLS connection with valid DTLS Key Context that can be used
 for negotiating further DTLS DTLS 1.3 connections.
-In case the DTLS connection is removed and no useable DCI exist
-for DTLS 1.3 negotiation, the Association SHALL be ABORTED.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-3">It is up to the implementation to guarantee that at least one
-available DCI and a spare DCI exists at any time, for avoiding
-that undesired DTLS connection closure causes the Association abortion.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
+In case the DTLS connection is removed and no useable DTLS Key Context exist
+for DTLS 1.3 negotiation, the Association SHALL be ABORTED.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-4">It is up to the implementation to guarantee that aDTLS Key Context exists
+at any time, for avoiding that undesired DTLS connection closure causes
+the Association abortion.<a href="#section-4.2.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2213,99 +2193,11 @@ that undesired DTLS connection closure causes the Association abortion.<a href="
         <h3 id="name-dtls-key-update">
 <a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-dtls-key-update" class="section-name selfRef">DTLS Key Update</a>
         </h3>
-<p id="section-4.3-1">To perform a DTLS Key Update when using the DTLS chunk for protection
-the following process is performed. Either endpoint can trigger a DTLS
-key update when needed to update the key used. The DTLS key-update
-process is detailed in Section 8 of <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> including a example of
-the DTLS key update procedure. Note that in line with DTLS, and in
-contrast to TLS, DTLS in SCTP endpoints MUST NOT start using new epoch
-keys until the DTLS ACK has been recived. This to avoid being unable
-to process any DTLS chunk due to the key-update in case of network
-packet reordering or usage of multiple paths.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">Note: The below role describes the keys in realtion to the endpoint
-and traffic it will receive or send. This will have to be translated
-into client or server key depending on the role the endpoint has in
-the DTLS connection the KeyUpdate happens in.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
-<div id="initiator">
-<section id="section-4.3.1">
-          <h4 id="name-initiator">
-<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-initiator" class="section-name selfRef">Initiator</a>
-          </h4>
-<p id="section-4.3.1-1">The below assumes that the Intitiator (I) are currentnly using key
-epoch N.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.3.1-2">
-<li id="section-4.3.1-2.1">
-              <p id="section-4.3.1-2.1.1">The endpoint Initiates the key update and generates the new key
-  for Epoch N+1. Epoch N+1 transmission key-materaial is set for the
-  current DCI and epoch N+1 but not yet enabled for use. DTLS
-  generates DTLS records containing the KeyUpdate DTLS message and
-  update_requested, which is then sent using SCTP user message
-  (<a href="#dtls-user-message" class="auto internal xref">Section 3</a>) to the responder.<a href="#section-4.3.1-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.1-2.2">
-              <p id="section-4.3.1-2.2.1">Initiator receives a DTLS user message containing the DTLS ACK
-  message acknowledging the reception of the KeyUpdate message sent in
-  step 1. The Initiator actives the new Epoch N+1 key in the DTLS
-  chunk for protection of future transmissions of SCTP packets. The
-  epoch N send direction key can be removed from the DTLS chunk key
-  store.<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.1-2.3">
-              <p id="section-4.3.1-2.3.1">Initiator receives a DTLS user message with the Responder's
-  KeyUpdate message. The initator generates the recevie keys for epoch
-  N+1 using the received message and installs them in the DTLS chunks
-  key store. Then it generates a DTLS ACK for the KeyUpdate and sends
-  it to the responder as a SCTP user message.<a href="#section-4.3.1-2.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.1-2.4">
-              <p id="section-4.3.1-2.4.1">When the first SCTP packet protected by epoch N+1 has been
-  received and succesfully decrypted by DTLS chunk the epoch N reception
-  keys can be removed. Although to deal with network reordering, a
-  delay of no more than 2 minutes are RECOMMENDED.<a href="#section-4.3.1-2.4.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-<p id="section-4.3.1-3">This completes the key-update procedure.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.3.1-4">Note that even if both endpoints runs the Initiator process the
-KeyUpdate will complete. The main difference is that step 3 may occur
-before step 2 has happened.<a href="#section-4.3.1-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="responder">
-<section id="section-4.3.2">
-          <h4 id="name-responder">
-<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-responder" class="section-name selfRef">Responder</a>
-          </h4>
-<p id="section-4.3.2-1">The process for a responder to a peer initiating KeyUpdate.<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.3.2-2">
-<li id="section-4.3.2-2.1">
-              <p id="section-4.3.2-2.1.1">The responder receives an SCTP DTLS user message containing a
-  KeyUpdate message. The epoch N+1 keys reception keys are generated
-  and installed into the DTLS chunk key store. A DTLS ACK message is
-  generated and transmitted to the peer using a SCTP user message.<a href="#section-4.3.2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.2-2.2">
-              <p id="section-4.3.2-2.2.1">The responder initiates its own Key Update by generating keys and
-  creating the KeyUpdate message. The send direction keys for epoch
-  N+1 is installed but not enabled for use. The KeyUpdate message is
-  transmitted to the peer using a SCTP user message.<a href="#section-4.3.2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.2-2.3">
-              <p id="section-4.3.2-2.3.1">The responder receives a DTLS user message containing the DTLS
-  ACK message acknowledging the reception of the KeyUpdate message
-  sent in step 2. The responder actives the new Epoch N+1 key in the
-  DTLS chunk for protection of future transmissions of SCTP
-  packets. The epoch N send direction key can be removed from the DTLS
-  chunk key store.<a href="#section-4.3.2-2.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-4.3.2-2.4">
-              <p id="section-4.3.2-2.4.1">When the first SCTP packet protected by epoch N+1 has been
-  received and succesfully decrypted by DTLS chunk the epoch N reception
-  keys can be removed. Although to deal with network reordering, a
-  delay of no more than 2 minutes are RECOMMENDED.<a href="#section-4.3.2-2.4.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-</section>
-</div>
+<p id="section-4.3-1">DTLS Key Update MUST NOT be used.
+DTLS Key Context replacemente MUST be used instead, by means creating
+a new DTLS connection as specified in <a href="#parallel-dtls" class="auto internal xref">Section 7</a>, deriving the
+new Traffic DTLS Key Context, the new Restart DTLS Key Context and then
+closing the old DTLS connection.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="error-cases">
