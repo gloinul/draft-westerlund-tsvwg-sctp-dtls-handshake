@@ -164,8 +164,18 @@ SCTP-AUTH (RFC4895).
    utilizes all parts of DTLS 1.3 for the security functions like key
    exchange, authentication, encryption, integrity protection, and
    replay protection. All key management message exchange happens
-   inband over the SCTP assocation. The basic functionalities and how
-   things are related are described below.
+   inband over the SCTP assocation.
+
+   In this document we use the terms DTLS Key context for indicating a
+   Key, derived from a DTLS connection, and all relevant data that needs
+   to be provided to the Protection Operator for DTLS encryption and
+   decryption.  DTLS Key context includes Keys for sending and receiving,
+   replay window, last used sequence number. Each DTLS key context are
+   associated with a four value tuple identifying the context, consisting
+   of SCTP Association, the restart indicator, the DTLS Connection ID (if
+   used), an the DTLS epoch.
+
+   The basic functionalities and how things are related is described below.
 
    In a SCTP association where DTLS 1.3 Chunk usage has been
    negotiated in the SCTP INIT and INIT-ACK, to initilize and
@@ -178,7 +188,7 @@ SCTP-AUTH (RFC4895).
    DTLS 1.3 chunk. From that point until SCTP association termination
    the DTLS chunk will protect the SCTP packets. When the DTLS
    connection has been established and the DTLS Chunk configured with
-   keys the PVALID chunk is exchanged to verify that no downgrade
+   DTLS Key context the PVALID chunk is exchanged to verify that no downgrade
    attack between any offered protection solutions has occurred. To
    prevent manipulation, the PVALID chunks are sent encapsulated in
    DTLS chunks.
@@ -189,18 +199,15 @@ SCTP-AUTH (RFC4895).
    chunks will be protected by encapsulating them in
    DTLS chunks as defined in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
    The DTLS chunk protects all of the SCTP Chunks to be sent in a SCTP
-   packet. Using the selected key-material the DTLS Protection
+   packet. Using the current DTLS Key context the DTLS Protection
    operator protects the plain text producing a DTLS Record that is
    encapsualted in the DTLS chunk and the transmitted as a SCTP packet
    with a common header.
 
    In the receiving SCTP endpoint each incoming SCTP packet on any of
    its interfaces and ports are matched to the SCTP association based
-   on ports and VTAG in the common header. In that association context
-   for the DTLS chunk the DTLS Connection Index (DCI) is used to look
-   up the key-material from the one DTLS connection used to
-   authenticate the peer and establish this key-material. Using the
-   identified key-material and context the content of the DTLS chunk
+   on ports and VTAG in the common header. Using the
+   current DTLS Key context the content of the DTLS chunk
    is attempted to be processed, including replay protection,
    decryption, and integrity checking. And if decryption and integrity
    verification was successful the produced plain text of one or more
@@ -210,16 +217,13 @@ SCTP-AUTH (RFC4895).
 
    When mutual re-authentication or rekeying with ephemeral key
    exchange is needed or desired by either endpoint a new DTLS
-   connection handshake is performed between the SCTP endpoints. A
-   different DCI than currently used in the DTLS chunk are used to
-   indicate that this is a new handshake. The DCI is sent as pre-amble
-   to any DTLS message sent as SCTP user message. When the handshake
+   connection handshake is performed between the SCTP endpoints
+   and a new DTLS Key context is created. When the handshake
    has completed the DTLS in SCTP implementation can simply switch to
-   use this DTLS connection's key-material in the DTLS chunk.  After a
+   use the new DTLS Key context in the DTLS chunk.  After a
    short while (no longer than 2 min) to enable any outstanding
    packets to drain from the network path between the endpoints the
-   old DTLS connection can be terminated and the key-material deleted
-   from the DTLS chunk's key store.
+   old DTLS Key context can be deleted from the DTLS chunk's key store.
 
    The DTLS connection is free to send any alert, handshake message, or
    other non-application data to its peer at any point in time. Thus,
@@ -330,8 +334,8 @@ in regard to SCTP and upper layer protocol"}
      usually will result in the need to terminate the SCTP association
      to restart the ULP session to avoid any issues due to
      inconsistencies. DTLS in SCTP is robustly handling of any early
-     discard of the DTLS key-material after having switched to a new
-     established DTLS connection and its key-material. Any outstanding
+     discard of the DTLS Key context after having switched to a new
+     established DTLS Key context. Any outstanding
      packet that has not been decoded yet will simply be treated as
      lost between the SCTP endpoints, and SCTP's retransmission will
      retransmit any user message data that requires it. Also, the
@@ -367,7 +371,7 @@ in regard to SCTP and upper layer protocol"}
    There are several significant differences in regard to
    implementation between the two realizations.
 
-   * DTLS in SCTP do requires the DTLS chunk to be implemented in the
+   * DTLS in SCTP do require the DTLS chunk to be implemented in the
      SCTP stack implementation, and not as an adaptation layer above
      the SCTP stack which DTLS/SCTP instead requires. This has some
      extra challenges for operating system level
@@ -379,7 +383,7 @@ in regard to SCTP and upper layer protocol"}
      that the DTLS implementation is split. Where the protection
      operations performed to create DTLS records needs to be
      implemented in the kernel and have an appropriate API for setting
-     keying materia and managed the functions of the protection
+     DTLS Key context and managed the functions of the protection
      operation. While the DTLS handshake is residing as an application
      on top of SCTP interface.
 
@@ -425,28 +429,32 @@ in regard to SCTP and upper layer protocol"}
    : An SCTP association.
 
    Connection:
-   : A DTLS connection. It is uniquely identified by a DTLS
-   connection index (DCI).
+   : A DTLS connection.
 
-  Restart DCI:
-  : A DTLS connection index indicating a DTLS connection to be
+   DTLS Key context:
+   : A Key, derived from a DTLS connection, and all relevant data that needs
+   to be provided to the Protection Operator for DTLS encryption and
+   decryption.
+
+  Restart DTLS Key context:
+  : A DTLS Key context to be
     used for an SCTP Association Restart
 
-   Stream:
+  Stream:
    : A unidirectional stream of an SCTP association.  It is
    uniquely identified by a stream identifier.
 
-   Traffic DCI:
-   : A DTLS Connection index indicating a DTLS connection used to
-     protect the regular SCTP traffic, i.e. not a restart DCI.
+  Traffic DTLS Key context:
+   : A DTLS Key context used to
+    protect the regular SCTP traffic, i.e. not a restart DTLS Key context.
 
 ## Abbreviations
 
    AEAD:
    : Authenticated Encryption with Associated Data
 
-   DCI:
-   : DTLS Connection Index
+   DKC:
+   : DTLS Key Context
 
    DTLS:
    : Datagram Transport Layer Security
@@ -481,7 +489,7 @@ in regard to SCTP and upper layer protocol"}
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Type = 0x4x   |reserved |R|DCI|         Chunk Length          |
+| Type = 0x4x   |reserved     |R|         Chunk Length          |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |                                                               |
 |                            Payload                            |
@@ -492,26 +500,15 @@ in regard to SCTP and upper layer protocol"}
 ~~~~~~~~~~~
 {: #sctp-dtls-chunk-structure title="DTLS Chunk Structure"}
 
-reserved: 5 bits
+reserved: 7 bits
 
 : Reserved bits for future use.
 
 R: 1 bit (boolean)
 
 : Restart indicator. If this bit is set this DTLS chunk is protected
-  with an restart DTLS Connection with the index indicated by the
-  DCI. If not set, then a traffic DCI is indicated.
-
-DCI: 2 bits (unsigned integer)
-
-: DTLS Connection Index is the lower two bits of an DTLS Connection
-   Index counter for the traffic or restart DTLS connection index.
-   This is a counter implemented in DTLS in
-   SCTP that is used to identify which DTLS connection instance that
-   is capable of processing any received packet or DTLS message over
-   an user message. This counter is recommended to be the lower part
-   of a larger variable.
-   DCI is unrelated to the DTLS Connection ID (CID) {{RFC9147}}.
+  with an restart DTLS Key context. If not set, then a traffic
+  DTLS Key context is indicated.
 
 Payload: variable length
 
@@ -526,9 +523,7 @@ set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
 where each message is configured for reliable and in-order delivery
 with the PPID set to DTLS Chunk Key-Management Messages
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The SCTP user message is
-created by having each DTLS message prepended with a single byte
-containing the Restart flag and DTLS connection index value. These user
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. These user
 messages MAY contain one or more DTLS records. The SCTP stream ID used
 MAY be any stream ID that the ULP alreay uses, and if not know Stream
 0. Note that all fragments of a handshake message MUST be sent with
@@ -538,8 +533,7 @@ the same stream ID to ensure the in-order delivery.
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|reserved |R|DCI|                                               |
-+-+-+-+-+-+-+-+-+                                               |
+|                                                               |
 |                                                               |
 |                            DTLS Message                       |
 |                                                               |
@@ -548,28 +542,6 @@ the same stream ID to ensure the in-order delivery.
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~~
 {: #sctp-dtls-user-message title="DTLS User Message Structure"}
-
-reserved: 5 bits
-
-: Reserved bits for future use. Sender MUST set these bits to 0 and
-  MUST be ignored on reception.
-
-R: 1 bit (boolean)
-
-: Restart indicator. If this bit is set this DTLS message is for the
-  restart DTLS Connection with the index indicated by the
-  DCI field. If not set, then a traffic DCI is indicated.
-
-DCI: 2 bits (unsigned integer)
-
-: DTLS Connection Index is the lower two bits of an DTLS Connection
-   Index counter for the traffic or restart DTLS connection index.
-   This is a counter implemented in DTLS in
-   SCTP that is used to identify which DTLS connection instance that
-   is capable of processing any received packet or DTLS message over
-   an user message. This counter is recommended to be the lower part
-   of a larger variable.
-   DCI is unrelated to the DTLS Connection ID {{RFC9147}}.
 
 
 DTLS Message: variable length
@@ -594,36 +566,17 @@ DTLS in SCTP uses inband key-establishment, thus the DTLS handshake
 establishes shared keys with the remote peer. As soon as the SCTP
 State Machine enters PROTECTION INITILIZATION state, DTLS in SCTP is
 responsible for progressing to the PROTECTED state when DTLS handshake
-has completed. The DCI counter is initialized to the value zero that
-is used for the initial DTLS handshake.
+has completed.
 
 ### PROTECTION INITILIZATION state
 
 When entering PROTECTION INITILIZATION state, DTLS will start the handshake
 according to {{dtls-handshake}}.
 
-DTLS being initialized for a new SCTP association will set the Traffic
-DCI counter = 0, which implies a DCI field value of 0, for the initial
-DTLS connection. The DTLS handshake messages are transmitted from this
-endpoint to the peer using SCTP User message {{dtls-user-message}}
-with the PPID value set to DTLS Chunk Key-Management Messages
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. Note that in case of SCTP
-association restart, the negotiation of the new Traffic DTLS
-connection SHALL still use a new Traffic DCI counter = 0 as the restarting
-SCTP endpoint may not know the old traffic DCI counter value for the
-last active DTLS connection.
-
-When in PROTECTION INITILIZATION state, DTLS in SCTP MAY create a DTLS
-connection for Restart purposes. Such Restart connection is identified
-by a Restart DCI, that is based on a DCI counter independent from the
-traffic DCI. Whilst the first Restart DCI has value = 0, further
-Restart DCI will be increased using the same procedure than Traffic
-DCI and implementing the same parallel connection mechanism (see
-{{add-dtls-connection}} and {{remove-dtls-connection}}).
-
-When a successful handshake for the traffic DCI = 0 has been completed
-and the keying material is established for DTLS connection and set for
-the DCI the DTLS chunk Handler will move to the VALIDATION state and
+When a successful handshake has been completed, the Traffic DTLS Key Context
+and the Restart DTLS Key Context will be created by deriving the
+keys from the DTLS connection.
+At that point the DTLS chunk Handler will move to the VALIDATION state and
 perform validation and then move SCTP State Machine into PROTECTED
 state.
 
