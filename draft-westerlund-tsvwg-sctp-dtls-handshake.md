@@ -64,7 +64,9 @@ informative:
 
 normative:
   RFC4820:
+  RFC5869:
   RFC6347:
+  RFC8446:
   RFC8996:
   RFC9147:
   RFC9325:
@@ -863,15 +865,13 @@ provide ephemeral key exchange.
    This section specifies how DTLS in SCTP is established
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
 
-   A DTLS in SCTP Association is built up with traffic
-   DTLS connection and Restart DTLS connection.
+   A DTLS in SCTP Association is built up with a DTLS connection,
+   from that connection Traffic DTLS Key Context and Restart DTLS
+   Key Context are derived.
 
-   Traffic DTLS connection is established as part of extra procedures
+   The DTLS connection is established as part of extra procedures
    for the DTLS chunk initial handshake (see
-   {{initial_dtls_connection}}) whilst Restart DTLS connection may be
-   established when Association is in PROTECTION INITILIZATION state
-   or later, and follows the procedure described in
-   {{further_dtls_connection}}.
+   {{initial_dtls_connection}}).
 
 ## DTLS Handshake {#dtls-handshake}
 
@@ -895,20 +895,24 @@ provide ephemeral key exchange.
    As soon the SCTP Association has entered the SCTP state PROTECTION
    INITILIZATION as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} the
    DTLS handshake procedure is initiated by the endpoint that has
-   initiated the SCTP association. The initial DTLS handshake or as a
-   result of a SCTP association restart SHALL use DCI = 0;
+   initiated the SCTP association.
 
    The DTLS endpoint will send the DTLS message in one or more SCTP
    user message depending if the DTLS endpoint fragments the message
    or not {{dtls-user-message}}.  The DTLS instance SHOULD NOT
    use DTLS retransmission to repair any packet losses of handshake
-   message fragment. Note: If the DTLS implementation support
+   message fragment. Note: If the DTLS implementation supports
    configuring a MTU larger than the actual IP MTU it MAY be used as
    SCTP provides reliability and fragmentation.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
-   accepted the keying material is installed for the DTLS chunk. This
+   accepted then Traffic DTLS Key Context and Restart DTLS Key Context
+   are created by deriving the keys from the DTLS connection.
+
+  ###### Here we need to explain how to derive Traffic and Restart Keys
+
+   The DTLS Key Contextes are installed for the DTLS chunk. This
    then triggers validated of the association establishment (see
    {{protocol_overview}}) by handshaking PVALID chunks inside DTLS
    CHUNK payload.
