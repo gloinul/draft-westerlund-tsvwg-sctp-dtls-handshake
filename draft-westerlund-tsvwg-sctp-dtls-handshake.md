@@ -873,6 +873,13 @@ provide ephemeral key exchange.
    for the DTLS chunk initial handshake (see
    {{initial_dtls_connection}}).
 
+
+## DTLS Key Context derivation {#dtls-key-derivation}
+
+  This section describes how DTLS Key Contect are derived from
+  the DTLS handshake.
+
+
 ## DTLS Handshake {#dtls-handshake}
 
 ### Handshake of initial DTLS connection {#initial_dtls_connection}
@@ -908,14 +915,11 @@ provide ephemeral key exchange.
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
    accepted then Traffic DTLS Key Context and Restart DTLS Key Context
-   are created by deriving the keys from the DTLS connection.
-
-  ###### Here we need to explain how to derive Traffic and Restart Keys
+   as specified in {{dtls-key-derivation}}.
 
    The DTLS Key Contextes are installed for the DTLS chunk. This
    then triggers validated of the association establishment (see
-   {{protocol_overview}}) by handshaking PVALID chunks inside DTLS
-   CHUNK payload.
+   {{protocol_overview}}) by handshaking PVALID messages.
 
    Once the Association has been validated, then the SCTP association
    is informed that it can move to the PROTECTED state.
@@ -963,7 +967,7 @@ with the DTLS Chunk Key-Management Messages PPID.
 
    When the SCTP Association has entered the PROTECTED state, each of
    the endpoint can initiate a DTLS handshake for rekeying when
-   necessary of the traffic or restart DTLS connections.
+   necessary.
 
    The DTLS endpoint will if necessary fragment the handshake into
    multiple records. Each DTLS handshake message fragment
@@ -977,14 +981,6 @@ with the DTLS Chunk Key-Management Messages PPID.
    If the DTLS handshake failed the SCTP association SHALL generate
    an ERROR chunk with the Error in Protection error cause, with
    extra error causes "Error During Protection Handshake".
-
-   The DCI to be used for the handshake depends on the purpose
-   of the DTLS connection. If this DTLS connection is being used
-   for traffic purpose, DCI value is computed as the last active
-   Traffic DCI increased by one modulo 4.
-   If this DTLS connection is being used for Restart purpose
-   DCI value is computed as the last active Restart DCI increased
-   by one modulo 4 and setting R bit to 1.
 
 ~~~~~~~~~~~ aasvg
 
@@ -1008,53 +1004,24 @@ of DATA chunks with the DTLS Chunk Key-Management Messages PPID.
 ## SCTP Association Restart {#sctp-restart}
 
 In order to achieve an Association Restart as described in
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a safe connection
+{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a Restart DTLS Key Context
 dedicated to Restart SHALL exist and be available.  Furthermore, both
-peers SHALL have safely stored both the current Restart DCI value and the
-related keying material.  Here we assume that Restart DCI and keying
-material are maintained across the events leading to SCTP Restart
-request.
+peers SHALL have safely stored both the current Restart DTLS Key Context.
+Here we assume that Restart DTLS Key Context is maintained across
+the events leading to SCTP Restart request.
 
-### Handshake of initial DTLS Restart connection {#init-dtls-restart-connection}
+### Installation of initial Restart DTLS Key Context {#init-dtls-restart-context}
 
 As soon as the Association has reached the PROTECTED INITILIZATION state, a
-DTLS Restart connection MAY be instantiated.  The instantiation of
-the initial DTLS Restart connection follows the rules given in
-{{further_dtls_connection}} where the DCI = 0 (that is initial DCI
-= 0) and R bit = 1. Unless a SCTP association restart has happened and
-the restart DCI has been used. In this case a new restart DTLS
-connection SHALL be established using a restart DCI counter of the current + 1.
+Restart DTLS Key Context SHALL be installed.
 
 It MAY exist a time gap where the Association is in PROTECTED state
-but no DTLS Restart connection exists yet. If a SCTP Restart procedure
+but no Restart DTLS Key Context has been installed yet. If a SCTP Restart procedure
 will be initiated during that time, it will fail and the Association
 will also fail.
 
-Once initiated, no traffic will be sent over the Restart DTLS
-connection so that both endpoints will have a known DTLS record state.
-
-### Handshake of further DTLS Restart connection {#further-dtls-restart-connection}
-
-After the initial DTLS Restart connection has been established, at
-least an active DTLS Restart connection shall exist in a known state.
-It is recommended that updating of DTLS Restart connection follows the
-same times and rules as the traffic DTLS connections and is
-implemented by following the rules described in {{parallel-dtls}}.
-
-The next DTLS Restart DCI is computed as described in
-{{add-dtls-connection}}.
-
-The handshake of further DTLS Restart Connection is sequenced as follows:
-
-- Perform the DTLS Handshake as described in {{further_dtls_connection}} on the next Restart DCI
-
-- The Responder will store the new key before sending DTLS ACK
-
-- The Initiator at reception of DTLS ACK will initiate closing the current Restart DCI
-
-- The Responder will reply to the DTLS Close and remove the old key
-
-- The Initiator receives the answer and remove the old key
+Once installed, no traffic will be sent over the Restart DTLS Key Context
+so that both endpoints will have a known DTLS record state.
 
 
 ### SCTP Association Restart Procedure {#sctp-assoc-restart-procedure}
@@ -1063,33 +1030,34 @@ The DTLS in SCTP Association Restart is meant to preserve the security
 characteristics.
 
 In order the Association Restart to proceed both Initiator and Responder
-SHALL use the same Restart DCI for COOKIE-ECHO/COOKIE-ACK handshake, that implies
-that the Initiator must preserve the Key for that DCI and that the Responder
-SHALL NOT change the Key for the Restart DCI during the Restart procedure.
+SHALL use the same Restart DTLS Key Context for COOKIE-ECHO/COOKIE-ACK
+handshake, that implies that the Initiator must preserve the Restart
+DTLS Key Context and that the Responder SHALL NOT change the Restart
+DTLS Key Context during the Restart procedure.
 
 ~~~~~~~~~~~ aasvg
 
 Initiator                                     Responder
     |                                             | -.
-    +--------------------[INIT]------------------>|   | Plain SCTP
-    |<-----------------[INIT-ACK]-----------------+   +-----------
-    |                                             | -'
-    |                                             | -.
-    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Encrypted
-    |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +----------
-    |                                             | -'
-    |                                             | -.
-    +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Traffic DCI
-    +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
-    |<-------------[DATA(DTLS ACK)]---------------+   |
+    +------------[DTLS CHUNK(INIT)]-------------->|   |
+    |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+    |                                             |   | Using
+    |                                             |   | SCTP
+    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
+    |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
     |                                             | -'
     |                                             | -.
     +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New Restart DCI
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS Connection
     +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
     |<-------------[DATA(DTLS ACK)]---------------+   |
     |                                             | -'
+    |                    ...                      | -.
+    |                    ...                      |   | Derive new Traffic
+    |                    ...                      |   | and Restart
+    |                    ...                      |   | DTLS Key Contextes
+    |                    ...                      |   +----------------
+    |                    ...                      | -'
     |                                             | -.
     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
     +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
@@ -1104,33 +1072,33 @@ SCTP Association Restart.
 
 From procedure viewpoint the sequence is the following:
 
-- Initiator sends plain INIT (VTag=0), Responder replies INIT-ACK
+- Initiator sends INIT (VTag=0), Responder replies INIT-ACK
+  both encrypted using Restart DTLS Key Context
 
 - Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key
-  tied to the Restart DCI
+  tied to the Restart DTLS Key Context
 
 - Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with
-  the Key tied to the Restart DCI
+  the to the Restart DTLS Key Context
 
 - Initiator sends handshakes for new Traffic DTLS connnection as well
   as new Restart DTLS connection.
 
 - When the handshake for the a new traffic DTLS connection has been
-  completed, the DCI used to protect
-  any SCTP chunks is switched from the restart DCI to the new traffic
-  DCI enabling the Validation and transit to PROTECTED state.
+  completed, new Traffic and Restart DTLS Key Contextes are derived.
+  New Traffic DTLS Key Context is being used for traffic.
 
 User Data for any ULP traffic MAY be initiated immediately after
-COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DCI, that
-is even before a new Traffic DCI or a Restart DCI have been
-handshaked.  If a problem occurs before the new Restart DCI has been
-handshaked, the Association cannot be Restarted, thus it's RECOMMENDED
-the new Restart DCI to be handshaked as early as possible.
+COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DTLS Key Context, that
+is even before a new Traffic DTLS Key Context or a Restart DTLS Key Context have been
+derived.  If a problem occurs before the new Restart DTLS Key Context has been
+installed, the Association cannot be Restarted, thus it's RECOMMENDED
+the new Restart DTLS Key Context to be installed as early as possible.
 
 Note that, different than the initial Association establishment,
 the ULP traffic is permitted immediately after the
 COOKIE-ECHO/COOKIE-ACK handshake, the reason is that the
-validation has already been performed prior to the restart DCI was
+validation has already been performed prior to the restart DTLS Key Context was
 created.
 
 # Parallel DTLS Rekeying {#parallel-dtls}
@@ -1176,15 +1144,15 @@ The following state machine applies.
 |          +---------+
 |          |  AGED   |  When in AGED state a
 |          +----+----+  new DTLS connection
-|               |       is added with a new Traffic DCI
-|      NEW DTLS |       Also a new connection for Restart
-|               |       SHOULD be added with a
-|               |       new Restart DCI
+|               |       is added with a newly derived Traffic DTLS Key Context
+|      NEW DTLS |       As well as a new Restart DTLS Key Context
+|               |
+|               |
 |               V
 |          +---------+
 |          |   OLD   |  In OLD state there
 |          +----+----+  are 2 active DTLS connections
-|               |       Traffic is switched to the new one
+|               |       Traffic is switched to the new Traffic DTLS Key Context
 |      SWITCH   |
 |               V
 |          +---------+
@@ -1206,30 +1174,22 @@ The following state machine applies.
 
 Trigger for rekeying can either be a local AGING event, triggered by
 the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
-event, triggered by receiving a DTLS record on the Traffic DCI that would be
-used for new DTLS connection. In such case a new DTLS connection
-shall be added according to {{add-dtls-connection}} with a new Traffic DCI.
+event, triggered by receiving a DTLS record on the Traffic Traffic DTLS Key Context
+that would be used for new DTLS connection. In such case a new DTLS connection
+shall be added according to {{add-dtls-connection}} with a new Traffic DTLS Key Context.
 
-As soon as the new DTLS connection completes handshaking, the traffic
-is moved from the old one, then the procedure for closing the old DTLS
+As soon as the new DTLS connection completes handshaking,
+and the Traffic and Restart DTLS Key Contextes have been derived, the traffic
+is moved from the old Traffic DTLS Key Context, then the procedure for closing the old DTLS
 connection is initiated, see {{remove-dtls-connection}}.
 
-On Restart connection, trigger for rekeying can either be a local
-AGING event, triggered by the DTLS connection meeting the criteria for
-rekeying, or a REMOTE AGING event, triggered by receiving a DTLS
-record on the Restart DCI that would be used for new DTLS
-connection. In such case a new DTLS connection shall be added
-according to {{add-dtls-connection}} with a new Restart DCI.
 
 ## Race Condition in Rekeying
 
 A race condition may happen when both peer experience local AGING event at
 the same time and start creation of a new DTLS connection.
 
-Since the criteria for calculating a new DCI is known and specified in
-{{add-dtls-connection}}, the peers will use the same DCI for
-identifying the new DTLS connection. And the race condition is solved
-as specified in {{add-dtls-connection}}.
+The race condition is solved as specified in {{add-dtls-connection}}.
 
 
 # PMTU Discovery Considerations
@@ -1259,7 +1219,7 @@ replay protection. This arises as the key materials for DTLS epoch=3
 and higher are shared between the DTLS chunk and the DTLS handshake
 parts.
 
-This issue is primarily for implementations of SCTP implementation and
+This issue is primarily for kernel implementation of SCTP,
 thus the DTLS chunk implementation resides in kernel space, and the
 DTLS handshake resides in user space. For user space implementations
 where both DTLS handshake messages and SCTP message protection can
