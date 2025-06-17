@@ -696,7 +696,8 @@ the error different paths can be the result:
    critical issue, but can still protect packets then a the endpoint
    SHOULD attempt to establish a new DTLS connection. If that succeeds
    then the SCTP association switches over to the new DTLS connection
-   and can terminate the old one including reporting the error. In
+   replace the DTLS Key Contextes, and can terminate the old
+   DTLS connection including reporting the error. In
    case the establishment fails, then this critical issue MUST be reported
    to the SCTP association so that it can send an ABORT chunk with the
    Error in Protection cause code. This will terminate the SCTP
@@ -732,10 +733,8 @@ the error different paths can be the result:
 ### General
 
    The DTLS Connection ID SHOULD NOT be included in the DTLS records as
-   it is not needed, the DTLS chunk indicates which DTLS connection
-   the DTLS records are intended for using the DCI bits. Avoiding
-   overhead and addition implementation requirements on DTLS
-   implementation.
+   it is not needed, avoiding overhead and addition implementation
+   requirements on DTLS implementation.
 
    The DTLS record length field is normally not needed as the DTLS
    Chunk provides a length field unless multiple records are put in
@@ -748,8 +747,8 @@ the error different paths can be the result:
    Sequence number size can be adapted based on how quickly it wraps.
 
    Many of the TLS registries have a "Recommended" column. Parameters
-   not marked as "Y" are NOT RECOMMENDED to support in DTLS in
-   SCTP. Non-AEAD cipher suites or cipher suites without
+   not marked as "Y" are NOT RECOMMENDED to support.
+   Non-AEAD cipher suites or cipher suites without
    confidentiality MUST NOT be supported. Cipher suites and parameters
    that do not provide ephemeral key-exchange MUST NOT be supported.
 
@@ -784,8 +783,8 @@ destination IP addresses.
 ### New Connections {#new-connections}
 
 Implementations MUST set up a new DTLS connection using a full handshake
-before any of the
-certificates expire. It is RECOMMENDED that all negotiated and
+before any of the certificates expire.
+It is RECOMMENDED that all negotiated and
 exchanged parameters are the same except for the timestamps in the
 certificates. Clients and servers MUST NOT accept a change of identity
 during the setup of a new connections, but MAY accept negotiation of
@@ -844,7 +843,8 @@ without known major weaknesses at the time of publication.
 
 DTLS 1.3 requires rekeying before algorithm specific AEAD limits have
 been reached. Implementations MAY setup a new DTLS connection instead
-of using key-update.
+of using key-update, this document mandates the setup of a new DTLS
+connection.
 
 In DTLS 1.3 any number of tickets can be issued in a connection and
 the tickets can be used for resumption as long as they are valid,
@@ -855,7 +855,7 @@ quickly restarting a broken DTLS/SCTP association. If tickets and
 resumption are used it is enough to issue a single ticket per
 connection.
 
-The PSK key exchange mode psk_ke MUST NOT be used as it does not
+The PSK key exchange mode : psk_ke MUST NOT be used as it does not
 provide ephemeral key exchange.
 
 # Establishing DTLS in SCTP
