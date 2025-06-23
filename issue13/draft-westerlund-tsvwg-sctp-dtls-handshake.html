@@ -4,27 +4,29 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Datagram Transport Layer Security (DTLS) in the Stream Control Transmission Protocol (SCTP) DTLS Chunk</title>
+<title>Datagram Transport Layer Security (DTLS) based key-management of the Stream Control Transmission Protocol (SCTP) DTLS Chunk</title>
 <meta content="Magnus Westerlund" name="author">
 <meta content="John Preuß Mattsson" name="author">
 <meta content="Claudio Porfiri" name="author">
 <meta content="
-       This document defines a usage of Datagram Transport Layer Security
-(DTLS) 1.3 to protect the content of Stream Control Transmission
-Protocol (SCTP) packets using the framework provided by the SCTP DTLS
-chunk which we name DTLS in SCTP. DTLS in SCTP provides encryption,
-source authentication, integrity and replay protection for the SCTP
-association with in-band DTLS based key-management and mutual
-authentication of the peers. The specification is enabling very
-long-lived sessions of weeks and months and supports mutual
-re-authentication and rekeying with ephemeral key exchange. This is
-intended as an alternative to using DTLS/SCTP (RFC6083) and
+       This document defines a key-management solution based on Datagram
+Transport Layer Security (DTLS) 1.3 to protect the content of Stream
+Control Transmission Protocol (SCTP) packets using the packet
+protection framework provided by the SCTP DTLS chunk. The combination
+provides encryption, source authentication, integrity and replay
+protection for the SCTP association with in-band DTLS based
+key-management and mutual authentication of the peers. The
+specification is enabling very long-lived sessions of weeks and months
+and supports mutual re-authentication and rekeying with ephemeral key
+exchange. The key-management solution does not require any additional
+defined features or implementation support beyond core DTLS 1.3. This
+is intended as an alternative to using DTLS/SCTP (RFC6083) and
 SCTP-AUTH (RFC4895). 
     " name="description">
-<meta content="xml2rfc 3.28.1" name="generator">
+<meta content="xml2rfc 3.29.0" name="generator">
 <meta content="draft-westerlund-tsvwg-sctp-dtls-handshake-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.1
+  xml2rfc 3.29.0
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
@@ -1059,7 +1061,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 19 December 2025</td>
+<td class="center">Expires 25 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1072,12 +1074,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-17" class="published">17 June 2025</time>
+<time datetime="2025-06-23" class="published">23 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-19">19 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-25">25 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1095,19 +1097,21 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </dd>
 </dl>
 </div>
-<h1 id="title">Datagram Transport Layer Security (DTLS) in the Stream Control Transmission Protocol (SCTP) DTLS Chunk</h1>
+<h1 id="title">Datagram Transport Layer Security (DTLS) based key-management of the Stream Control Transmission Protocol (SCTP) DTLS Chunk</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document defines a usage of Datagram Transport Layer Security
-(DTLS) 1.3 to protect the content of Stream Control Transmission
-Protocol (SCTP) packets using the framework provided by the SCTP DTLS
-chunk which we name DTLS in SCTP. DTLS in SCTP provides encryption,
-source authentication, integrity and replay protection for the SCTP
-association with in-band DTLS based key-management and mutual
-authentication of the peers. The specification is enabling very
-long-lived sessions of weeks and months and supports mutual
-re-authentication and rekeying with ephemeral key exchange. This is
-intended as an alternative to using DTLS/SCTP (RFC6083) and
+<p id="section-abstract-1">This document defines a key-management solution based on Datagram
+Transport Layer Security (DTLS) 1.3 to protect the content of Stream
+Control Transmission Protocol (SCTP) packets using the packet
+protection framework provided by the SCTP DTLS chunk. The combination
+provides encryption, source authentication, integrity and replay
+protection for the SCTP association with in-band DTLS based
+key-management and mutual authentication of the peers. The
+specification is enabling very long-lived sessions of weeks and months
+and supports mutual re-authentication and rekeying with ephemeral key
+exchange. The key-management solution does not require any additional
+defined features or implementation support beyond core DTLS 1.3. This
+is intended as an alternative to using DTLS/SCTP (RFC6083) and
 SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
@@ -1144,7 +1148,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 19 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 25 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1367,20 +1371,21 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-overview" class="section-name selfRef">Overview</a>
         </h3>
 <p id="section-1.1-1">This document describes the usage of the Datagram Transport Layer
-   Security (DTLS) protocol, as defined in
-   DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>, in the Stream Control
-   Transmission Protocol (SCTP), as defined in <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span> with SCTP
-   DTLS chunk <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.  This
-   specification is intended as an alternative to DTLS/SCTP <span>[<a href="#RFC6083" class="cite xref">RFC6083</a>]</span>
-   and usage of SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">This specification provides mutual authentication of endpoints,
-   data confidentiality, data origin authentication, data integrity
+   Security version 1.3 (DTLS) protocol <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> for key-managment
+   of the Stream Control Transmission Protocol (SCTP) <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span> DTLS
+   Chunk packet protection <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.
+   This combination of specification is intended as an alternative to
+   DTLS/SCTP <span>[<a href="#RFC6083" class="cite xref">RFC6083</a>]</span> and usage of SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span>. The
+   combination of SCTP DTLS Chunk and the key-management defined in
+   this document we call DTLS in SCTP.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">DTLS in SCTP provides mutual authentication of endpoints, data
+   confidentiality, data origin authentication, data integrity
    protection, and data replay protection of SCTP packets. Ensuring
    these security services to the application and its upper layer
    protocol over SCTP.  Thus, it allows client/server applications to
-   communicate in a way that is designed with communications
-   privacy and preventing eavesdropping and detect tampering or
-   message forgery.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+   communicate in a way that is designed with communications privacy
+   and preventing eavesdropping and detect tampering or message
+   forgery.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 <p id="section-1.1-3">Applications using DTLS in SCTP can use all currently existing
    transport features provided by SCTP and its extensions, in some
    cases with some limitations, as specified in
@@ -1403,7 +1408,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.1-4.6">
             <p id="section-1.1-4.6.1">the dynamic address reconfiguration extension as defined in
- <span>[<a href="#RFC5061" class="cite xref">RFC5061</a>]</span>.<a href="#section-1.1-4.6.1" class="pilcrow">¶</a></p>
+ <span>[<a href="#RFC5061" class="cite xref">RFC5061</a>]</span> (Limitations apply).<a href="#section-1.1-4.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.1-4.7">
             <p id="section-1.1-4.7.1">User messages of any size.<a href="#section-1.1-4.7.1" class="pilcrow">¶</a></p>
@@ -1413,6 +1418,12 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 2<sup>14</sup> (16384) bytes.<a href="#section-1.1-4.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
+<p id="section-1.1-5">The main benefit of this key-management solution over the solution
+   proposed by the WG is that this does not require any extensions to
+   DTLS 1.3 to be implemented. It soley relies on the core DTLS
+   handshake to do mutual authentication, a create a main secret, and
+   then relies on the TLS exporter to export necessary secrets for the
+   DTLS Chunk.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="protocol_overview">
@@ -1422,69 +1433,75 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         </h3>
 <p id="section-1.2-1">DTLS in SCTP is a key management specification for the SCTP DTLS
    1.3 chunk <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span> that together
-   utilizes all parts of DTLS 1.3 for the security functions like key
+   utilizes DTLS 1.3 for the security functions like key
    exchange, authentication, encryption, integrity protection, and
    replay protection. All key management message exchange happens
    inband over the SCTP assocation.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
 <p id="section-1.2-2">In this document we use the terms DTLS Key context for indicating a
-   Key, derived from a DTLS connection, and all relevant data that needs
-   to be provided to the Protection Operator for DTLS encryption and
-   decryption.  DTLS Key context includes Keys for sending and receiving,
-   replay window, last used sequence number. Each DTLS key context are
-   associated with a four value tuple identifying the context, consisting
-   of SCTP Association, the restart indicator, the DTLS Connection ID (if
-   used), an the DTLS epoch.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
-<p id="section-1.2-3">The basic functionalities and how things are related is described below.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.2-4">In a SCTP association where DTLS 1.3 Chunk usage has been
-   negotiated in the SCTP INIT and INIT-ACK, to initilize and
-   authenticate the peer the DTLS handshake is exchanged as SCTP user
-   messages with the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
+   Key, derived from a DTLS connection, and all relevant data that
+   needs to be provided to the SCTP DTLS Chunk Protection Operator for
+   DTLS encryption and decryption.  DTLS Key context includes Keys for
+   sending and receiving, replay window, last used sequence
+   number. Each DTLS key context are associated with a four value
+   tuple identifying the context, consisting of SCTP Association, the
+   restart indicator, the DTLS Connection ID (if used), an the DTLS
+   epoch.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">The basic functionalities and how things are related is described
+   below.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">The process starts with a SCTP association where DTLS 1.3 Chunk
+   usage has been negotiated and this key-managmenet method has been
+   agreed in the SCTP INIT and INIT-ACK. To initilize and authenticate
+   the peer the DTLS handshake is exchanged as SCTP user messages with
+   the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
    <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>) until an initial DTLS
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With succesful handshake and
-   authentication of the peer the key material is configured for the
-   DTLS 1.3 chunk. From that point until SCTP association termination
-   the DTLS chunk will protect the SCTP packets. When the DTLS
-   connection has been established and the DTLS Chunk configured with
-   DTLS Key context the PVALID chunk is exchanged to verify that no downgrade
-   attack between any offered protection solutions has occurred. To
-   prevent manipulation, the PVALID chunks are sent encapsulated in
-   DTLS chunks.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+   authentication of the peer the key material exported from the DTLS
+   connection and configured for the DTLS 1.3 chunk. From that point
+   until SCTP association termination the DTLS chunk will protect the
+   SCTP packets. When the DTLS connection has been established and the
+   DTLS Chunk configured with DTLS Key context the PVALID message is
+   exchanged to verify that no downgrade attack between any offered
+   protection solutions has occurred. To prevent manipulation, the
+   PVALID message are sent encapsulated in DTLS chunks.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
 <p id="section-1.2-5">Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
-   start sending data over the SCTP association. From this point all
-   chunks will be protected by encapsulating them in
+   start sending meesages over the SCTP association. All
+   chunks are protected by encapsulating them in
    DTLS chunks as defined in <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.
-   The DTLS chunk protects all of the SCTP Chunks to be sent in a SCTP
-   packet. Using the current DTLS Key context the DTLS Protection
+   Using the current DTLS Key context the DTLS Chunk Protection
    operator protects the plain text producing a DTLS Record that is
    encapsualted in the DTLS chunk and the transmitted as a SCTP packet
    with a common header.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
-<p id="section-1.2-6">In the receiving SCTP endpoint each incoming SCTP packet on any of
-   its interfaces and ports are matched to the SCTP association based
-   on ports and VTAG in the common header. Using the
-   current DTLS Key context the content of the DTLS chunk
-   is attempted to be processed, including replay protection,
+<p id="section-1.2-6">The DTLS Chunk specifies that in the receiving SCTP endpoint each
+   incoming SCTP packet on any of its interfaces and ports are matched
+   to the SCTP association based on ports and VTAG in the common
+   header. Using the current DTLS Key context the content of the DTLS
+   chunk is attempted to be processed, including replay protection,
    decryption, and integrity checking. And if decryption and integrity
    verification was successful the produced plain text of one or more
    SCTP chunks are provided for normal SCTP processing in the
    identified SCTP association along with associated per-packet meta
    data such as path received on, original packet size, and ECN bits.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
-<p id="section-1.2-7">When mutual re-authentication or rekeying with ephemeral key
-   exchange is needed or desired by either endpoint a new DTLS
-   connection handshake is performed between the SCTP endpoints
-   and a new DTLS Key context is created. When the handshake
-   has completed the DTLS in SCTP implementation can simply switch to
-   use the new DTLS Key context in the DTLS chunk.  After a
+<p id="section-1.2-7">When mutual re-authentication or rekeying is needed or desired by
+   either endpoint a new DTLS connection handshake is performed
+   between the SCTP endpoints and a new DTLS Key context is
+   created. When the handshake has completed the DTLS in SCTP
+   implementation can simply switch to use the new DTLS Key context in
+   the DTLS chunk.  All rekeying will be using ephemeral key exchange
+   and not use the DTLS Key-Update mechanism to avoid confusion about
+   the properties of the DTLS Key Context for the DTLS chunk.  After a
    short while (no longer than 2 min) to enable any outstanding
    packets to drain from the network path between the endpoints the
-   old DTLS Key context can be deleted from the DTLS chunk's key store.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
+   old DTLS Key context can be deleted from the DTLS chunk's key
+   store.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
 <p id="section-1.2-8">The DTLS connection is free to send any alert, handshake message, or
-   other non-application data to its peer at any point in time. Thus,
-   enabling DTLS 1.3 Key Updates for example.
+   other non-application data to its peer at any point in time.
    All DTLS message will be sent by means of SCTP user messages
    with the DTLS Chunk Key-Management Messages PPID as specified in
-   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
+   <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. However, only the
+   DTLS close_notify is expected to be used after the handshake has
+   completed in this solution.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
 <span id="name-dtls-in-sctp-layer-in-regar"></span><div id="overview-layering">
 <figure id="figure-1">
           <div id="section-1.2-9.1">
@@ -1595,24 +1612,29 @@ properties can be implemented without further changes to this
 specification.<a href="#section-1.3-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.6">
-            <p id="section-1.3-2.6.1">Secures all SCTP packets exchanged after SCTP association has
-reached the established state and the initial key-exchange has
-completed. Making targeted attacks against the SCTP protocol and
-implementation much harder.<a href="#section-1.3-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-1.3-2.6.1">No reliance on DTLS implementation used for key-management having
+to support any features beyond core DTLS specification and the
+TLS exporter.<a href="#section-1.3-2.6.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.7">
-            <p id="section-1.3-2.7.1">DTLS in SCTP results in no limitations on user message
-transmission or message sizes, those properties are the same as
-for an unprotected SCTP association.<a href="#section-1.3-2.7.1" class="pilcrow">¶</a></p>
+            <p id="section-1.3-2.7.1">Secures all SCTP packets exchanged after SCTP association has
+reached the established state and the initial key-exchange has
+completed. Making targeted attacks against the SCTP protocol and
+implementation much harder.<a href="#section-1.3-2.7.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.8">
-            <p id="section-1.3-2.8.1">Limited overhead on a per packet basis, with 4 bytes for the
-DTLS chunk plus the DTLS record overhead. The DTLS
-overhead is dependent on the DTLS version and cipher suit.<a href="#section-1.3-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-1.3-2.8.1">DTLS in SCTP results in no limitations on user message
+transmission or message sizes, those properties are the same as
+for an unprotected SCTP association.<a href="#section-1.3-2.8.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.9">
-            <p id="section-1.3-2.9.1">Support of SCTP packet plain text payload sizes up to
-2<sup>14</sup> bytes.<a href="#section-1.3-2.9.1" class="pilcrow">¶</a></p>
+            <p id="section-1.3-2.9.1">Limited overhead on a per packet basis, with 4 bytes for the
+DTLS chunk plus the DTLS record overhead. The DTLS
+overhead is dependent on the DTLS version and cipher suit.<a href="#section-1.3-2.9.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.3-2.10">
+            <p id="section-1.3-2.10.1">Support of SCTP packet plain text payload sizes up to
+2<sup>14</sup> bytes.<a href="#section-1.3-2.10.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div id="benefits-compared-to-dtlssctp">
@@ -1673,87 +1695,9 @@ in DTLS in SCTP.<a href="#section-1.3.1-2.4.1" class="pilcrow">¶</a></p>
               <p id="section-1.3.1-2.5.1">By using the DTLS chunk that is acting on SCTP packet level
 instead of user messages the consideration for extensions are
 quite different. Only extensions that would affect the common
-header or how packets are formed would interact with this
-mechanism, any extension that just defines new chunks or
-parameters for existing chunks is expected to just work and be
-secured by the mechanism. DTLS/SCTP instead interact with
-extensions that affects how user messages are handled.<a href="#section-1.3.1-2.5.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-1.3.1-2.6">
-              <p id="section-1.3.1-2.6.1">A known limitation is that DTLS in SCTP does not support more
-than 2<sup>14</sup> bytes of chunks per SCTP packet. If the DTLS
-implementation does not support the full DTLS record size the
-maximum supported packet size might be even lower. However, this
-value needs to be compared to the supported MTU of IP, and are
-thus in reality often not an actual limitation. Only for some
-special deployments or over loopback may this limitation be
-visible. Also if the proposed extension to (D)TLS record sizes
-<span>[<a href="#I-D.mattsson-tls-super-jumbo-record-limit" class="cite xref">I-D.mattsson-tls-super-jumbo-record-limit</a>]</span> are published and
-implemented this extension could be used to achieve full IP MTU
-(64k).<a href="#section-1.3.1-2.6.1" class="pilcrow">¶</a></p>
+header or how packets are formed would interact with this<a href="#section-1.3.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-1.3.1-3">There are several significant differences in regard to
-   implementation between the two realizations.<a href="#section-1.3.1-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-1.3.1-4.1">
-              <p id="section-1.3.1-4.1.1">DTLS in SCTP do require the DTLS chunk to be implemented in the
-SCTP stack implementation, and not as an adaptation layer above
-the SCTP stack which DTLS/SCTP instead requires. This has some
-extra challenges for operating system level
-implementations. However, as some updates anyway will be required
-to support the updated SCTP-AUTH specficiation the implementation
-burden is likely similar in this regard.<a href="#section-1.3.1-4.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-1.3.1-4.2">
-              <p id="section-1.3.1-4.2.1">DTLS in SCTP implemented in operating system kernels will require
-that the DTLS implementation is split. Where the protection
-operations performed to create DTLS records needs to be
-implemented in the kernel and have an appropriate API for setting
-DTLS Key context and managed the functions of the protection
-operation. While the DTLS handshake is residing as an application
-on top of SCTP interface.<a href="#section-1.3.1-4.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-1.3.1-4.3">
-              <p id="section-1.3.1-4.3.1">DTLS in SCTP can use a DTLS implementation that does not rely on
-features from outside of the core protocol, where DTLS/SCTP
-required a number of features as listed below:<a href="#section-1.3.1-4.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-1.3.1-4.3.2.1">
-                  <p id="section-1.3.1-4.3.2.1.1">DTLS Connection Index to identify which DTLS connection that
-should process the DTLS record.<a href="#section-1.3.1-4.3.2.1.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-1.3.1-4.3.2.2">
-                  <p id="section-1.3.1-4.3.2.2.1">Support for DTLS records of the maximum size of 16 KB.<a href="#section-1.3.1-4.3.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-1.3.1-4.3.2.3">
-                  <p id="section-1.3.1-4.3.2.3.1">Optional to support negotiation of maximum DTLS record size
-unless not supporting 16 KB records when it is
-required. Even if implementing the negotiation,
-interoperability failure may occur. DTLS in SCTP will only
-require supporting DTLS record sizes that matches the
-largest IP packet size that endpoint support or the SCTP
-implementation.<a href="#section-1.3.1-4.3.2.3.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-1.3.1-4.3.2.4">
-                  <p id="section-1.3.1-4.3.2.4.1">Implementation is required to support turning off the DTLS
-replay protection.<a href="#section-1.3.1-4.3.2.4.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-1.3.1-4.3.2.5">
-                  <p id="section-1.3.1-4.3.2.5.1">Implementation is required to not use DTLS Key-update
-functionality. Where DTLS in SCTP is agnostic to its usage,
-and it provides a useful tool to ensure that the key lifetime
-is not an issue.<a href="#section-1.3.1-4.3.2.5.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-          </ul>
-<p id="section-1.3.1-5">The conclusion of these implementation details is that DTLS
-   in SCTP can use existing DTLS implementations, at least for user
-   land SCTP implementation. It is not known if any DTLS 1.3 stack
-   exist that fully support the requirements of DTLS/SCTP. It is
-   expected that a DTLS/SCTP implementation will have to also extend
-   some DTLS implementation.<a href="#section-1.3.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1777,9 +1721,8 @@ is not an issue.<a href="#section-1.3.1-4.3.2.5.1" class="pilcrow">¶</a></p>
           <dd class="break"></dd>
 <dt id="section-1.4-2.5">DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.6">
-            <p id="section-1.4-2.6.1">A Key, derived from a DTLS connection, and all relevant data that needs
-   to be provided to the Protection Operator for DTLS encryption and
-   decryption.<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.6.1">Keys, derived from a DTLS connection, and all relevant data that needs
+   to be provided to the SCTP DTLS Chunk.<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-1.4-2.7">Restart DTLS Key context:</dt>
@@ -1839,14 +1782,9 @@ used for an SCTP Association Restart<a href="#section-1.4-2.8.1" class="pilcrow"
             <p id="section-1.5-1.12.1">Stream Control Transmission Protocol<a href="#section-1.5-1.12.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.5-1.13">SCTP-AUTH:</dt>
+<dt id="section-1.5-1.13">ULP:</dt>
           <dd style="margin-left: 1.5em" id="section-1.5-1.14">
-            <p id="section-1.5-1.14.1">Authenticated Chunks for SCTP <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span><a href="#section-1.5-1.14.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-1.5-1.15">ULP:</dt>
-          <dd style="margin-left: 1.5em" id="section-1.5-1.16">
-            <p id="section-1.5-1.16.1">Upper Layer Protocol<a href="#section-1.5-1.16.1" class="pilcrow">¶</a></p>
+            <p id="section-1.5-1.14.1">Upper Layer Protocol<a href="#section-1.5-1.14.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1985,13 +1923,16 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
 <figure id="figure-3">
         <div id="section-3-2.1">
           <div class="alignLeft art-svg artwork" id="section-3-2.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="192" width="528" viewBox="0 0 528 192" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-              <path d="M 8,64 L 8,176" fill="none" stroke="black"></path>
-              <path d="M 264,144 L 264,176" fill="none" stroke="black"></path>
-              <path d="M 520,64 L 520,144" fill="none" stroke="black"></path>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="528" viewBox="0 0 528 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,64 L 8,192" fill="none" stroke="black"></path>
+              <path d="M 104,64 L 104,96" fill="none" stroke="black"></path>
+              <path d="M 136,64 L 136,96" fill="none" stroke="black"></path>
+              <path d="M 264,160 L 264,192" fill="none" stroke="black"></path>
+              <path d="M 520,64 L 520,160" fill="none" stroke="black"></path>
               <path d="M 8,64 L 520,64" fill="none" stroke="black"></path>
-              <path d="M 264,144 L 520,144" fill="none" stroke="black"></path>
-              <path d="M 8,176 L 264,176" fill="none" stroke="black"></path>
+              <path d="M 8,96 L 136,96" fill="none" stroke="black"></path>
+              <path d="M 264,160 L 520,160" fill="none" stroke="black"></path>
+              <path d="M 8,192 L 264,192" fill="none" stroke="black"></path>
               <g class="text">
                 <text x="16" y="36">0</text>
                 <text x="176" y="36">1</text>
@@ -2029,8 +1970,9 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
                 <text x="480" y="52">9</text>
                 <text x="496" y="52">0</text>
                 <text x="512" y="52">1</text>
-                <text x="252" y="116">DTLS</text>
-                <text x="304" y="116">Message</text>
+                <text x="120" y="84">DCI</text>
+                <text x="252" y="132">DTLS</text>
+                <text x="304" y="132">Message</text>
               </g>
             </svg><a href="#section-3-2.1.1" class="pilcrow">¶</a>
 </div>
@@ -2040,13 +1982,25 @@ the same stream ID to ensure the in-order delivery.<a href="#section-3-1" class=
         </figcaption></figure>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-3-3">
-        <dt id="section-3-3.1">DTLS Message: variable length</dt>
+        <dt id="section-3-3.1">DCI: DTLS Connection Index 2 bits (unsigned integer)</dt>
         <dd style="margin-left: 1.5em" id="section-3-3.2">
-          <p id="section-3-3.2.1">One or more DTLS records. In cases more
+          <p id="section-3-3.2.1">DTLS Connection Index is the lower two bits of an DTLS Connection
+Index counter which corresponds to the epoch used in the SCTP DTLS
+Chunk.  This is a counter implemented in DTLS in SCTP that is used
+to identify which DTLS connection instance that is capable of
+processing the DTLS message over an user message.  This counter is
+recommended to be the lower part of a 64-bit unsigned integer
+variable as this is how DTLS epoch counter is defined.  DCI is
+unrelated to the DTLS Connection ID <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-3.3">DTLS Message: variable length</dt>
+        <dd style="margin-left: 1.5em" id="section-3-3.4">
+          <p id="section-3-3.4.1">One or more DTLS records. In cases more
  than one DTLS record is included all DTLS records except the last
  MUST include a length field. Note that this matches what is
  specified in DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span> will always include the length
- field in each record.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+ field in each record.<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
