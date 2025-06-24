@@ -1048,14 +1048,16 @@ Initiator                                     Responder
     |                                             | -'
     |                                             | -.
     +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS Connection
-    +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
-    |<-------------[DATA(DTLS ACK)]---------------+   |
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
+    +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
+    |<-------------[DATA(DTLS ACK)]---------------+   +----------------
     |                                             | -'
     |                    ...                      | -.
-    |                    ...                      |   | Derive new Traffic
-    |                    ...                      |   | and Restart
-    |                    ...                      |   | DTLS Key Contextes
+    |                    ...                      |   | Derive new
+    |                    ...                      |   | Traffic and
+    |                    ...                      |   | Restart
+    |                    ...                      |   | DTLS Key
+    |                    ...                      |   | Contextes
     |                    ...                      |   +----------------
     |                    ...                      | -'
     |                                             | -.
