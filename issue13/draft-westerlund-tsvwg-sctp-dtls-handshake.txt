@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 25 December 2025                                       Ericsson
-                                                            23 June 2025
+Expires: 27 December 2025                                       Ericsson
+                                                            25 June 2025
 
 
   Datagram Transport Layer Security (DTLS) based key-management of the
@@ -61,7 +61,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 December 2025.
+   This Internet-Draft will expire on 27 December 2025.
 
 Copyright Notice
 
@@ -956,34 +956,36 @@ Table of Contents
    preserve the Restart DTLS Key Context and that the Responder SHALL
    NOT change the Restart DTLS Key Context during the Restart procedure.
 
-Initiator                                     Responder
-    |                                             | -.
-    +------------[DTLS CHUNK(INIT)]-------------->|   |
-    |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
-    |                                             |   | Using
-    |                                             |   | SCTP
-    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-    |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
-    |                                             | -'
-    |                                             | -.
-    +----------[DATA(DTLS Client Hello)]--------->|   |
-    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS Connection
-    +---[DATA(DTLS Certificate ... Finished)]---->|   +----------------
-    |<-------------[DATA(DTLS ACK)]---------------+   |
-    |                                             | -'
-    |                    ...                      | -.
-    |                    ...                      |   | Derive new Traffic
-    |                    ...                      |   | and Restart
-    |                    ...                      |   | DTLS Key Contextes
-    |                    ...                      |   +----------------
-    |                    ...                      | -'
-    |                                             | -.
-    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
-    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
-    |                    ...                      |   |
-    |                    ...                      |   |
+ Initiator                                     Responder
+     |                                             | -.
+     +------------[DTLS CHUNK(INIT)]-------------->|   |
+     |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+     |                                             |   | Using
+     |                                             |   | SCTP
+     +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
+     |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
+     |                                             | -'
+     |                                             | -.
+     +----------[DATA(DTLS Client Hello)]--------->|   |
+     |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
+     +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
+     |<-------------[DATA(DTLS ACK)]---------------+   +----------------
+     |                                             | -'
+     |                    ...                      | -.
+     |                    ...                      |   | Derive new
+     |                    ...                      |   | Traffic and
+     |                    ...                      |   | Restart
+     |                    ...                      |   | DTLS Key
+     |                    ...                      |   | Contextes
+     |                    ...                      |   +----------------
+     |                    ...                      | -'
+     |                                             | -.
+     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
+     +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
+     |                    ...                      |   |
+     |                    ...                      |   |
 
-           Figure 6: SCTP Restart sequence for DTLS in SCTP
+            Figure 6: SCTP Restart sequence for DTLS in SCTP
 
    The Figure 6 shows a successfull SCTP Association Restart.
 
