@@ -1061,7 +1061,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund, et al.</td>
-<td class="center">Expires 27 December 2025</td>
+<td class="center">Expires 28 December 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-westerlund-tsvwg-sctp-dtls-handshake-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-06-25" class="published">25 June 2025</time>
+<time datetime="2025-06-26" class="published">26 June 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-12-27">27 December 2025</time></dd>
+<dd class="expires"><time datetime="2025-12-28">28 December 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1148,7 +1148,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 27 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 28 December 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1442,7 +1442,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    needs to be provided to the SCTP DTLS Chunk Protection Operator for
    DTLS encryption and decryption.  DTLS Key context includes Keys for
    sending and receiving, replay window, last used sequence
-   number. Each DTLS key context are associated with a four value
+   number. Each DTLS key context is associated with a four value
    tuple identifying the context, consisting of SCTP Association, the
    restart indicator, the DTLS Connection ID (if used), an the DTLS
    epoch.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
@@ -1466,12 +1466,12 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    PVALID message are sent encapsulated in DTLS chunks.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
 <p id="section-1.2-5">Assuming that the PVALID validation is successful the SCTP
    association is established and the Upper Layer Protocol (ULP) can
-   start sending meesages over the SCTP association. All
+   start sending messages over the SCTP association. All
    chunks are protected by encapsulating them in
    DTLS chunks as defined in <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>.
    Using the current DTLS Key context the DTLS Chunk Protection
    operator protects the plain text producing a DTLS Record that is
-   encapsualted in the DTLS chunk and the transmitted as a SCTP packet
+   encapsualted in the DTLS chunk and then transmitted as a SCTP packet
    with a common header.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
 <p id="section-1.2-6">The DTLS Chunk specifies that in the receiving SCTP endpoint each
    incoming SCTP packet on any of its interfaces and ports are matched
@@ -1485,23 +1485,23 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    data such as path received on, original packet size, and ECN bits.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
 <p id="section-1.2-7">When mutual re-authentication or rekeying is needed or desired by
    either endpoint a new DTLS connection handshake is performed
-   between the SCTP endpoints and a new DTLS Key context is
+   between the SCTP endpoints and new DTLS Key contextes are
    created. When the handshake has completed the DTLS in SCTP
-   implementation can simply switch to use the new DTLS Key context in
+   implementation can simply switch to use the new DTLS Key contextes in
    the DTLS chunk.  All rekeying will be using ephemeral key exchange
-   and not use the DTLS Key-Update mechanism to avoid confusion about
-   the properties of the DTLS Key Context for the DTLS chunk.  After a
+   and shall not use the DTLS Key-Update mechanism to avoid confusion about
+   the properties of the DTLS Key Contextes for the DTLS chunk.  After a
    short while (no longer than 2 min) to enable any outstanding
-   packets to drain from the network path between the endpoints the
-   old DTLS Key context can be deleted from the DTLS chunk's key
+   packets to drain from the network path between the endpoints, the
+   old DTLS Key contextes can be deleted from the DTLS chunk's key
    store.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
-<p id="section-1.2-8">The DTLS connection is free to send any alert, handshake message, or
+<p id="section-1.2-8">The DTLS connection may send alerts, handshake messages, or
    other non-application data to its peer at any point in time.
    All DTLS message will be sent by means of SCTP user messages
    with the DTLS Chunk Key-Management Messages PPID as specified in
    <span>[<a href="#I-D.westerlund-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.westerlund-tsvwg-sctp-dtls-chunk</a>]</span>. However, only the
    DTLS close_notify is expected to be used after the handshake has
-   completed in this solution.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
+   been completed in this solution.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
 <span id="name-dtls-in-sctp-layer-in-regar"></span><div id="overview-layering">
 <figure id="figure-1">
           <div id="section-1.2-9.1">
@@ -1608,7 +1608,7 @@ needing to drain the SCTP association.<a href="#section-1.3-2.4.1" class="pilcro
 </li>
           <li class="normal" id="section-1.3-2.5">
             <p id="section-1.3-2.5.1">Uses core of DTLS as it is and updates and fixes to DTLS security
-properties can be implemented without further changes to this
+properties; can be implemented without further changes to this
 specification.<a href="#section-1.3-2.5.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.3-2.6">
@@ -1651,7 +1651,7 @@ overhead is dependent on the DTLS version and cipher suit.<a href="#section-1.3-
 SCTP-AUTH <span>[<a href="#RFC4895" class="cite xref">RFC4895</a>]</span> and its interaction with the SCTP implementation and
 dependencies on the actual SCTP-AUTH rekeying frequency. DTLS
 in SCTP relies on DTLS mechanism for replay protection that can
-prevent both duplicates from being delivered as well as
+prevent duplicates from being delivered as well as
 preventing packets from outside the current window to be
 delivered. Thus, a stronger protection especially for non-DATA
 chunk is provided and protects the SCTP stack from replayed or
@@ -1659,8 +1659,8 @@ duplicated packets.<a href="#section-1.3.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-1.3.1-2.2">
               <p id="section-1.3.1-2.2.1">Encryption in DTLS/SCTP is only applied to ULP data. For DTLS in
-SCTP all chunk types after the association has reached
-established state and the initial DTLS handshake has compeleted
+SCTP all chunk types, after the association has reached
+established state and the initial DTLS handshake has compeleted,
 will be encrypted. This, makes protocol attacks harder as a
 third-party attacker will have less insight into SCTP protocol
 state. Also, protocol header information likes PPIDs will also be
@@ -1668,12 +1668,12 @@ encrypted, which makes targeted attacks harder but may also make
 management and debugging harder.<a href="#section-1.3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-1.3.1-2.3">
-              <p id="section-1.3.1-2.3.1">DTLS/SCTP Rekeying is complicated and require advanced API or
+              <p id="section-1.3.1-2.3.1">DTLS/SCTP Rekeying is complicated and requires advanced API or
 user message tracking to determine when a key is no longer needed
 so that it can be discarded. A DTLS/SCTP key that is prematurely
 discarded can result in loss of parts of a user message and
 failure of the assumptions on the transport where the sender
-believes it delivered and the receiver never gets it. This
+believes it's delivered and the receiver never gets it. This
 usually will result in the need to terminate the SCTP association
 to restart the ULP session to avoid any issues due to
 inconsistencies. DTLS in SCTP is robustly handling of any early
@@ -1722,7 +1722,11 @@ header or how packets are formed would interact with this<a href="#section-1.3.1
 <dt id="section-1.4-2.5">DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.6">
             <p id="section-1.4-2.6.1">Keys, derived from a DTLS connection, and all relevant data that needs
-   to be provided to the SCTP DTLS Chunk.<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
+   to be provided to the SCTP DTLS Chunk.
+   Each DTLS key context is associated with a four value
+   tuple identifying the context, consisting of SCTP Association, the
+   restart indicator, the DTLS Connection ID (if used), an the DTLS
+   epoch<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-1.4-2.7">Restart DTLS Key context:</dt>
@@ -1907,8 +1911,8 @@ DTLS Key context is indicated.<a href="#section-2-3.4.1" class="pilcrow">¶</a><
       <h2 id="name-dtls-messages-over-sctp-use">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dtls-messages-over-sctp-use" class="section-name selfRef">DTLS messages over SCTP User Messages</a>
       </h2>
-<p id="section-3-1">DTLS messages that are not DTLS records containing protected SCTP
-chunk payloads will be sent as SCTP user messages using the format
+<p id="section-3-1">DTLS messages, that are not DTLS records containing protected SCTP
+chunk payloads, will be sent as SCTP user messages using the format
 defined below. A DTLS handshake message may be fragmented by DTLS to a
 set of DTLS records of a maximum configured fragment size. Each DTLS
 message fragment is sent as a SCTP user message on the same stream
@@ -2130,13 +2134,13 @@ should take care of the DTLS connection removal in details.<a href="#section-4.2
 the PROTECTED state. As long as one DTLS connection only exists,
 that DTLS connection SHALL NOT be removed as it won't be possible for the
 Association to proceed further.<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-3">In general a DTLS connection can be removed when there's at least
+<p id="section-4.2.3-3">In general a DTLS connection can be removed when there's
 another active DTLS connection with valid DTLS Key Context that can be used
 for negotiating further DTLS DTLS 1.3 connections.
 In case the DTLS connection is removed and no useable DTLS Key Context exist
 for DTLS 1.3 negotiation, the Association SHALL be ABORTED.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-4">It is up to the implementation to guarantee that aDTLS Key Context exists
-at any time, for avoiding that undesired DTLS connection closure causes
+<p id="section-4.2.3-4">It is up to the implementation to guarantee that a DTLS Key Context exists
+all the time, for avoiding that undesired DTLS connection closure causes
 the Association abortion.<a href="#section-4.2.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2837,7 +2841,8 @@ created.<a href="#section-6.3.2-8" class="pilcrow">¶</a></p>
       </h2>
 <p id="section-7-1">Rekeying in this specification is implemented by replacing the DTLS
 connection getting old with a new one by first creating the new DTLS
-connection, start using it, then closing the old one.<a href="#section-7-1" class="pilcrow">¶</a></p>
+connection, derive the new DTLS Key contextes, start using it,
+then closing the old one.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <div id="criteria-for-rekeying">
 <section id="section-7.1">
         <h3 id="name-criteria-for-rekeying">
@@ -3013,9 +3018,10 @@ The following state machine applies.<a href="#section-7.2-1" class="pilcrow">¶<
 </div>
 <p id="section-7.2-3">Trigger for rekeying can either be a local AGING event, triggered by
 the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
-event, triggered by receiving a DTLS record on the Traffic Traffic DTLS Key Context
-that would be used for new DTLS connection. In such case a new DTLS connection
-shall be added according to <a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a> with a new Traffic DTLS Key Context.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
+event, triggered by receiving a DTLS connection creation request on the
+Traffic DTLS Key Context that would be used for new DTLS connection.
+In such case a new DTLS connection shall be added according
+to <a href="#add-dtls-connection" class="auto internal xref">Section 4.2.1</a> with a new Traffic DTLS Key Context.<a href="#section-7.2-3" class="pilcrow">¶</a></p>
 <p id="section-7.2-4">As soon as the new DTLS connection completes handshaking,
 and the Traffic and Restart DTLS Key Contextes have been derived, the traffic
 is moved from the old Traffic DTLS Key Context, then the procedure for closing the old DTLS
@@ -3060,7 +3066,7 @@ itself for signaling.<a href="#section-8-3" class="pilcrow">¶</a></p>
       <h2 id="name-implementation-consideratio">
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
       </h2>
-<p id="section-9-1">For each DTLS connection, there are certain crypto state infomration
+<p id="section-9-1">For each DTLS connection, there are certain crypto state information
 that needs to be handled thread safe to avoid nonce re-use and correct
 replay protection. This arises as the key materials for DTLS epoch=3
 and higher are shared between the DTLS chunk and the DTLS handshake
