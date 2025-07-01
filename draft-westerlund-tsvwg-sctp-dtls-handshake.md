@@ -759,15 +759,17 @@ provide ephemeral key exchange.
 
 # Establishing DTLS in SCTP
 
-   This section specifies how DTLS in SCTP is established
+   This section specifies how DTLS in SCTP is established using
+   Key-Management DTLS Connections and the DTLS Chunk
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
 
    A DTLS in SCTP Association is built up with a Key-Management DTLS
    connection, from that DTLS connection Traffic DTLS Key Context and
-   Restart DTLS Key Context are derived.
+   Restart DTLS Key Context are derived and the configures
+   the DTLS Context.
 
-   The DTLS connection is established as part of extra procedures
-   for the DTLS chunk initial handshake (see
+   The Key-Management DTLS connection is established as part of extra
+   procedures for the DTLS chunk initial handshake (see
    {{initial_dtls_connection}}).
 
 
@@ -777,6 +779,11 @@ provide ephemeral key exchange.
   the DTLS handshake.
 
   TO BE WRITTEN!
+
+
+## Protection Solution Validations {#dtls-validation}
+
+TO BE WRITTEN
 
 ## DTLS Handshake {#dtls-handshake}
 
@@ -795,7 +802,13 @@ provide ephemeral key exchange.
    Moving towards next phase is possible only when the previous
    phase handshake is completed.
 
-   SCTP Handshake is strictly compliant to {{RFC9260}}.
+   SCTP Handshake is strictly compliant to {{RFC9260}}. The DTLS 1.3
+   Chunk Protected Association parameter (Section 4.1 of
+   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) is included containing
+   the Protection Solution identifier (See {{sec-iana-psi}}) for this
+   documents key-management at a suitable preference position
+   depending on local policy. And in case this key-management solution
+   is the most preferred then the process continues as stated below.
 
    As soon the SCTP Association has entered the SCTP state PROTECTION
    INITILIZATION as defined by {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} the
@@ -812,12 +825,12 @@ provide ephemeral key exchange.
 
    If the DTLS handshake is successful in establishing a security
    context to protect further communication and the peer identity is
-   accepted then Traffic DTLS Key Context and Restart DTLS Key Context
-   as specified in {{dtls-key-derivation}}.
+   accepted then generate the Traffic DTLS Key Context and Restart
+   DTLS Key Context as specified in {{dtls-key-derivation}}.
 
-   The DTLS Key Contexts are installed for the DTLS chunk. This
-   then triggers validated of the association establishment (see
-   {{protocol_overview}}) by handshaking PVALID messages.
+   The DTLS Key Contexts are installed for the DTLS chunk. When this
+   has been completed the implementation performs validation by
+   exchanging PVALID messages per {{dtls-validation}}.
 
    Once the Association has been validated, then the SCTP association
    is informed that it can move to the PROTECTED state.
@@ -844,8 +857,8 @@ Initiator                                     Responder
     |<-------------[DATA(DTLS ACK)]---------------+   |
     |                                             | -'
     |                                             | -.
-    |<-----------[DTLS CHUNK(PVALID)]-------------+   | VALIDATION
-    +------------[DTLS CHUNK(PVALID)]------------>|   +-----------
+    |<---------[DTLS CHUNK(PVALID MSG)]-----------+   | VALIDATION
+    +----------[DTLS CHUNK(PVALID MSG)]---------->|   +-----------
     |                                             | -'
     |                                             | -.
     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
@@ -910,16 +923,30 @@ the events leading to SCTP Restart request.
 
 ### Installation of initial Restart DTLS Key Context {#init-dtls-restart-context}
 
-As soon as the Association has reached the PROTECTED INITILIZATION state, a
-Restart DTLS Key Context SHALL be installed.
+As soon as the Association has reached the PROTECTED INITILIZATION
+state, after the Traffic DTLS Key context have been installed a
+Restart DTLS Key Context SHALL be derived and then installed.
 
-It MAY exist a time gap where the Association is in PROTECTED state
-but no Restart DTLS Key Context has been installed yet. If a SCTP Restart procedure
-will be initiated during that time, it will fail and the Association
-will also fail.
+It MAY exist a short time gap where the Association has entered in
+PROTECTED state but no Restart DTLS Key Context has been installed
+yet. If a SCTP Restart procedure will be initiated during that time,
+it will fail and the Association will also fail. However, this is
+unlikely as the restart Init will be sent multiple times following a
+expontial back-off timer and in that time the Restart DTLS Key Context is
+expected to be in place.
 
 Once installed, no traffic will be sent over the Restart DTLS Key Context
-so that both endpoints will have a known DTLS record state.
+so that both endpoints will have a known DTLS context state, i.e. the
+Sequence number and replay window are both just initilized to default
+values for the epoch=3.
+
+### Installation of Restart DTLS Key Context for further DTLS Connections
+
+As each subsequent Key-Management DTLS connection complete the DTLS handshake
+and the Traffic DTLS Key context has been derived and installed also
+the Restart DTLS Key context SHALL be installed. The closing of the previous
+DTLS connection SHALL NOT be initiated or completed until the Restart
+DTLS Key Context is in place.
 
 
 ### SCTP Association Restart Procedure {#sctp-assoc-restart-procedure}
@@ -984,9 +1011,17 @@ From procedure viewpoint the sequence is the following:
 - Initiator sends handshakes for new Traffic DTLS connnection as well
   as new Restart DTLS connection.
 
-- When the handshake for the a new traffic DTLS connection has been
-  completed, new Traffic and Restart DTLS Key Contexts are derived.
-  New Traffic DTLS Key Context is being used for traffic.
+- The SCTP Association goes into Established state and jumps directly
+  to PROTECTED state, and the ULP can resume communication protected
+  using the Restart DTLS Key Context.
+
+- A new key-management DTLS handshake is initiated as soon as
+  PROTECTED state has been reached. When the Key-management DTLS
+  connection has been completed, new Traffic and Restart DTLS Key
+  Contexts are derived and installed using Epoch=3. The new Traffic
+  DTLS Key Context is being used for traffic as soon as the context
+  have been installed. When Traffic Key Context has been installed
+  the new Restart DTLS Key Context for epoch=3 are installed.
 
 User Data for any ULP traffic MAY be initiated immediately after
 COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DTLS Key Context, that
@@ -1017,15 +1052,12 @@ that the implementation will be configurable by the ULP to meet its demand.
 Likely criteria to impact the need for rekeying through the usage of
 new DTLS connection are:
 
-   * Maximum time since last authentication of the peer
+   * Time duration since last authentication of the peer
 
    * Amount of data transferred since last forward secrecy preserving
      rekeying
 
-   * The cipher suit's maximum key usage being reached. Although for
-     DTLS 1.3 usage of the Key Update mechanism can generate new keys
-     not having the same security properties as opening a new DTLS
-     connection.
+   * The cipher suit's maximum key usage being reached.
 
 
 ## Procedure for Rekeying
@@ -1045,8 +1077,8 @@ The following state machine applies.
 |          +---------+
 |          |  AGED   |  When in AGED state a
 |          +----+----+  new DTLS connection
-|               |       is added with a newly derived Traffic DTLS Key Context
-|      NEW DTLS |       As well as a new Restart DTLS Key Context
+|               |       is added and deriving new Traffic DTLS Key Context
+|      NEW DTLS |       as well as a new Restart DTLS Key Context
 |               |
 |               |
 |               V
@@ -1074,16 +1106,17 @@ The following state machine applies.
 {: #dtls-rekeying-state-diagram title="State Diagram for Rekeying"}
 
 Trigger for rekeying can either be a local AGING event, triggered by
-the DTLS connection meeting the criteria for rekeying, or a REMOTE AGING
-event, triggered by receiving a DTLS connection creation request on the
-Traffic DTLS Key Context that would be used for new DTLS connection.
-In such case a new DTLS connection shall be added according
-to {{add-dtls-connection}} with a new Traffic DTLS Key Context.
+the DTLS connection meeting the criteria for rekeying, or a REMOTE
+AGING event, triggered by receiving a DTLS Connection handshake on the
+DTLS Connection Index (next value) that would be used for new DTLS
+connection.  In such case a new DTLS connection shall be added
+according to {{add-dtls-connection}}.
 
-As soon as the new DTLS connection completes handshaking,
-and the Traffic and Restart DTLS Key Contexts have been derived, the traffic
-is moved from the old Traffic DTLS Key Context, then the procedure for closing the old DTLS
-connection is initiated, see {{remove-dtls-connection}}.
+As soon as the new DTLS connection completes handshaking, and the
+Traffic and Restart DTLS Key Contexts have been derived and installed,
+the protection of the SCTP packets is moved from the old Traffic DTLS
+Key Context, then the procedure for closing the old DTLS connection is
+initiated, see {{remove-dtls-connection}}.
 
 
 ## Race Condition in Rekeying
@@ -1093,46 +1126,6 @@ the same time and start creation of a new DTLS connection.
 
 The race condition is solved as specified in {{add-dtls-connection}}.
 
-
-# PMTU Discovery Considerations
-
-Due to the DTLS record limitation for application data SCTP MUST use
-2<sup>14</sup> as input to determine absolute maximum MTU when running
-PMTUD and using DTLS in SCTP.
-
-The implementor needs to handle the DTLS 1.3 record overhead. SCTP
-PMTUD needs to include both the DTLS record as well as the DTLS chunk
-overhead in this consideration and ensure that produced packets,
-especially those that are not PMTUD probes do not become oversized.
-The DTLS record size may change during the SCTP associations lifetime
-due to future handshakes affecting cipher suit in use, or changes to
-record layer configurations.
-
-Note that this implies that DTLS 1.3 is expected to
-accept application data payloads of potentially larger sizes than what
-it configured to use for messages the DTLS implementation generates
-itself for signaling.
-
-# Implementation Considerations
-
-For each DTLS connection, there are certain crypto state information
-that needs to be handled thread safe to avoid nonce re-use and correct
-replay protection. This arises as the key materials for DTLS epoch=3
-and higher are shared between the DTLS chunk and the DTLS handshake
-parts.
-
-This issue is primarily for kernel implementation of SCTP,
-thus the DTLS chunk implementation resides in kernel space, and the
-DTLS handshake resides in user space. For user space implementations
-where both DTLS handshake messages and SCTP message protection can
-directly call the same DTLS implementation instance the issue is
-avoided.
-
-Different implementation strategies do exists for the kernel
-implementations but likely have some impact on the DTLS implementation
-itself as the DTLS record protection processing either need to synchronize
-over state variables, alternatively use the DTLS Chunk protection operation
-using an extended DTLS Chunk API {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
 
 # Security Considerations
 
@@ -1168,4 +1161,13 @@ due to key compromise.
 
 # IANA Consideration
 
-This document has no IANA considerations currently.
+This document requests the following registration.
+
+## SCTP Protection Solution Identifier  {#sec-iana-psi}
+
+IANA is requested to assign one SCTP Protoection Solution Indicator to
+identify the key-management defined in this document.
+
+| Identifier | Solution Name | Reference | Contact |
+| 4096 | DTLS in SCTP Handshake | RFC-TBD | Draft Authors |
+{: #iana-psi title="SCTP Protection Solution Indicators" cols="r l l l"}
