@@ -1202,3 +1202,18 @@ identify the key-management defined in this document.
 | Identifier | Solution Name | Reference | Contact |
 | 4096 | DTLS in SCTP Handshake | RFC-TBD | Draft Authors |
 {: #iana-psi title="SCTP Protection Solution Indicators" cols="r l l l"}
+
+## TLS Exporter Labels
+
+IANA is requested to register the following values in the TLS Exporter
+Label Registry {{RFC5705}}. The registery was at the time of writing located
+at: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#exporter-labels
+
+| Value | DTLS-OK | Recommended | Reference | Comment |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N | RFC-TO-BE | |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N | RFC-TO-BE | |
+| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N | RFC-TO-BE | |
+| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N | RFC-TO-BE | |
+{: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l l l"}
+
+
