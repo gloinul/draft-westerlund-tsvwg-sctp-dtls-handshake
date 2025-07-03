@@ -1337,6 +1337,9 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
                 <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-sctp-protection-solution-id" class="internal xref">SCTP Protection Solution Identifier</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-tls-exporter-labels" class="internal xref">TLS Exporter Labels</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
@@ -3113,6 +3116,63 @@ identify the key-management defined in this document.<a href="#section-9.1-1" cl
               <td class="text-left" rowspan="1" colspan="1">DTLS in SCTP Handshake</td>
               <td class="text-left" rowspan="1" colspan="1">RFC-TBD</td>
               <td class="text-left" rowspan="1" colspan="1">Draft Authors</td>
+            </tr>
+          </tbody>
+        </table>
+</div>
+</section>
+</div>
+<div id="tls-exporter-labels">
+<section id="section-9.2">
+        <h3 id="name-tls-exporter-labels">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-tls-exporter-labels" class="section-name selfRef">TLS Exporter Labels</a>
+        </h3>
+<p id="section-9.2-1">IANA is requested to register the following values in the TLS Exporter
+Label Registry <span>[<a href="#RFC5705" class="cite xref">RFC5705</a>]</span>. The registery was at the time of writing located
+at: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#exporter-labels<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<span id="name-tls-exporter-labels-2"></span><div id="iana-tls-exporter">
+<table class="center" id="table-2">
+          <caption>
+<a href="#table-2" class="selfRef">Table 2</a>:
+<a href="#name-tls-exporter-labels-2" class="selfRef">TLS Exporter Labels</a>
+          </caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Value</th>
+              <th class="text-left" rowspan="1" colspan="1">DTLS-OK</th>
+              <th class="text-left" rowspan="1" colspan="1">Recommended</th>
+              <th class="text-left" rowspan="1" colspan="1">Reference</th>
+              <th class="text-left" rowspan="1" colspan="1">Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT</td>
+              <td class="text-left" rowspan="1" colspan="1">Y</td>
+              <td class="text-left" rowspan="1" colspan="1">N</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC-TO-BE</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER</td>
+              <td class="text-left" rowspan="1" colspan="1">Y</td>
+              <td class="text-left" rowspan="1" colspan="1">N</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC-TO-BE</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT</td>
+              <td class="text-left" rowspan="1" colspan="1">Y</td>
+              <td class="text-left" rowspan="1" colspan="1">N</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC-TO-BE</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">EXPORTER_DTLS_IN_SCTP_RESTART_SERVER</td>
+              <td class="text-left" rowspan="1" colspan="1">Y</td>
+              <td class="text-left" rowspan="1" colspan="1">N</td>
+              <td class="text-left" rowspan="1" colspan="1">RFC-TO-BE</td>
+              <td class="text-left" rowspan="1" colspan="1"> </td>
             </tr>
           </tbody>
         </table>

@@ -126,6 +126,7 @@ Table of Contents
      8.2.  Privacy Considerations
    9.  IANA Consideration
      9.1.  SCTP Protection Solution Identifier
+     9.2.  TLS Exporter Labels
    10. References
      10.1.  Normative References
      10.2.  Informative References
@@ -1171,6 +1172,28 @@ Table of Contents
     +------------+------------------------+-----------+---------------+
 
                 Table 1: SCTP Protection Solution Indicators
+
+9.2.  TLS Exporter Labels
+
+   IANA is requested to register the following values in the TLS
+   Exporter Label Registry [RFC5705].  The registery was at the time of
+   writing located at: https://www.iana.org/assignments/tls-parameters/
+   tls-parameters.xhtml#exporter-labels
+
+   +====================================+=====+===========+=========+=======+
+   |Value                               |DTLS-|Recommended|Reference|Comment|
+   |                                    |OK   |           |         |       |
+   +====================================+=====+===========+=========+=======+
+   |EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT|Y    |N          |RFC-TO-BE|       |
+   +------------------------------------+-----+-----------+---------+-------+
+   |EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER|Y    |N          |RFC-TO-BE|       |
+   +------------------------------------+-----+-----------+---------+-------+
+   |EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT|Y    |N          |RFC-TO-BE|       |
+   +------------------------------------+-----+-----------+---------+-------+
+   |EXPORTER_DTLS_IN_SCTP_RESTART_SERVER|Y    |N          |RFC-TO-BE|       |
+   +------------------------------------+-----+-----------+---------+-------+
+
+                        Table 2: TLS Exporter Labels
 
 10.  References
 
