@@ -35,6 +35,7 @@ informative:
   RFC3758:
   RFC4895:
   RFC5061:
+  RFC5705:
   RFC6083:
   I-D.ietf-tls-rfc8446bis:
   I-D.ietf-tsvwg-dtls-over-sctp-bis:
@@ -775,10 +776,40 @@ provide ephemeral key exchange.
 
 ## DTLS Key Context derivation {#dtls-key-derivation}
 
-  This section describes how DTLS Key Contexts are derived from
-  the DTLS handshake.
+  This section describes how DTLS Key Contexts are derived from the
+  DTLS handshake using the TLS Exporter as defined by {{RFC9147}}. The
+  TLS exporter label specifications below is following {{RFC5705}}.
 
-  TO BE WRITTEN!
+  There are two sets of keys one for traffic and one for restart. Each
+  set consists of one client and one server side write key. The client
+  and server roles are here in relation to key-management DTLS session
+  roles. So the DTLS Client will install the key derived using the
+  EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT label as its write key for the
+  traffic context, and use the EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER as
+  its traffic DTLS context read key. Correspondlingly the
+  EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT is used to export the key used
+  by the endpoint that acted as DTLS Client as write key for the
+  restart DTLS key context. And the EXPORTER_DTLS_IN_SCTP_RESTART_SERVER
+  as the DTLS client's read key for the restart DTLS Key Context.
+
+  The following labels are defined:
+
+  * EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT
+  * EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER
+  * EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT
+  * EXPORTER_DTLS_IN_SCTP_RESTART_SERVER
+
+  To ensure that downgrade attack on the protection solution offered
+  is not is possible the context used will be the full sequence of
+  Protection Solution Identiers as include in the DTLS 1.3 Chunk
+  Protected Association (Section 4.1 of
+  {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) sent by the SCTP
+  assocation initiator. Thus, any downgrade attack on this will result
+  in a missmatch in produced keys as the initiator will use what it
+  actually offered and the responder a truncated or modified sequence.
+
+  The length of the exported key material depends on the need for the
+  negotiatated cipher suit for the protection.
 
 
 ## Protection Solution Validations {#dtls-validation}
