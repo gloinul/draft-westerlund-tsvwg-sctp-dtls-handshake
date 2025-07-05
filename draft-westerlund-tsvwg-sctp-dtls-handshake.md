@@ -1005,7 +1005,7 @@ Initiator                                     Responder
     +----------[DATA(DTLS Client Hello)]--------->|   |
     |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
     +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
-    |<-------------[DATA(DTLS ACK)]---------------+   +----------------
+    |<-------------[DATA(DTLS ACK)]---------------+   +-----------
     |                                             | -'
     |                    ...                      | -.
     |                    ...                      |   | Derive new
@@ -1013,7 +1013,7 @@ Initiator                                     Responder
     |                    ...                      |   | Restart
     |                    ...                      |   | DTLS Key
     |                    ...                      |   | Contexts
-    |                    ...                      |   +----------------
+    |                    ...                      |   +------------
     |                    ...                      | -'
     |                                             | -.
     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
@@ -1105,17 +1105,17 @@ The following state machine applies.
 |        AGING  |  REMOTE AGING
 |               V
 |          +---------+
-|          |  AGED   |  When in AGED state a
-|          +----+----+  new DTLS connection
-|               |       is added and deriving new Traffic DTLS Key Context
-|      NEW DTLS |       as well as a new Restart DTLS Key Context
+|          |  AGED   |  When in AGED state a new DTLS connection is
+|          +----+----+  added and deriving new Traffic DTLS Key 
+|               |       Context as well as a new Restart DTLS Key 
+|      NEW DTLS |       Context
 |               |
 |               |
 |               V
 |          +---------+
-|          |   OLD   |  In OLD state there
-|          +----+----+  are 2 active DTLS connections
-|               |       Traffic is switched to the new Traffic DTLS Key Context
+|          |   OLD   |  In OLD state there are 2 active DTLS
+|          +----+----+  connections Traffic is switched to the new
+|               |       Traffic DTLS Key Context
 |      SWITCH   |
 |               V
 |          +---------+
@@ -1205,14 +1205,12 @@ identify the key-management defined in this document.
 ## TLS Exporter Labels
 
 IANA is requested to register the following values in the TLS Exporter
-Label Registry {{RFC5705}}. The registry was at the time of writing located
+Label Registry {{RFC5705}} with Reference RFC-TO-BE and empty Comment. The registry was at the time of writing located
 at: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#exporter-labels
 
-| Value | DTLS-OK | Recommended | Reference | Comment |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N | RFC-TO-BE | |
-{: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l l l"}
-
-
+| Value | DTLS-OK | Recommended |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N |
+{: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l"}
