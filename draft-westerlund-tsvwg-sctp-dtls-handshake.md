@@ -1106,8 +1106,8 @@ The following state machine applies.
 |               V
 |          +---------+
 |          |  AGED   |  When in AGED state a new DTLS connection is
-|          +----+----+  added and deriving new Traffic DTLS Key 
-|               |       Context as well as a new Restart DTLS Key 
+|          +----+----+  added and deriving new Traffic DTLS Key
+|               |       Context as well as a new Restart DTLS Key
 |      NEW DTLS |       Context
 |               |
 |               |
