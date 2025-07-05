@@ -966,36 +966,36 @@ Table of Contents
    preserve the Restart DTLS Key Context and that the Responder SHALL
    NOT change the Restart DTLS Key Context during the Restart procedure.
 
- Initiator                                     Responder
-     |                                             | -.
-     +------------[DTLS CHUNK(INIT)]-------------->|   |
-     |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
-     |                                             |   | Using
-     |                                             |   | SCTP
-     +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-     |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
-     |                                             | -'
-     |                                             | -.
-     +----------[DATA(DTLS Client Hello)]--------->|   |
-     |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
-     +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
-     |<-------------[DATA(DTLS ACK)]---------------+   +----------------
-     |                                             | -'
-     |                    ...                      | -.
-     |                    ...                      |   | Derive new
-     |                    ...                      |   | Traffic and
-     |                    ...                      |   | Restart
-     |                    ...                      |   | DTLS Key
-     |                    ...                      |   | Contexts
-     |                    ...                      |   +----------------
-     |                    ...                      | -'
-     |                                             | -.
-     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
-     +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
-     |                    ...                      |   |
-     |                    ...                      |   |
+    Initiator                                     Responder
+        |                                             | -.
+        +------------[DTLS CHUNK(INIT)]-------------->|   |
+        |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+        |                                             |   | Using
+        |                                             |   | SCTP
+        +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
+        |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
+        |                                             | -'
+        |                                             | -.
+        +----------[DATA(DTLS Client Hello)]--------->|   |
+        |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
+        +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
+        |<-------------[DATA(DTLS ACK)]---------------+   +-----------
+        |                                             | -'
+        |                    ...                      | -.
+        |                    ...                      |   | Derive new
+        |                    ...                      |   | Traffic and
+        |                    ...                      |   | Restart
+        |                    ...                      |   | DTLS Key
+        |                    ...                      |   | Contexts
+        |                    ...                      |   +------------
+        |                    ...                      | -'
+        |                                             | -.
+        +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
+        +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
+        |                    ...                      |   |
+        |                    ...                      |   |
 
-            Figure 6: SCTP Restart sequence for DTLS in SCTP
+              Figure 6: SCTP Restart sequence for DTLS in SCTP
 
    The Figure 6 shows a successful SCTP Association Restart.
 
@@ -1068,42 +1068,42 @@ Table of Contents
    same time for the current SCTP Association.  The following state
    machine applies.
 
-           +---------+
-+--------->|  YOUNG  |  There's only one
-|          +----+----+  DTLS connection until
-|               |       aging criteria are met
-|               |
-|        AGING  |  REMOTE AGING
-|               V
-|          +---------+
-|          |  AGED   |  When in AGED state a
-|          +----+----+  new DTLS connection
-|               |       is added and deriving new Traffic DTLS Key Context
-|      NEW DTLS |       as well as a new Restart DTLS Key Context
-|               |
-|               |
-|               V
-|          +---------+
-|          |   OLD   |  In OLD state there
-|          +----+----+  are 2 active DTLS connections
-|               |       Traffic is switched to the new Traffic DTLS Key Context
-|      SWITCH   |
-|               V
-|          +---------+
-|          |  DRAIN  |  The aged DTLS connection
-|          +----+----+  is drained before being ready
-|               |       to be closed
-|               |
-|       DRAINED | DTLS close_notify
-|               V
-|          +---------+
-|          |  DEAD   |  In DEAD state the aged
-|          +----+----+  connection is closed
-|               |
-|      REMOVED  |
-+---------------+
+              +---------+
+   +--------->|  YOUNG  |  There's only one
+   |          +----+----+  DTLS connection until
+   |               |       aging criteria are met
+   |               |
+   |        AGING  |  REMOTE AGING
+   |               V
+   |          +---------+
+   |          |  AGED   |  When in AGED state a new DTLS connection is
+   |          +----+----+  added and deriving new Traffic DTLS Key
+   |               |       Context as well as a new Restart DTLS Key
+   |      NEW DTLS |       Context
+   |               |
+   |               |
+   |               V
+   |          +---------+
+   |          |   OLD   |  In OLD state there are 2 active DTLS
+   |          +----+----+  connections Traffic is switched to the new
+   |               |       Traffic DTLS Key Context
+   |      SWITCH   |
+   |               V
+   |          +---------+
+   |          |  DRAIN  |  The aged DTLS connection
+   |          +----+----+  is drained before being ready
+   |               |       to be closed
+   |               |
+   |       DRAINED | DTLS close_notify
+   |               V
+   |          +---------+
+   |          |  DEAD   |  In DEAD state the aged
+   |          +----+----+  connection is closed
+   |               |
+   |      REMOVED  |
+   +---------------+
 
-                 Figure 7: State Diagram for Rekeying
+                    Figure 7: State Diagram for Rekeying
 
    Trigger for rekeying can either be a local AGING event, triggered by
    the DTLS connection meeting the criteria for rekeying, or a REMOTE
@@ -1177,24 +1177,24 @@ Table of Contents
 9.2.  TLS Exporter Labels
 
    IANA is requested to register the following values in the TLS
-   Exporter Label Registry [RFC5705].  The registry was at the time of
-   writing located at: https://www.iana.org/assignments/tls-parameters/
-   tls-parameters.xhtml#exporter-labels
+   Exporter Label Registry [RFC5705] with Reference RFC-TO-BE and empty
+   Comment.  The registry was at the time of writing located at:
+   https://www.iana.org/assignments/tls-parameters/tls-
+   parameters.xhtml#exporter-labels
 
-   +====================================+=====+===========+=========+=======+
-   |Value                               |DTLS-|Recommended|Reference|Comment|
-   |                                    |OK   |           |         |       |
-   +====================================+=====+===========+=========+=======+
-   |EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT|Y    |N          |RFC-TO-BE|       |
-   +------------------------------------+-----+-----------+---------+-------+
-   |EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER|Y    |N          |RFC-TO-BE|       |
-   +------------------------------------+-----+-----------+---------+-------+
-   |EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT|Y    |N          |RFC-TO-BE|       |
-   +------------------------------------+-----+-----------+---------+-------+
-   |EXPORTER_DTLS_IN_SCTP_RESTART_SERVER|Y    |N          |RFC-TO-BE|       |
-   +------------------------------------+-----+-----------+---------+-------+
+     +======================================+=========+=============+
+     | Value                                | DTLS-OK | Recommended |
+     +======================================+=========+=============+
+     | EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y       | N           |
+     +--------------------------------------+---------+-------------+
+     | EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y       | N           |
+     +--------------------------------------+---------+-------------+
+     | EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y       | N           |
+     +--------------------------------------+---------+-------------+
+     | EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y       | N           |
+     +--------------------------------------+---------+-------------+
 
-                        Table 2: TLS Exporter Labels
+                       Table 2: TLS Exporter Labels
 
 10.  References
 
