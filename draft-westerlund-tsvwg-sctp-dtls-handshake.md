@@ -37,10 +37,10 @@ informative:
   RFC5061:
   RFC5705:
   RFC6083:
+  RFC9525:
   I-D.ietf-tls-rfc8446bis:
+  I-D.ietf-tls-super-jumbo-record-limit:
   I-D.ietf-tsvwg-dtls-over-sctp-bis:
-  I-D.ietf-uta-rfc6125bis:
-  I-D.mattsson-tls-super-jumbo-record-limit:
 
   ANSSI-DAT-NT-003:
     target: <https://www.ssi.gouv.fr/uploads/2015/09/NT_IPsec_EN.pdf>
@@ -70,9 +70,8 @@ normative:
   RFC8446:
   RFC8996:
   RFC9147:
-  RFC9325:
-
   RFC9260:
+  RFC9325:
 
   I-D.westerlund-tsvwg-sctp-dtls-chunk:
     target: "https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/"
@@ -686,7 +685,7 @@ that any error will occur.
    using DTLS in SCTP defines what the identity is and how it is
    encoded and the client and server MUST use the same identity
    format. Guidance on server certificate validation can be found in
-   [I-D.ietf-uta-rfc6125bis]. DTLS in SCTP enables periodic transfer
+   [RFC9525]. DTLS in SCTP enables periodic transfer
    of mutual revocation information (OSCP stapling) every time a new
    parallel connection is set up. All security decisions MUST be based
    on the peer's authenticated identity, not on its transport layer
