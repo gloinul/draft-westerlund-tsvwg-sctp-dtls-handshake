@@ -779,17 +779,16 @@ provide ephemeral key exchange.
   DTLS handshake using the TLS Exporter as defined by {{RFC9147}}. The
   TLS exporter label specifications below is following {{RFC5705}}.
 
-  There are two sets of keys one for traffic and one for restart. Each
-  set consists of one client and one server side write key. The client
-  and server roles are here in relation to key-management DTLS session
-  roles. So the DTLS Client will install the key derived using the
-  EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT label as its write key for the
-  traffic context, and use the EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER as
-  its traffic DTLS context read key. Correspondingly the
-  EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT is used to export the key used
-  by the endpoint that acted as DTLS Client as write key for the
-  restart DTLS key context. And the EXPORTER_DTLS_IN_SCTP_RESTART_SERVER
-  as the DTLS client's read key for the restart DTLS Key Context.
+  There are two sets of keys one for traffic and one for restart. The
+  client and server roles are here in relation to key-management DTLS session
+  roles. So the DTLS endpoints will install the key derived using the
+  EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT label as their client_application_traffic_secret_3
+  and the key derived using the EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER label as their
+  server_application_traffic_secret_3. Correspondingly,
+  EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT and EXPORTER_DTLS_IN_SCTP_RESTART_SERVER
+  are used to export the keys used by the endpoints for the
+  restart DTLS key context. These keys are also used instead of client_application_traffic_secret_3
+  and server_application_traffic_secret_3.
 
   The following labels are defined:
 
