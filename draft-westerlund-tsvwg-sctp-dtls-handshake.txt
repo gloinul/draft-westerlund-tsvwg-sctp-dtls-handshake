@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 6 January 2026                                         Ericsson
-                                                             5 July 2025
+Expires: 7 January 2026                                         Ericsson
+                                                             6 July 2025
 
 
   Datagram Transport Layer Security (DTLS) based key-management of the
@@ -61,7 +61,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 January 2026.
+   This Internet-Draft will expire on 7 January 2026.
 
 Copyright Notice
 
@@ -141,10 +141,10 @@ Table of Contents
    the SCTP DTLS Chunk packet protection
    [I-D.westerlund-tsvwg-sctp-dtls-chunk] securing Stream Control
    Transmission Protocol (SCTP) [RFC9260].  This combination of
-   specification is intended as a replacement to DTLS/SCTP [RFC6083] and
-   usage of SCTP-AUTH [RFC4895].  The combination of SCTP DTLS Chunk and
-   the key-management defined in this document we refer to as DTLS in
-   SCTP.
+   specifications is intended as a replacement to DTLS/SCTP [RFC6083]
+   and usage of SCTP-AUTH [RFC4895].  The combination of SCTP DTLS Chunk
+   and the key-management defined in this document we refer to as DTLS
+   in SCTP.
 
    DTLS in SCTP provides mutual authentication of endpoints, data
    confidentiality, data origin authentication, data integrity
@@ -181,7 +181,7 @@ Table of Contents
    The main benefit of this key-management solution over the solution
    proposed by the WG is that this does not require any extensions to
    DTLS 1.3 to be implemented.  It solely relies on the core DTLS
-   handshake to do mutual authentication, a create a main secret, and
+   handshake to do mutual authentication, creates a main secret, and
    then relies on the TLS exporter to export necessary secrets for the
    DTLS Chunk.
 
@@ -198,8 +198,8 @@ Table of Contents
    pair of keys, derived from a DTLS connection, and all relevant data
    that needs to be provided to the SCTP DTLS Chunk Protection Operator
    for DTLS encryption and decryption.  DTLS Key context includes Keys
-   for sending and receiving, replay window, last used sequence number.
-   Each DTLS key context is associated with a four value tuple
+   for sending and receiving, replay window, and last used sequence
+   number.  Each DTLS key context is associated with a four value tuple
    identifying the context, consisting of SCTP Association, the restart
    indicator, the DTLS Connection ID (if used), and the DTLS epoch.
 
@@ -648,7 +648,7 @@ Table of Contents
    supported.  Cipher suites and parameters that do not provide
    ephemeral key-exchange MUST NOT be supported.
 
-   The Cipher suits negotiated in the Key-Management DTLS Connection
+   The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk.  The DTLS Chunk
    is expected to have an API capability to determine the Cipher Suit
    Capabilities, see Abstract API in Section 10.1 of
@@ -1163,8 +1163,8 @@ Table of Contents
 
 9.1.  SCTP Protection Solution Identifier
 
-   IANA is requested to assign one SCTP Protection Solution Indicator to
-   identify the key-management defined in this document.
+   IANA is requested to assign one SCTP Protection Solution Identifier
+   to identify the key-management defined in this document.
 
     +============+========================+===========+===============+
     | Identifier | Solution Name          | Reference | Contact       |
