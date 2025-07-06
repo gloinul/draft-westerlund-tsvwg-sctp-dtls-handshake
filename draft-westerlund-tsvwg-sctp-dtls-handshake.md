@@ -124,7 +124,7 @@ SCTP-AUTH (RFC4895).
    of the SCTP DTLS Chunk packet protection
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} securing Stream Control
    Transmission Protocol (SCTP) {{RFC9260}}.  This combination of
-   specification is intended as a replacement to DTLS/SCTP
+   specifications is intended as a replacement to DTLS/SCTP
    {{RFC6083}} and usage of SCTP-AUTH {{RFC4895}}. The combination of
    SCTP DTLS Chunk and the key-management defined in this document we
    refer to as DTLS in SCTP.
@@ -164,7 +164,7 @@ SCTP-AUTH (RFC4895).
    The main benefit of this key-management solution over the solution
    proposed by the WG is that this does not require any extensions to
    DTLS 1.3 to be implemented. It solely relies on the core DTLS
-   handshake to do mutual authentication, a create a main secret, and
+   handshake to do mutual authentication, creates a main secret, and
    then relies on the TLS exporter to export necessary secrets for the
    DTLS Chunk.
 
@@ -182,7 +182,7 @@ SCTP-AUTH (RFC4895).
    the pair of keys, derived from a DTLS connection, and all relevant
    data that needs to be provided to the SCTP DTLS Chunk Protection
    Operator for DTLS encryption and decryption.  DTLS Key context
-   includes Keys for sending and receiving, replay window, last used
+   includes Keys for sending and receiving, replay window, and last used
    sequence number. Each DTLS key context is associated with a four
    value tuple identifying the context, consisting of SCTP
    Association, the restart indicator, the DTLS Connection ID (if
@@ -663,7 +663,7 @@ that any error will occur.
    confidentiality MUST NOT be supported. Cipher suites and parameters
    that do not provide ephemeral key-exchange MUST NOT be supported.
 
-   The Cipher suits negotiated in the Key-Management DTLS Connection
+   The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk. The DTLS
    Chunk is expected to have an API capability to determine the Cipher
    Suit Capabilities, see Abstract API in Section 10.1 of
@@ -1195,7 +1195,7 @@ This document requests the following registration.
 
 ## SCTP Protection Solution Identifier  {#sec-iana-psi}
 
-IANA is requested to assign one SCTP Protection Solution Indicator to
+IANA is requested to assign one SCTP Protection Solution Identifier to
 identify the key-management defined in this document.
 
 | Identifier | Solution Name | Reference | Contact |
