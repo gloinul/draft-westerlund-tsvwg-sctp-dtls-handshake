@@ -37,6 +37,7 @@ informative:
   RFC5061:
   RFC5705:
   RFC6083:
+  RFC9525:
   I-D.ietf-tls-rfc8446bis:
   I-D.ietf-uta-rfc6125bis:
 
@@ -66,9 +67,8 @@ normative:
   RFC8446:
   RFC8996:
   RFC9147:
-  RFC9325:
-
   RFC9260:
+  RFC9325:
 
   I-D.westerlund-tsvwg-sctp-dtls-chunk:
     target: "https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/"
@@ -110,7 +110,7 @@ specification is enabling very long-lived sessions of weeks and months
 and supports mutual re-authentication and rekeying with ephemeral key
 exchange. The key-management solution does not require any additional
 defined features or implementation support beyond core DTLS 1.3. This
-is intended as an replacement to using DTLS/SCTP (RFC6083) and
+is intended as a replacement to using DTLS/SCTP (RFC6083) and
 SCTP-AUTH (RFC4895).
 
 --- middle
@@ -122,11 +122,11 @@ SCTP-AUTH (RFC4895).
 ## Overview
 
    This document describes the usage of the Datagram Transport Layer
-   Security version 1.3 (DTLS) {{RFC9147}} protocol for key-managment
+   Security version 1.3 (DTLS) {{RFC9147}} protocol for key-management
    of the SCTP DTLS Chunk packet protection
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} securing Stream Control
    Transmission Protocol (SCTP) {{RFC9260}}.  This combination of
-   specification is intended as an replacement to DTLS/SCTP
+   specifications is intended as a replacement to DTLS/SCTP
    {{RFC6083}} and usage of SCTP-AUTH {{RFC4895}}. The combination of
    SCTP DTLS Chunk and the key-management defined in this document we
    refer to as DTLS in SCTP.
@@ -165,8 +165,8 @@ SCTP-AUTH (RFC4895).
 
    The main benefit of this key-management solution over the solution
    proposed by the WG is that this does not require any extensions to
-   DTLS 1.3 to be implemented. It soley relies on the core DTLS
-   handshake to do mutual authentication, a create a main secret, and
+   DTLS 1.3 to be implemented. It solely relies on the core DTLS
+   handshake to do mutual authentication, creates a main secret, and
    then relies on the TLS exporter to export necessary secrets for the
    DTLS Chunk.
 
@@ -184,23 +184,23 @@ SCTP-AUTH (RFC4895).
    the pair of keys, derived from a DTLS connection, and all relevant
    data that needs to be provided to the SCTP DTLS Chunk Protection
    Operator for DTLS encryption and decryption.  DTLS Key context
-   includes Keys for sending and receiving, replay window, last used
+   includes Keys for sending and receiving, replay window, and last used
    sequence number. Each DTLS key context is associated with a four
    value tuple identifying the context, consisting of SCTP
    Association, the restart indicator, the DTLS Connection ID (if
-   used), an the DTLS epoch.
+   used), and the DTLS epoch.
 
    The basic functionalities and how things are related is described
    below.
 
    The process starts with a SCTP association where DTLS 1.3 Chunk
-   usage has been negotiated and this key-managmenet method has been
-   agreed in the SCTP INIT and INIT-ACK. To initilize and authenticate
+   usage has been negotiated and this key-management method has been
+   agreed in the SCTP INIT and INIT-ACK. To initialize and authenticate
    the peer the DTLS handshake is exchanged as SCTP user messages with
    the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) until an initial DTLS
    connection has been established.  If the DTLS handshake fails, the
-   SCTP association is aborted. With succesful handshake and
+   SCTP association is aborted. With successful handshake and
    authentication of the peer the key material exported from the DTLS
    connection and configured for the DTLS 1.3 chunk. From that point
    until SCTP association termination the DTLS chunk will protect the
@@ -218,7 +218,7 @@ SCTP-AUTH (RFC4895).
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.  Using the current DTLS
    Key context the DTLS Chunk Protection operator protects the plain
    text, which is all chunks to be sent in one SCTP packet, producing
-   a DTLS Record that is encapsualted in the DTLS chunk and then
+   a DTLS Record that is encapsulated in the DTLS chunk and then
    transmitted as a SCTP packet with a common header.
 
    The DTLS Chunk specifies that in the receiving SCTP endpoint each
@@ -342,7 +342,7 @@ in regard to SCTP and upper layer protocol"}
    to be provided to the SCTP DTLS Chunk.
    Each DTLS key context is associated with a four value
    tuple identifying the context, consisting of SCTP Association, the
-   restart indicator, the DTLS Connection ID (if used), an the DTLS
+   restart indicator, the DTLS Connection ID (if used), and the DTLS
    epoch
 
   Restart DTLS Key context:
@@ -389,7 +389,7 @@ in regard to SCTP and upper layer protocol"}
 
    DTLS in SCTP uses the DTLS chunk as specified in
    {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The chunk if just
-   repeated here for the reader's convience.
+   repeated here for the reader's convenience.
 
 ~~~~~~~~~~~ aasvg
  0                   1                   2                   3
@@ -415,7 +415,7 @@ reserved: 7 bits
 
 R: 1 bit (boolean)
 : Restart indicator. If this bit is set this DTLS chunk is protected
-  with by an Restart DTLS Key context.
+  with by a Restart DTLS Key context.
 
 Chunk Length: 16 bits (unsigned integer)
 : This value holds the length of the Payload in bytes plus 4.
@@ -438,7 +438,7 @@ configured for reliable and in-order delivery with the PPID set to
 DTLS Chunk Key-Management Messages
 {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. These user messages MAY
 contain one or more DTLS records. The SCTP stream ID used MAY be any
-stream ID that the ULP alreay uses, and if not know Stream 0. Note
+stream ID that the ULP already uses, and if not know Stream 0. Note
 that all fragments of a handshake message MUST be sent with the same
 stream ID to ensure the in-order delivery.
 
@@ -475,7 +475,7 @@ DCI: DTLS Connection Index 2 bits (unsigned integer)
   Index counter which corresponds to the epoch used in the SCTP DTLS
   Chunk.  This is a counter implemented in DTLS in SCTP that is used
   to identify which DTLS connection instance that is capable of
-  processing the DTLS message over an user message.  This index is
+  processing the DTLS message over a user message.  This index is
   recommended to be the lower part of a 64-bit unsigned integer
   variable as this is how DTLS epoch counter is defined.  DCI is
   unrelated to the DTLS Connection ID [RFC9147]. The counters
@@ -616,7 +616,7 @@ In general a DTLS connection can be removed when there's another
 active DTLS connection with valid DTLS Key Contexts that can be used
 for negotiating further key-management DTLS 1.3 connections.  In case
 the DTLS connection is removed and no useable DTLS Key Context exist
-for key-managemetn DTLS 1.3 negotiation, the Association SHALL be
+for key-management DTLS 1.3 negotiation, the Association SHALL be
 ABORTED.
 
 It is up to the implementation to guarantee that a DTLS Key Context exists
@@ -625,7 +625,7 @@ the Association abortion.
 
 ## DTLS Key Update
 
-DTLS Key Update MUST NOT be used.  DTLS Key Context replacemente MUST
+DTLS Key Update MUST NOT be used.  DTLS Key Context replacement MUST
 be used instead, by means creating a new DTLS connection as specified
 in {{parallel-dtls}}, deriving the new Traffic DTLS Key Context, the
 new Restart DTLS Key Context and then closing the old DTLS connection.
@@ -646,7 +646,7 @@ paths can be the result:
 However, as there is not expected that the key-management DTLS
 connection will at all have any activity between completing the
 handshake, and the DTLS connection closing, there is unlikely
-that any error will occurr.
+that any error will occur.
 
 
 # DTLS Considerations
@@ -668,7 +668,7 @@ that any error will occurr.
 
 ### General
 
-   The DTLS Connection ID SHOULD NOT be used in the Key-Managment DTLS
+   The DTLS Connection ID SHOULD NOT be used in the Key-Management DTLS
    Connection avoiding overhead and addition implementation
    requirements on DTLS implementation.
 
@@ -688,7 +688,7 @@ that any error will occurr.
    confidentiality MUST NOT be supported. Cipher suites and parameters
    that do not provide ephemeral key-exchange MUST NOT be supported.
 
-   The Cipher suits negotiated in the Key-Management DTLS Connection
+   The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk. The DTLS
    Chunk is expected to have an API capability to determine the Cipher
    Suit Capabilities, see Abstract API in Section 10.1 of
@@ -710,7 +710,7 @@ that any error will occurr.
    using DTLS in SCTP defines what the identity is and how it is
    encoded and the client and server MUST use the same identity
    format. Guidance on server certificate validation can be found in
-   [I-D.ietf-uta-rfc6125bis]. DTLS in SCTP enables periodic transfer
+   [RFC9525]. DTLS in SCTP enables periodic transfer
    of mutual revocation information (OSCP stapling) every time a new
    parallel connection is set up. All security decisions MUST be based
    on the peer's authenticated identity, not on its transport layer
@@ -834,12 +834,12 @@ provide ephemeral key exchange.
   * EXPORTER_DTLS_IN_SCTP_RESTART_SERVER_IV
 
   To ensure that downgrade attack on the protection solution offered
-  is not is possible the context used will be the full sequence of
-  Protection Solution Identiers as include in the DTLS 1.3 Chunk
+  is not possible the context used will be the full sequence of
+  Protection Solution Identifiers as include in the DTLS 1.3 Chunk
   Protected Association (Section 4.1 of
   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) sent by the SCTP
   assocation initiator. Thus, any downgrade attack on this will result
-  in a missmatch in produced keys as the initiator will use what it
+  in a mismatch in produced keys as the initiator will use what it
   actually offered and the responder a truncated or modified sequence.
 
   The length of the exported key or IV material depends on the need for the
@@ -1012,7 +1012,7 @@ Initiator                                     Responder
 ~~~~~~~~~~~
 {: #sctp-DTLS-further-dtls-connection title="Handshake of further DTLS connection" artwork-align="center"}
 
-The {{sctp-DTLS-further-dtls-connection}} shows a successfull
+The {{sctp-DTLS-further-dtls-connection}} shows a successful
 handshake of a further DTLS connection. Such connections can
 be initiated by any of the peers. Same as during the initial
 handshake, DTLS handshake messages are transported by means
@@ -1038,12 +1038,12 @@ PROTECTED state but no Restart DTLS Key Context has been installed
 yet. If a SCTP Restart procedure will be initiated during that time,
 it will fail and the Association will also fail. However, this is
 unlikely as the restart Init will be sent multiple times following a
-expontial back-off timer and in that time the Restart DTLS Key Context is
+exponential back-off timer and in that time the Restart DTLS Key Context is
 expected to be in place.
 
 Once installed, no traffic will be sent over the Restart DTLS Key Context
 so that both endpoints will have a known DTLS context state, i.e. the
-Sequence number and replay window are both just initilized to default
+Sequence number and replay window are both just initialized to default
 values for the epoch=3.
 
 ### Installation of Restart DTLS Key Context for further DTLS Connections
@@ -1081,7 +1081,7 @@ Initiator                                     Responder
     +----------[DATA(DTLS Client Hello)]--------->|   |
     |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
     +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
-    |<-------------[DATA(DTLS ACK)]---------------+   +----------------
+    |<-------------[DATA(DTLS ACK)]---------------+   +-----------
     |                                             | -'
     |                    ...                      | -.
     |                    ...                      |   | Derive new
@@ -1089,7 +1089,7 @@ Initiator                                     Responder
     |                    ...                      |   | Restart
     |                    ...                      |   | DTLS Key
     |                    ...                      |   | Contexts
-    |                    ...                      |   +----------------
+    |                    ...                      |   +------------
     |                    ...                      | -'
     |                                             | -.
     +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
@@ -1100,7 +1100,7 @@ Initiator                                     Responder
 ~~~~~~~~~~~
 {: #sctp-assoc-restart-sequence title="SCTP Restart sequence for DTLS in SCTP" artwork-align="center"}
 
-The {{sctp-assoc-restart-sequence}} shows a successfull
+The {{sctp-assoc-restart-sequence}} shows a successful
 SCTP Association Restart.
 
 From procedure viewpoint the sequence is the following:
@@ -1112,9 +1112,9 @@ From procedure viewpoint the sequence is the following:
   tied to the Restart DTLS Key Context
 
 - Responder replies with COOKIE-ACK using DTLS CHUNK encrypted with
-  the to the Restart DTLS Key Context
+  the Restart DTLS Key Context
 
-- Initiator sends handshakes for new Traffic DTLS connnection as well
+- Initiator sends handshakes for new Traffic DTLS connection as well
   as new Restart DTLS connection.
 
 - The SCTP Association goes into Established state and jumps directly
@@ -1181,17 +1181,17 @@ The following state machine applies.
 |        AGING  |  REMOTE AGING
 |               V
 |          +---------+
-|          |  AGED   |  When in AGED state a
-|          +----+----+  new DTLS connection
-|               |       is added and deriving new Traffic DTLS Key Context
-|      NEW DTLS |       as well as a new Restart DTLS Key Context
+|          |  AGED   |  When in AGED state a new DTLS connection is
+|          +----+----+  added and deriving new Traffic DTLS Key
+|               |       Context as well as a new Restart DTLS Key
+|      NEW DTLS |       Context
 |               |
 |               |
 |               V
 |          +---------+
-|          |   OLD   |  In OLD state there
-|          +----+----+  are 2 active DTLS connections
-|               |       Traffic is switched to the new Traffic DTLS Key Context
+|          |   OLD   |  In OLD state there are 2 active DTLS
+|          +----+----+  connections Traffic is switched to the new
+|               |       Traffic DTLS Key Context
 |      SWITCH   |
 |               V
 |          +---------+
@@ -1228,7 +1228,7 @@ initiated, see {{remove-dtls-connection}}.
 
 ## Race Condition in Rekeying
 
-A race condition may happen when both peer experience local AGING event at
+A race condition may happen when both peers experience local AGING event at
 the same time and start creation of a new DTLS connection.
 
 The race condition is solved as specified in {{add-dtls-connection}}.
@@ -1272,7 +1272,7 @@ This document requests the following registration.
 
 ## SCTP Protection Solution Identifier  {#sec-iana-psi}
 
-IANA is requested to assign one SCTP Protoection Solution Indicator to
+IANA is requested to assign one SCTP Protection Solution Identifier to
 identify the key-management defined in this document.
 
 | Identifier | Solution Name | Reference | Contact |
@@ -1282,14 +1282,12 @@ identify the key-management defined in this document.
 ## TLS Exporter Labels
 
 IANA is requested to register the following values in the TLS Exporter
-Label Registry {{RFC5705}}. The registery was at the time of writing located
+Label Registry {{RFC5705}} with Reference RFC-TO-BE and empty Comment. The registry was at the time of writing located
 at: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#exporter-labels
 
-| Value | DTLS-OK | Recommended | Reference | Comment |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N | RFC-TO-BE | |
-| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N | RFC-TO-BE | |
-{: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l l l"}
-
-
+| Value | DTLS-OK | Recommended |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N |
+| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N |
+{: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l"}
