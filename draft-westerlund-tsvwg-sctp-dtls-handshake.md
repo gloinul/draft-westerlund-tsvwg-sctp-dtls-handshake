@@ -1286,8 +1286,13 @@ Label Registry {{RFC5705}} with Reference RFC-TO-BE and empty Comment. The regis
 at: https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#exporter-labels
 
 | Value | DTLS-OK | Recommended |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_CLIENT | Y | N |
-| EXPORTER_DTLS_IN_SCTP_TRAFFIC_SERVER | Y | N |
-| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT | Y | N |
-| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER | Y | N |
+| EXPORTER_DTLS_IN_SCTP_PRIMARY_CLIENT_KEY | Y | N |
+| EXPORTER_DTLS_IN_SCTP_PRIMARY_CLIENT_IV | Y | N |
+| EXPORTER_DTLS_IN_SCTP_PRIMARY_SERVER_KEY | Y | N |
+| EXPORTER_DTLS_IN_SCTP_PRIMARY_SERVER_IV | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT_KEY | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT_IV | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER_KEY | Y | N |
+| EXPORTER_DTLS_IN_SCTP_RESTART_SERVER_IV | Y | N |
 {: #iana-tls-exporter title="TLS Exporter Labels" cols="l l l"}
+
