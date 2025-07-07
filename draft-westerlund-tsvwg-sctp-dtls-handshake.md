@@ -38,9 +38,7 @@ informative:
   RFC5705:
   RFC6083:
   I-D.ietf-tls-rfc8446bis:
-  I-D.ietf-tsvwg-dtls-over-sctp-bis:
   I-D.ietf-uta-rfc6125bis:
-  I-D.mattsson-tls-super-jumbo-record-limit:
 
   ANSSI-DAT-NT-003:
     target: <https://www.ssi.gouv.fr/uploads/2015/09/NT_IPsec_EN.pdf>
@@ -64,8 +62,6 @@ informative:
     date: October 2024
 
 normative:
-  RFC4820:
-  RFC5869:
   RFC6347:
   RFC8446:
   RFC8996:
@@ -1222,6 +1218,7 @@ Traffic and Restart DTLS Key Contexts have been derived and installed,
 the protection of the SCTP packets is moved from the old Traffic DTLS
 Key Context, then the procedure for closing the old DTLS connection is
 initiated, see {{remove-dtls-connection}}.
+
 
 
 ## Race Condition in Rekeying
