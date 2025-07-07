@@ -89,7 +89,12 @@ normative:
        name: Claudio Porfiri
        org: Ericsson
        email: claudio.porfiri@ericsson.com
-    date: March 2025
+      -
+       ins: M. Tüxen
+       name: Michael Tüxen
+       org: Münster University of Applied Sciences
+       email: tuexen@fh-muenster.de
+    date: Jul 2025
 
 
 --- abstract
