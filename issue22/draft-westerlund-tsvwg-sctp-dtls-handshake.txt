@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 10 January 2026                                        Ericsson
-                                                             9 July 2025
+Expires: 11 January 2026                                        Ericsson
+                                                            10 July 2025
 
 
   Datagram Transport Layer Security (DTLS) based key-management of the
@@ -61,7 +61,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 January 2026.
+   This Internet-Draft will expire on 11 January 2026.
 
 Copyright Notice
 
@@ -91,7 +91,7 @@ Table of Contents
    4.  Protection Valid Message
    5.  DTLS Chunk Integration
      5.1.  SCTP Association Life Cycle.
-       5.1.1.  PROTECTION INITILIZATION
+       5.1.1.  Protection Initialization
        5.1.2.  SCTP Association Ongoing
        5.1.3.  SHUTDOWN states
      5.2.  DTLS Connection Handling
@@ -524,16 +524,17 @@ Table of Contents
    state, DTLS in SCTP is responsible for progressing to where the DTLS
    Chunk is fully configured and the ULP will be protected.
 
-5.1.1.  PROTECTION INITILIZATION
+5.1.1.  Protection Initialization
 
-   When the SCTP Association enter ESTABLISHED state, the initator will
+   When the SCTP Association enter ESTABLISHED state, the initiator will
    start the handshake according to Section 7.2.
 
    When a successful handshake has been completed, the Primary DTLS Key
    Context and the Restart DTLS Key Context will be created by deriving
    the keys and IVs from the key-management DTLS connection.  These will
-   be installed in the DTLS Chunks as defined in this document to avoid
-   dead lock and ensure successful protection enabling the ULP
+   be installed in the Chunks Protection Operator as defined in this
+   document to avoid dead lock, ensure successful protection and
+   enabling the ULP traffic.
 
 5.1.2.  SCTP Association Ongoing
 
