@@ -542,16 +542,17 @@ DTLS Key Contexts. As soon as the SCTP State Machine enters ESTABLISHED
 state, DTLS in SCTP is responsible for progressing to where the DTLS
 Chunk is fully configured and the ULP will be protected.
 
-### PROTECTION INITILIZATION
+### Protection Initialization {#protect-init}
 
-When the SCTP Association enter ESTABLISHED state, the initator will
+When the SCTP Association enter ESTABLISHED state, the initiator will
 start the handshake according to {{dtls-handshake}}.
 
 When a successful handshake has been completed, the Primary DTLS Key
 Context and the Restart DTLS Key Context will be created by deriving
 the keys and IVs from the key-management DTLS connection. These will
-be installed in the DTLS Chunks as defined in this document to
-avoid dead lock and ensure successful protection enabling the ULP
+be installed in the Chunks Protection Operator as defined in this document to
+avoid dead lock, ensure successful protection and enabling the ULP
+traffic.
 
 ### SCTP Association Ongoing
 
