@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 11 January 2026                                        Ericsson
-                                                            10 July 2025
+Expires: 3 April 2026                                           Ericsson
+                                                       30 September 2025
 
 
   Datagram Transport Layer Security (DTLS) based key-management of the
@@ -61,7 +61,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 January 2026.
+   This Internet-Draft will expire on 3 April 2026.
 
 Copyright Notice
 
@@ -139,7 +139,7 @@ Table of Contents
    This document describes the usage of the Datagram Transport Layer
    Security version 1.3 (DTLS) [RFC9147] protocol for key-management of
    the SCTP DTLS Chunk packet protection
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk] securing Stream Control
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk] securing Stream Control
    Transmission Protocol (SCTP) [RFC9260].  This combination of
    specifications is intended as a replacement to DTLS/SCTP [RFC6083]
    and usage of SCTP-AUTH [RFC4895].  The combination of SCTP DTLS Chunk
@@ -157,7 +157,7 @@ Table of Contents
    Applications using DTLS in SCTP can use all currently existing
    transport features provided by SCTP and its extensions, in some cases
    with some limitations, as specified in
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  DTLS in SCTP supports:
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].  DTLS in SCTP supports:
 
    *  preservation of message boundaries.
 
@@ -188,7 +188,7 @@ Table of Contents
 1.2.  Protocol Overview
 
    DTLS in SCTP is a key management specification for the SCTP DTLS 1.3
-   chunk [I-D.westerlund-tsvwg-sctp-dtls-chunk] that together utilizes
+   chunk [I-D.draft-ietf-tsvwg-sctp-dtls-chunk] that together utilizes
    DTLS 1.3 for the security functions like key exchange,
    authentication, encryption, integrity protection, and replay
    protection.  All key management message exchange happens inband over
@@ -204,32 +204,32 @@ Table of Contents
    indicator, the DTLS Connection ID (if used), and the DTLS epoch.
 
    The basic functionalities and how things are related is described
-   below.
+   below:
 
-   The process starts with a SCTP association where DTLS 1.3 Chunk usage
-   has been negotiated and this key-management method has been agreed in
-   the SCTP INIT and INIT-ACK.  To initialize and authenticate the peer
-   the DTLS handshake is exchanged as SCTP user messages with the DTLS
-   Chunk Key-Management Messages PPID (see section 10.6 of
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk]) until an initial DTLS
-   connection has been established.  If the DTLS handshake fails, the
-   SCTP association is aborted.  With successful handshake and
-   authentication of the peer the key material is exported from the DTLS
-   connection and configured for the DTLS 1.3 chunk.  From that point
-   until SCTP association termination the DTLS chunk will protect the
-   SCTP packets.  When the DTLS connection has been established and the
-   DTLS Chunk configured with DTLS Key context the PVALID message is
-   sent to trigger the peer SCTP Endpoint that Protection initiation has
-   been completed.
+   *  The process starts with a SCTP association where DTLS 1.3 Chunk
+      usage has been negotiated and this key-management method has been
+      agreed in the SCTP INIT and INIT-ACK.  To initialize and
+      authenticate the peer the DTLS handshake is exchanged as SCTP user
+      messages with the DTLS Chunk Key-Management Messages PPID (see
+      section 10.6 of [I-D.draft-ietf-tsvwg-sctp-dtls-chunk]) until an
+      initial DTLS connection has been established.  If the DTLS
+      handshake fails, the SCTP association is aborted.  With successful
+      handshake and authentication of the peer the key material is
+      exported from the DTLS connection and configured for the DTLS 1.3
+      chunk.  From that point until SCTP association termination the
+      DTLS chunk will protect the SCTP packets.  When the DTLS
+      connection has been established and the DTLS Chunk configured with
+      DTLS Key context the PVALID message is sent to trigger the peer
+      SCTP Endpoint that Protection initiation has been completed.
 
-   After PVALID is received, the Upper Layer Protocol(ULP) can start
-   sending messages over the SCTP association.  All chunks are protected
-   by encapsulating them in DTLS chunks as defined in
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  Using the current DTLS Key
-   context the DTLS Chunk Protection operator protects the plain text,
-   which is all chunks to be sent in one SCTP packet, producing a DTLS
-   Record that is encapsulated in the DTLS chunk and then transmitted as
-   a SCTP packet with a common header.
+   *  After PVALID is received, the Upper Layer Protocol(ULP) can start
+      sending messages over the SCTP association.  All chunks are
+      protected by encapsulating them in DTLS chunks as defined in
+      [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].  Using the current DTLS
+      Key context the DTLS Chunk Protection operator protects the plain
+      text, which is all chunks to be sent in one SCTP packet, producing
+      a DTLS Record that is encapsulated in the DTLS chunk and then
+      transmitted as a SCTP packet with a common header.
 
    The DTLS Chunk specifies that in the receiving SCTP endpoint each
    incoming SCTP packet on any of its interfaces and ports are matched
@@ -259,7 +259,7 @@ Table of Contents
    non-application data to its peer at any point in time.  All DTLS
    message will be sent by means of SCTP user messages with the DTLS
    Chunk Key-Management Messages PPID as specified in
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  However, only the DTLS
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].  However, only the DTLS
    close_notify is expected to be used after the handshake has been
    completed in this solution.
 
@@ -404,7 +404,7 @@ Table of Contents
 2.  DTLS usage of DTLS Chunk
 
    DTLS in SCTP uses the DTLS chunk as specified in
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].  The chunk if just repeated
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].  The chunk if just repeated
    here for the reader's convenience.
 
     0                   1                   2                   3
@@ -440,23 +440,23 @@ Table of Contents
 
 3.  DTLS messages over SCTP User Messages
 
-   When DTLS in SCTP has completed theinitialization, that is after
+   When DTLS in SCTP has completed the initialization, that is after
    PVALID message has been sent for triggering, DTLS messages for the
    Handshake DTLS connection, i.e. that are not DTLS records containing
    protected SCTP chunk payloads, will be sent as SCTP user messages
-   using the format defined below.  A DTLS handshake message may be
-   fragmented by DTLS to a set of DTLS records of a maximum configured
-   fragment size.  Each DTLS message fragment is sent as a SCTP user
-   message on the same stream where each message is configured for
-   reliable and in-order delivery with the PPID set to DTLS Chunk Key-
-   Management Messages [I-D.westerlund-tsvwg-sctp-dtls-chunk].  These
-   user messages MAY contain one or more DTLS records.  The SCTP stream
-   ID used MAY be any stream ID that the ULP already uses, and if not
-   known Stream 0.  Note that all fragments of a handshake message MUST
-   be sent with the same stream ID to ensure the in-order delivery.
+   using the format defined in Figure 3.  A DTLS handshake message may
+   be fragmented by DTLS to a set of DTLS records of a maximum
+   configured fragment size.  Each DTLS message fragment is sent as a
+   SCTP user message on the same stream where each message is configured
+   for reliable and in-order delivery with the PPID set to DTLS Chunk
+   Key-Management Messages [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].
+   These user messages MAY contain one or more DTLS records.  The SCTP
+   stream ID used MAY be any stream ID that the ULP already uses, and if
+   not known Stream 0.  Note that all fragments of a handshake message
+   MUST be sent with the same stream ID to ensure the in-order delivery.
 
    The DTLS instance SHOULD NOT use DTLS retransmission to repair any
-   packet losses of handshake message fragment.  Note: If the DTLS
+   packet losses of handshake message fragment.  If the DTLS
    implementation supports configuring a MTU larger than the actual IP
    MTU it MAY be used as SCTP provides reliability and fragmentation.
 
@@ -500,7 +500,10 @@ Table of Contents
    The Protection Valid message is sent from the Responder to the
    Initiator when the Responder has confirmed reception of DTLS chunk
    protected DTLS messages.  This message triggers requiring protection
-   at the Initiator when it has been received.
+   at the Initiator when it has been received.  Once received from the
+   Initiator, the Protection Valid Message is relayed back to the
+   Responder.  At reception of the message the Responder will be enabled
+   at sending Traffic.
 
    The message SHALL be sent protected.
 
@@ -510,7 +513,7 @@ Table of Contents
 
 5.  DTLS Chunk Integration
 
-   The [I-D.westerlund-tsvwg-sctp-dtls-chunk] contains a high-level
+   The [I-D.draft-ietf-tsvwg-sctp-dtls-chunk] contains a high-level
    description of the basic DTLS in SCTP architecture, this section
    deals with details related to the DTLS 1.3 inband key-management
    integration with SCTP.
@@ -541,7 +544,7 @@ Table of Contents
    When an SCTP Association is protected the established Primary DTLS
    key context is used for Chunk protection operation of the payload of
    SCTP chunks in each packet per the DTLS Chunk specification
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].
 
    When necessary to meet requirements on key life time or periodic re-
    authentication of the peer and establishment of new forward secrecy
@@ -572,7 +575,7 @@ Table of Contents
 
    Either peer can add a new DTLS connection to the SCTP association at
    any time, but no more than 2 DTLS connections can exist at the same
-   time.  Details of the handshake are described in Section 7.2.
+   time.  Details of the handshake are described in Section 7.2.2.
 
    As either endpoint can initiate a DTLS handshake at the same time,
    either endpoint may receive a DTLS ClientHello message when it has
@@ -612,19 +615,19 @@ Table of Contents
    Removal of a DTLS connection may happen under circumstances as
    described above in Section 5.2.2 in different states of the
    Association.  This section describes how the implementation should
-   take care of the DTLS connection removal in details.
+   take care of the DTLS connection removal in details:
 
-   The initial DTLS connection exists as soon as Association reaches the
-   PROTECTED state.  As long as one DTLS connection only exists, that
-   DTLS connection SHALL NOT be removed as it won't be possible for the
-   Association to proceed further.
+   *  As long as one DTLS connection only exists, that DTLS connection
+      SHALL NOT be removed as it won't be possible for the Association
+      to proceed further.
 
-   In general a DTLS connection can be removed when there's another
-   active DTLS connection with valid DTLS Key Contexts that can be used
-   for negotiating further key-management DTLS 1.3 connections.  In case
-   the DTLS connection is removed and no useable DTLS Key Context exist
-   for key-management DTLS 1.3 negotiation, the Association SHALL be
-   ABORTED.
+   *  A DTLS connection can be removed when there's another active DTLS
+      connection with valid DTLS Key Contexts that can be used for
+      negotiating further key-management DTLS 1.3 connections.
+
+   *  In case the DTLS connection is removed and no useable DTLS Key
+      Context exist for key-management DTLS 1.3 negotiation, the
+      Association SHALL be ABORTED.
 
    It is up to the implementation to guarantee that a DTLS Key Context
    exists all the time, for avoiding that undesired DTLS connection
@@ -641,14 +644,14 @@ Table of Contents
 5.4.  Error Cases
 
    As DTLS has its own error reporting mechanism by exchanging DTLS
-   alert messages no new DTLS related cause codes are defined to use the
-   error handling defined in [I-D.westerlund-tsvwg-sctp-dtls-chunk].
+   alert messages.  No new DTLS related cause codes are defined to use
+   the error handling defined in [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].
 
-   When Handshake DTLS connection encounters an error it may report that
-   issue using DTLS alert message to its peer by putting the created
-   DTLS record in a SCTP user message (Section 3) with the Handshake
-   PPID.  This is independent of what to do in relation to the SCTP
-   association.  Depending on the severity of the error different
+   When the handshake of DTLS connection encounters an error it may
+   report that issue using DTLS alert message to its peer by putting the
+   created DTLS record in a SCTP user message (see Section 3) with the
+   Handshake PPID.  This is independent of what to do in relation to the
+   SCTP association.  Depending on the severity of the error different
    decisions can be taken.
 
    However, as it is not expected that the key-management DTLS
@@ -697,8 +700,8 @@ Table of Contents
    The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk.  The DTLS Chunk
    is expected to have an API capability to determine the Cipher Suit
-   Capabilities, see Abstract API in Section 10.1 of
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].
+   Capabilities, see Abstract API in Section 10 of
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].
 
 6.2.2.  Authentication and Policy Decisions
 
@@ -789,7 +792,7 @@ Table of Contents
 
    This section specifies how DTLS in SCTP is established using Key-
    Management DTLS Connections and the DTLS Chunk
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk].
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk].
 
    A DTLS in SCTP Association is built up with a Key-Management DTLS
    connection, from that DTLS connection Primary DTLS Key Context and
@@ -844,7 +847,7 @@ Table of Contents
    To ensure that downgrade attack on the protection solution offered is
    not possible the context used will be the full sequence of Protection
    Solution Identifiers as include in the DTLS 1.3 Chunk Protected
-   Association (Section 4.1 of [I-D.westerlund-tsvwg-sctp-dtls-chunk])
+   Association (Section 4.1 of [I-D.draft-ietf-tsvwg-sctp-dtls-chunk])
    sent by the SCTP assocation initiator.  Thus, any downgrade attack on
    this will result in a mismatch in produced keys as the initiator will
    use what it actually offered and the responder a truncated or
@@ -885,34 +888,41 @@ Table of Contents
 
    SCTP Handshake is strictly compliant to [RFC9260].  The DTLS 1.3
    Chunk Protected Association parameter (Section 4.1 of
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk]) is included containing the
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk]) is included containing the
    Protection Solution identifier (See Section 10.1) for this documents
    key-management at a suitable preference position depending on local
    policy.  And in case this key-management solution is the most
    preferred then the process continues as stated below and depiceted in
    Figure 5.
 
-     Initiator                                     Responder
-         |                                             |
-      0. +--------------------[INIT]------------------>|
-         |<-----------------[INIT-ACK]-----------------+
-         +----------------[COOKIE ECHO]--------------->| 1.
-      2. |<----------------[COOKIE ACK]----------------+
-         |                                             |
-         |                                             |
-      3. +----------[DATA(DTLS Client Hello)]--------->| 4.
-         |<--[DATA(DTLS Server Hello ... Finished)]----+ 5.
-      6. +---[DATA(DTLS Certificate ... Finished)]---->| 7.
-      9. |<---------[DATA(DTLS ACK, PVALID)]-----------+ 8.
-         |                                             |
-         |                                             | -.
-     10. +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
-         +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
-         |                    ...                      |   |
-         |                    ...                      |   |
+ Initiator                                            Responder
+     |                                                    |
+  0. +------------------------[INIT]--------------------->|
+     |<---------------------[INIT-ACK]--------------------+
+     +--------------------[COOKIE ECHO]------------------>| 1.
+  2. |<--------------------[COOKIE ACK]-------------------+
+     |                                                    |
+     |  Key Manager                           Key Manager |
+     |    |                                          |    |
+  3. +--->| CRYPTO UP                      CRYPTO UP |<---+
+     |    |                                          |    |
+     |    +---------[DATA(DTLS Client Hello)]------->| 4. |
+     |    |<-[DATA(DTLS Server Hello ... Finished)]--+ 5. |
+     | 6. +--[DATA(DTLS Certificate ... Finished)]-->| 7. |
+     |    |<--[DTLS CHUNK(DATA(DTLS ACK, PVALID))]---+ 8. |
+     |    +---[DTLS CHUNK(DATA(DTLS ACK, PVALID))]-->| 9. |
+     |    |                                          |    |
+     |<---+ VALIDATED                      VALIDATED +--->|
+     |    |                                          |    |
+     |    |                                          |    |
+     |                                                    | -.
+ 10. +------------[DTLS CHUNK(DATA(APP DATA))]----------->|   | APP DATA
+     +<-----------[DTLS CHUNK(DATA(APP DATA))]------------+   +---------
+     |                         ...                        |   |
+     |                         ...                        |   |
 
-       Figure 5: The steps of Interaction between Key-Management and
-                               DTLS Chunk API
+     Figure 5: The steps of Interaction between Key-Management and
+                             DTLS Chunk API
 
    1.   The Initiator initiates an SCTP Association and provides the
         DTLS 1.3 Chunk Protected Association parameter preference
@@ -961,12 +971,17 @@ Table of Contents
         future SCTP Packets to be protected by DTLS Chunk.  If any DTLS
         ACK message is to be sent, it SHOULD be sent next.  Then it
         sends a protected Protection Valid Message Section 4 to the SCTP
-        Association Initiators Key-Management.  The key-management can
-        now inform the ULP that the SCTP association is protected.
+        Association Initiators Key-Management.
 
-   10.  Upon successful reception of the Protection Valid Message the
-        Initiator's Key-Management configure the DTLS Chunk to only
-        accept DTLS Chunk Protected SCTP packets.
+   10.  Having received the Protection Valid Message, the initiator's
+        key-management can now inform the ULP that the SCTP association
+        is protected and verified.  It shall also send a Protection
+        Validation Message to the responder.  Upon successful reception
+        of the Protection Valid Message the Initiator's Key-Management
+        configure the DTLS Chunk to only accept DTLS Chunk Protected
+        SCTP packets.  Upon successful reception of the Protection Valid
+        Message the Responder's Key-Management informs the SCTP stack
+        that the Association is Validated and traffic can be sent.
 
    11.  The Initiator's ULP is notified that the SCTP association is
         Established and protected and it may generate user messages.
@@ -985,10 +1000,10 @@ Table of Contents
 
    The DTLS Key-Management will act as a User of SCTP, identified with
    the Key-Management PPID 4242.  DTLS handshake is sent as a SCTP user
-   message Section 3.
+   message according to Section 3.
 
    The DTLS instance SHOULD NOT use DTLS retransmission to repair any
-   packet losses of handshake message fragment.  Note: If the DTLS
+   packet losses of handshake message fragment.  If the DTLS
    implementation support configuring a MTU larger than the actual IP
    MTU it could be used as SCTP provides reliability and fragmentation.
 
@@ -1008,14 +1023,13 @@ Table of Contents
 
    The Figure 6 shows a successful handshake of a further DTLS
    connection.  Such connections can be initiated by any of the peers.
-   Same as during the initial handshake, DTLS handshake messages are
-   transported by means of DATA chunks with the DTLS Chunk Key-
-   Management Messages PPID inside DTLS Chunks.
+   Here DTLS handshake messages are transported by means of DATA chunks
+   with the DTLS Chunk Key-Management Messages PPID inside DTLS Chunks.
 
 7.3.  SCTP Association Restart
 
    In order to achieve an Association Restart as described in
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk], a Restart DTLS Key Context
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk], a Restart DTLS Key Context
    dedicated to Restart SHALL exist and be available.  Furthermore, both
    peers SHALL have safely stored both the current Restart DTLS Key
    Context.  Here we assume that Restart DTLS Key Context is maintained
@@ -1023,12 +1037,12 @@ Table of Contents
 
 7.3.1.  Installation of initial Restart DTLS Key Context
 
-   As soon as the Association has reached the PROTECTED INITILIZATION
-   state, before the Primary DTLS Key context have been installed a
-   Restart DTLS Key Context SHALL be derived and then installed.
+   As soon as the Association has reached the ESTABLISHED state and
+   before the Primary DTLS Key context have been installed a Restart
+   DTLS Key Context SHALL be derived and then installed.
 
-   It MAY exist a short time gap where the Association has entered in
-   PROTECTED state but no Restart DTLS Key Context has been installed
+   It MAY exist a short time gap where the Association has already been
+   validated state but no Restart DTLS Key Context has been installed
    yet.  If a SCTP Restart procedure will be initiated during that time,
    it will fail and the Association will also fail.  However, this is
    unlikely as the Restart Init will be sent multiple times following a
@@ -1043,7 +1057,7 @@ Table of Contents
 7.3.2.  Installation of Restart DTLS Key Context for further DTLS
         Connections
 
-   As each subsequent Key-Management DTLS connection complete the DTLS
+   As each subsequent Key-Management DTLS connection completes the DTLS
    handshake and the Primary DTLS Key context has been derived and
    installed also the Restart DTLS Key context SHALL be installed.  The
    closing of the previous DTLS connection SHALL NOT be initiated or
@@ -1060,36 +1074,36 @@ Table of Contents
    preserve the Restart DTLS Key Context and that the Responder SHALL
    NOT change the Restart DTLS Key Context during the Restart procedure.
 
-    Initiator                                     Responder
-        |                                             | -.
-        +------------[DTLS CHUNK(INIT)]-------------->|   |
-        |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
-        |                                             |   | Using
-        |                                             |   | DTLS
-        +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-        |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
-        |                                             | -'
-        |                                             | -.
-        +----------[DATA(DTLS Client Hello)]--------->|   |
-        |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
-        +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
-        |<-------------[DATA(DTLS ACK)]---------------+   +-----------
-        |                                             | -'
-        |                    ...                      | -.
-        |                    ...                      |   | Derive new
-        |                    ...                      |   | Primary and
-        |                    ...                      |   | Restart
-        |                    ...                      |   | DTLS Key
-        |                    ...                      |   | Contexts
-        |                    ...                      |   +------------
-        |                    ...                      | -'
-        |                                             | -.
-        +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
-        +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
-        |                    ...                      |   |
-        |                    ...                      |   |
+  Initiator                                        Responder
+      |                                                | -.
+      +---------------[DTLS CHUNK(INIT)]-------------->|   |
+      |<------------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+      |                                                |   | Using
+      |                                                |   | DTLS
+      +------------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
+      |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
+      |                                                |   |
+      |                                                |   |
+      +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   |
+      |<--[DTLS CHUNK(DATA(DTLS Server ... Finished))]-+   | New DTLS
+      +---[DTLS CHUNK(DATA(DTLS Cert... Finished))]--->|   | Connection
+      |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +-----------
+      |                                                | -'
+      |                       ...                      | -.
+      |                       ...                      |   | Derive new
+      |                       ...                      |   | Primary and
+      |                       ...                      |   | Restart
+      |                       ...                      |   | DTLS Key
+      |                       ...                      |   | Contexts
+      |                       ...                      |   +------------
+      |                       ...                      | -'
+      |                                                | -.
+      +--------[DTLS CHUNK(DATA(APP DATA))]----------->|   | APP DATA
+      +<-------[DTLS CHUNK(DATA(APP DATA))]------------+   +---------
+      |                       ...                      |   |
+      |                       ...                      |   |
 
-              Figure 7: SCTP Restart sequence for DTLS in SCTP
+             Figure 7: SCTP Restart sequence for DTLS in SCTP
 
    The Figure 7 shows a successful SCTP Association Restart.
 
@@ -1325,12 +1339,11 @@ Table of Contents
               (DTLS)", BCP 195, RFC 9325, DOI 10.17487/RFC9325, November
               2022, <https://www.rfc-editor.org/info/rfc9325>.
 
-   [I-D.westerlund-tsvwg-sctp-dtls-chunk]
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk]
               Westerlund, M., Preuß Mattsson, J., Porfiri, C., and M.
               Tüxen, "Stream Control Transmission Protocol (SCTP) DTLS
-              chunk", July 2025,
-              <https://datatracker.ietf.orghttps://datatracker.ietf.org/
-              doc/draft-westerlund-tsvwg-sctp-dtls-chunk/>.
+              chunk", July 2025, <https://datatracker.ietf.org/doc/
+              draft-ietf-tsvwg-sctp-dtls-chunk/>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1377,9 +1390,9 @@ Table of Contents
    [I-D.ietf-tls-rfc8446bis]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
               Version 1.3", Work in Progress, Internet-Draft, draft-
-              ietf-tls-rfc8446bis-12, 17 February 2025,
+              ietf-tls-rfc8446bis-14, 13 September 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-tls-
-              rfc8446bis-12>.
+              rfc8446bis-14>.
 
    [I-D.ietf-uta-rfc6125bis]
               Saint-Andre, P. and R. Salz, "Service Identity in TLS",
