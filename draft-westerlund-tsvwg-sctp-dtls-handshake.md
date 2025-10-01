@@ -1114,18 +1114,23 @@ DTLS Key Context during the Restart procedure.
 
 Initiator                                        Responder
     |                                                | -.
-    +---------------[DTLS CHUNK(INIT)]-------------->|   |
-    |<------------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+    |                                                |   +------------
+    +----------------------[INIT]------------------->|   | Plain
+    |<-------------------[INIT-ACK]------------------+   | Text
+    |                                                |   +------------
+    |                                                | -'
+    |                                                | -.
+    |                                                |   +------------
     |                                                |   | Using
     |                                                |   | DTLS
     +------------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-    |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
-    |                                                |   |
-    |                                                |   |
-    +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   |
+    |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   | and
+    |                                                |   | Restart
+    |                                                |   | Key Context
+    +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   +------------
     |<--[DTLS CHUNK(DATA(DTLS Server ... Finished))]-+   | New DTLS
     +---[DTLS CHUNK(DATA(DTLS Cert... Finished))]--->|   | Connection
-    |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +-----------
+    |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +------------
     |                                                | -'
     |                       ...                      | -.
     |                       ...                      |   | Derive new
@@ -1150,7 +1155,7 @@ SCTP Association Restart.
 From procedure viewpoint the sequence is the following:
 
 - Initiator sends INIT (VTag=0), Responder replies INIT-ACK
-  both encrypted using Restart DTLS Key Context
+  in Plain Text as specified in {{RFC9260}}
 
 - Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key
   tied to the Restart DTLS Key Context
