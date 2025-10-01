@@ -5,8 +5,8 @@
 TSVWG                                                      M. Westerlund
 Internet-Draft                                         J. Preuß Mattsson
 Intended status: Standards Track                              C. Porfiri
-Expires: 3 April 2026                                           Ericsson
-                                                       30 September 2025
+Expires: 4 April 2026                                           Ericsson
+                                                          1 October 2025
 
 
   Datagram Transport Layer Security (DTLS) based key-management of the
@@ -61,7 +61,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 April 2026.
+   This Internet-Draft will expire on 4 April 2026.
 
 Copyright Notice
 
@@ -1076,18 +1076,23 @@ Table of Contents
 
   Initiator                                        Responder
       |                                                | -.
-      +---------------[DTLS CHUNK(INIT)]-------------->|   |
-      |<------------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
+      |                                                |   +------------
+      +----------------------[INIT]------------------->|   | Plain
+      |<-------------------[INIT-ACK]------------------+   | Text
+      |                                                |   +------------
+      |                                                | -'
+      |                                                | -.
+      |                                                |   +------------
       |                                                |   | Using
       |                                                |   | DTLS
       +------------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-      |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
-      |                                                |   |
-      |                                                |   |
-      +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   |
+      |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   | and
+      |                                                |   | Restart
+      |                                                |   | Key Context
+      +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   +------------
       |<--[DTLS CHUNK(DATA(DTLS Server ... Finished))]-+   | New DTLS
       +---[DTLS CHUNK(DATA(DTLS Cert... Finished))]--->|   | Connection
-      |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +-----------
+      |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +------------
       |                                                | -'
       |                       ...                      | -.
       |                       ...                      |   | Derive new
@@ -1109,8 +1114,8 @@ Table of Contents
 
    From procedure viewpoint the sequence is the following:
 
-   *  Initiator sends INIT (VTag=0), Responder replies INIT-ACK both
-      encrypted using Restart DTLS Key Context
+   *  Initiator sends INIT (VTag=0), Responder replies INIT-ACK in Plain
+      Text as specified in [RFC9260]
 
    *  Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the
       Key tied to the Restart DTLS Key Context
