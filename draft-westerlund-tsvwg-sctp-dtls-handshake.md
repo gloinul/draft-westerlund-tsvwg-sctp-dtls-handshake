@@ -70,8 +70,8 @@ normative:
   RFC9260:
   RFC9325:
 
-  I-D.westerlund-tsvwg-sctp-dtls-chunk:
-    target: "https://datatracker.ietf.orghttps://datatracker.ietf.org/doc/draft-westerlund-tsvwg-sctp-dtls-chunk/"
+  I-D.draft-ietf-tsvwg-sctp-dtls-chunk:
+    target: "https://datatracker.ietf.org/doc/draft-ietf-tsvwg-sctp-dtls-chunk/"
     title: "Stream Control Transmission Protocol (SCTP) DTLS chunk"
     author:
       -
@@ -124,7 +124,7 @@ SCTP-AUTH (RFC4895).
    This document describes the usage of the Datagram Transport Layer
    Security version 1.3 (DTLS) {{RFC9147}} protocol for key-management
    of the SCTP DTLS Chunk packet protection
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} securing Stream Control
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}} securing Stream Control
    Transmission Protocol (SCTP) {{RFC9260}}.  This combination of
    specifications is intended as a replacement to DTLS/SCTP
    {{RFC6083}} and usage of SCTP-AUTH {{RFC4895}}. The combination of
@@ -143,7 +143,7 @@ SCTP-AUTH (RFC4895).
    Applications using DTLS in SCTP can use all currently existing
    transport features provided by SCTP and its extensions, in some
    cases with some limitations, as specified in
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. DTLS in SCTP supports:
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}. DTLS in SCTP supports:
 
    * preservation of message boundaries.
 
@@ -174,7 +174,7 @@ SCTP-AUTH (RFC4895).
 ## Protocol Overview {#protocol_overview}
 
    DTLS in SCTP is a key management specification for the SCTP DTLS
-   1.3 chunk {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} that together
+   1.3 chunk {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}} that together
    utilizes DTLS 1.3 for the security functions like key
    exchange, authentication, encryption, integrity protection, and
    replay protection. All key management message exchange happens
@@ -198,7 +198,7 @@ SCTP-AUTH (RFC4895).
    agreed in the SCTP INIT and INIT-ACK. To initialize and authenticate
    the peer the DTLS handshake is exchanged as SCTP user messages with
    the DTLS Chunk Key-Management Messages PPID (see section 10.6 of
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) until an initial DTLS
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}) until an initial DTLS
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With successful handshake and
    authentication of the peer the key material exported from the DTLS
@@ -215,7 +215,7 @@ SCTP-AUTH (RFC4895).
    association is established and the Upper Layer Protocol (ULP) can
    start sending messages over the SCTP association. All chunks are
    protected by encapsulating them in DTLS chunks as defined in
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.  Using the current DTLS
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.  Using the current DTLS
    Key context the DTLS Chunk Protection operator protects the plain
    text, which is all chunks to be sent in one SCTP packet, producing
    a DTLS Record that is encapsulated in the DTLS chunk and then
@@ -251,7 +251,7 @@ SCTP-AUTH (RFC4895).
    other non-application data to its peer at any point in time.
    All DTLS message will be sent by means of SCTP user messages
    with the DTLS Chunk Key-Management Messages PPID as specified in
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. However, only the
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}. However, only the
    DTLS close_notify is expected to be used after the handshake has
    been completed in this solution.
 
@@ -388,20 +388,22 @@ in regard to SCTP and upper layer protocol"}
 # DTLS usage of DTLS Chunk
 
    DTLS in SCTP uses the DTLS chunk as specified in
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. The chunk if just
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}. The chunk if just
    repeated here for the reader's convenience.
 
 ~~~~~~~~~~~ aasvg
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Type = 0x4x   |reserved     |R|         Chunk Length          |
+| Type = 0x4x   | reserved| P |R|         Chunk Length          |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|        Pre-Padding            |                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
 |                                                               |
 |                            Payload                            |
 |                                                               |
 |                               +-------------------------------+
-|                               |           Padding             |
+|                               |       Post-Padding            |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~~
 {: #sctp-dtls-chunk-structure title="DTLS Chunk Structure"}
@@ -417,13 +419,19 @@ R: 1 bit (boolean)
 : Restart indicator. If this bit is set this DTLS chunk is protected
   with by a Restart DTLS Key context.
 
+P: 2 bit (0-3)
+
+: Payload Pre-Padding indicator. It indicates how many bytes
+are inserted for padding before the DTLSCiphertext.
+This allows the encrypted data to be 32 bit aligned.
+
 Chunk Length: 16 bits (unsigned integer)
 : This value holds the length of the Payload in bytes plus 4.
 
 Payload: variable length
-: This holds the encrypted data as one DTLS 1.3 Record {{RFC9147}}.
+: This holds the DTLSCiphertext as specified in DTLS 1.3 {{RFC9147}}.
 
-Padding: 0, 8, 16, or 24 bits
+Post-Padding: 0, 8, 16, or 24 bits
 : To ensure the Chunk is whole 32-bit words long.
 
 # DTLS messages over SCTP User Messages  {#dtls-user-message}
@@ -436,7 +444,7 @@ maximum configured fragment size. Each DTLS message fragment is sent
 as a SCTP user message on the same stream where each message is
 configured for reliable and in-order delivery with the PPID set to
 DTLS Chunk Key-Management Messages
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}. These user messages MAY
+{{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}. These user messages MAY
 contain one or more DTLS records. The SCTP stream ID used MAY be any
 stream ID that the ULP already uses, and if not know Stream 0. Note
 that all fragments of a handshake message MUST be sent with the same
@@ -506,7 +514,7 @@ and on Stream 0 with in order delivery in relatio to any DTLS ACK message.
 
 # DTLS Chunk Integration
 
-The {{I-D.westerlund-tsvwg-sctp-dtls-chunk}} contains a high-level
+The {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}} contains a high-level
 description of the basic DTLS in SCTP architecture, this section deals
 with details related to the DTLS 1.3 inband key-establishment
 integration with SCTP.
@@ -535,7 +543,7 @@ avoid dead lock and ensure successful protection enabling the ULP
 When an SCTP Association is protected the establishe primary DTLS key
 context is used for Chunk protection operation of the payload of SCTP
 chunks in each packet per the DTLS Chunk specification
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+{{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
 When necessary to meet requirements on key life time or periodic
 re-authentication of the peer and establishment of new forward secrecy
@@ -634,7 +642,7 @@ new Restart DTLS Key Context and then closing the old DTLS connection.
 
 As DTLS has its own error reporting mechanism by exchanging DTLS alert
 messages no new DTLS related cause codes are defined to use the error
-handling defined in {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+handling defined in {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
 When Handshake DTLS connection encounters an error it may report that
 issue using DTLS alert message to its peer by putting the created DTLS
@@ -692,7 +700,7 @@ that any error will occur.
    SHALL only include those supported by the DTLS Chunk. The DTLS
    Chunk is expected to have an API capability to determine the Cipher
    Suit Capabilities, see Abstract API in Section 10.1 of
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
 ### Authentication and Policy Decisions
 
@@ -786,7 +794,7 @@ provide ephemeral key exchange.
 
    This section specifies how DTLS in SCTP is established using
    Key-Management DTLS Connections and the DTLS Chunk
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}.
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
    A DTLS in SCTP Association is built up with a Key-Management DTLS
    connection, from that DTLS connection Traffic DTLS Key Context and
@@ -837,7 +845,7 @@ provide ephemeral key exchange.
   is not possible the context used will be the full sequence of
   Protection Solution Identifiers as include in the DTLS 1.3 Chunk
   Protected Association (Section 4.1 of
-  {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) sent by the SCTP
+  {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}) sent by the SCTP
   assocation initiator. Thus, any downgrade attack on this will result
   in a mismatch in produced keys as the initiator will use what it
   actually offered and the responder a truncated or modified sequence.
@@ -882,7 +890,7 @@ Initiator                                     Responder
 
    SCTP Handshake is strictly compliant to {{RFC9260}}. The DTLS 1.3
    Chunk Protected Association parameter (Section 4.1 of
-   {{I-D.westerlund-tsvwg-sctp-dtls-chunk}}) is included containing
+   {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}) is included containing
    the Protection Solution identifier (See {{sec-iana-psi}}) for this
    documents key-management at a suitable preference position
    depending on local policy. And in case this key-management solution
@@ -1021,7 +1029,7 @@ of DATA chunks with the DTLS Chunk Key-Management Messages PPID.
 ## SCTP Association Restart {#sctp-restart}
 
 In order to achieve an Association Restart as described in
-{{I-D.westerlund-tsvwg-sctp-dtls-chunk}}, a Restart DTLS Key Context
+{{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}, a Restart DTLS Key Context
 dedicated to Restart SHALL exist and be available.  Furthermore, both
 peers SHALL have safely stored both the current Restart DTLS Key Context.
 Here we assume that Restart DTLS Key Context is maintained across
