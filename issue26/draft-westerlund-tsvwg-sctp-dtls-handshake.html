@@ -1216,7 +1216,7 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-sctp-association-life-cycle" class="internal xref">SCTP Association Life Cycle.</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
-                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-protection-initilization" class="internal xref">PROTECTION INITILIZATION</a></p>
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-protection-initialization" class="internal xref">Protection Initialization</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
                     <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-sctp-association-ongoing" class="internal xref">SCTP Association Ongoing</a></p>
@@ -1448,8 +1448,10 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    Association, the restart indicator, the DTLS Connection ID (if
    used), and the DTLS epoch.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2-3">The basic functionalities and how things are related is described
-   below.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.2-4">The process starts with a SCTP association where DTLS 1.3 Chunk
+   below:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-4.1">
+            <p id="section-1.2-4.1.1">The process starts with a SCTP association where DTLS 1.3 Chunk
    usage has been negotiated and this key-management method has been
    agreed in the SCTP INIT and INIT-ACK. To initialize and authenticate
    the peer the DTLS handshake is exchanged as SCTP user messages with
@@ -1457,123 +1459,162 @@ SCTP-AUTH (RFC4895).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
    <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>) until an initial DTLS
    connection has been established.  If the DTLS handshake fails, the
    SCTP association is aborted. With successful handshake and
-   authentication of the peer the key material exported from the DTLS
+   authentication of the peer the key material is exported from the DTLS
    connection and configured for the DTLS 1.3 chunk. From that point
    until SCTP association termination the DTLS chunk will protect the
    SCTP packets. When the DTLS connection has been established and the
    DTLS Chunk configured with DTLS Key context the PVALID message is
-   exchanged to verify that no downgrade attack between any offered
-   protection solutions has occurred. To prevent manipulation, the
-   PVALID message are sent as SCTP user messages (using DATA chunks)
-   encapsulated in DTLS chunks.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
-<p id="section-1.2-5">Assuming that the PVALID validation is successful the SCTP
-   association is established and the Upper Layer Protocol (ULP) can
+   sent to trigger the peer SCTP Endpoint that Protection initiation
+   has been completed.<a href="#section-1.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.2">
+            <p id="section-1.2-4.2.1">After PVALID is received, the Upper Layer Protocol(ULP) can
    start sending messages over the SCTP association. All chunks are
    protected by encapsulating them in DTLS chunks as defined in
    <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.  Using the current DTLS
    Key context the DTLS Chunk Protection operator protects the plain
    text, which is all chunks to be sent in one SCTP packet, producing
    a DTLS Record that is encapsulated in the DTLS chunk and then
-   transmitted as a SCTP packet with a common header.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
-<p id="section-1.2-6">The DTLS Chunk specifies that in the receiving SCTP endpoint each
+   transmitted as a SCTP packet with a common header.<a href="#section-1.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-1.2-5">The DTLS Chunk specifies that in the receiving SCTP endpoint each
    incoming SCTP packet on any of its interfaces and ports are matched
    to the SCTP association based on ports and VTAG in the common
    header. Using the indicated DTLS Key context(s) for that SCTP
    association the content of the DTLS chunk is attempted to be
    processed, including replay protection, decryption, and integrity
-   checking. And if decryption and integrity verification was
+   checking. If decryption and integrity verification was
    successful the produced plain text of one or more SCTP chunks are
    provided for normal SCTP processing in the identified SCTP
    association along with associated per-packet meta data such as path
-   received on, original packet size, and ECN bits.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
-<p id="section-1.2-7">When mutual re-authentication or rekeying is needed or desired by
+   received on, original packet size, and ECN bits.<a href="#section-1.2-5" class="pilcrow">¶</a></p>
+<p id="section-1.2-6">When mutual re-authentication or rekeying is needed or desired by
    either endpoint a new DTLS connection handshake is performed
-   between the SCTP endpoints and a new DTLS Key context is
-   created. When the handshake has completed the DTLS in SCTP
+   between the SCTP endpoints and new DTLS Key contexts are
+   created. When the handshake is completed, the DTLS in SCTP
    implementation can simply switch to use the new DTLS Key contexts
-   in the DTLS chunk.  All rekeying will be using ephemeral key
-   exchange and shall not use the DTLS Key-Update mechanism to avoid
+   in the DTLS chunk.  All rekeying SHALL be using ephemeral key
+   exchange and SHALL NOT use the DTLS Key-Update mechanism to avoid
    confusion about the properties of the DTLS Key Contexts for the
    DTLS chunk.  After a short while (no longer than 2 min) to enable
    any outstanding packets to drain from the network path between the
    endpoints, the old key-management DTLS connection is closed and
    that signal that the corresponding key context can be deleted from
-   the DTLS chunk's key store.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
-<p id="section-1.2-8">The DTLS connection may send alerts, handshake messages, or
+   the DTLS chunk's key store.<a href="#section-1.2-6" class="pilcrow">¶</a></p>
+<p id="section-1.2-7">The DTLS connection may send alerts, handshake messages, or
    other non-application data to its peer at any point in time.
    All DTLS message will be sent by means of SCTP user messages
    with the DTLS Chunk Key-Management Messages PPID as specified in
    <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>. However, only the
    DTLS close_notify is expected to be used after the handshake has
-   been completed in this solution.<a href="#section-1.2-8" class="pilcrow">¶</a></p>
+   been completed in this solution.<a href="#section-1.2-7" class="pilcrow">¶</a></p>
 <span id="name-dtls-in-sctp-layer-in-regar"></span><div id="overview-layering">
 <figure id="figure-1">
-          <div id="section-1.2-9.1">
-            <div class="alignLeft art-svg artwork" id="section-1.2-9.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="352" width="496" viewBox="0 0 496 352" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                <path d="M 8,32 L 8,336" fill="none" stroke="black"></path>
-                <path d="M 136,32 L 136,96" fill="none" stroke="black"></path>
-                <path d="M 152,32 L 152,96" fill="none" stroke="black"></path>
-                <path d="M 184,96 L 184,336" fill="none" stroke="black"></path>
-                <path d="M 224,208 L 224,272" fill="none" stroke="black"></path>
-                <path d="M 320,32 L 320,96" fill="none" stroke="black"></path>
-                <path d="M 400,208 L 400,272" fill="none" stroke="black"></path>
-                <path d="M 440,80 L 440,224" fill="none" stroke="black"></path>
+          <div id="section-1.2-8.1">
+            <div class="alignLeft art-svg artwork" id="section-1.2-8.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="656" width="440" viewBox="0 0 440 656" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,32 L 8,464" fill="none" stroke="black"></path>
+                <path d="M 8,560 L 8,640" fill="none" stroke="black"></path>
+                <path d="M 72,472 L 72,512" fill="none" stroke="black"></path>
+                <path d="M 96,512 L 96,552" fill="none" stroke="black"></path>
+                <path d="M 136,32 L 136,464" fill="none" stroke="black"></path>
+                <path d="M 152,32 L 152,464" fill="none" stroke="black"></path>
+                <path d="M 168,80 L 168,416" fill="none" stroke="black"></path>
+                <path d="M 176,576 L 176,624" fill="none" stroke="black"></path>
+                <path d="M 192,64 L 192,96" fill="none" stroke="black"></path>
+                <path d="M 192,128 L 192,160" fill="none" stroke="black"></path>
+                <path d="M 192,400 L 192,448" fill="none" stroke="black"></path>
+                <path d="M 216,176 L 216,336" fill="none" stroke="black"></path>
+                <path d="M 232,336 L 232,368" fill="none" stroke="black"></path>
+                <path d="M 248,176 L 248,336" fill="none" stroke="black"></path>
+                <path d="M 264,176 L 264,336" fill="none" stroke="black"></path>
+                <path d="M 280,336 L 280,400" fill="none" stroke="black"></path>
+                <path d="M 288,472 L 288,512" fill="none" stroke="black"></path>
+                <path d="M 296,176 L 296,336" fill="none" stroke="black"></path>
+                <path d="M 352,576 L 352,624" fill="none" stroke="black"></path>
+                <path d="M 368,64 L 368,96" fill="none" stroke="black"></path>
+                <path d="M 368,128 L 368,160" fill="none" stroke="black"></path>
+                <path d="M 368,400 L 368,448" fill="none" stroke="black"></path>
+                <path d="M 392,80 L 392,592" fill="none" stroke="black"></path>
+                <path d="M 408,32 L 408,464" fill="none" stroke="black"></path>
+                <path d="M 408,560 L 408,640" fill="none" stroke="black"></path>
                 <path d="M 8,32 L 136,32" fill="none" stroke="black"></path>
-                <path d="M 152,32 L 320,32" fill="none" stroke="black"></path>
-                <path d="M 320,64 L 424,64" fill="none" stroke="black"></path>
-                <path d="M 8,96 L 320,96" fill="none" stroke="black"></path>
-                <path d="M 424,96 L 456,96" fill="none" stroke="black"></path>
-                <path d="M 336,128 L 352,128" fill="none" stroke="black"></path>
-                <path d="M 200,176 L 216,176" fill="none" stroke="black"></path>
-                <path d="M 8,208 L 184,208" fill="none" stroke="black"></path>
-                <path d="M 224,208 L 400,208" fill="none" stroke="black"></path>
-                <path d="M 192,240 L 216,240" fill="none" stroke="black"></path>
-                <path d="M 408,240 L 424,240" fill="none" stroke="black"></path>
-                <path d="M 8,272 L 184,272" fill="none" stroke="black"></path>
-                <path d="M 224,272 L 400,272" fill="none" stroke="black"></path>
-                <path d="M 200,304 L 216,304" fill="none" stroke="black"></path>
-                <path d="M 8,336 L 184,336" fill="none" stroke="black"></path>
-                <path d="M 184,272 L 200,304" fill="none" stroke="black"></path>
-                <path d="M 320,96 L 336,128" fill="none" stroke="black"></path>
-                <path d="M 184,208 L 200,176" fill="none" stroke="black"></path>
-                <path d="M 424,64 C 432.83064,64 440,71.16936 440,80" fill="none" stroke="black"></path>
-                <path d="M 424,240 C 432.83064,240 440,232.83064 440,224" fill="none" stroke="black"></path>
-                <polygon class="arrowhead" points="416,240 404,234.4 404,245.6" fill="black" transform="rotate(180,408,240)"></polygon>
-                <polygon class="arrowhead" points="224,240 212,234.4 212,245.6" fill="black" transform="rotate(0,216,240)"></polygon>
-                <polygon class="arrowhead" points="200,240 188,234.4 188,245.6" fill="black" transform="rotate(180,192,240)"></polygon>
+                <path d="M 152,32 L 408,32" fill="none" stroke="black"></path>
+                <path d="M 192,64 L 368,64" fill="none" stroke="black"></path>
+                <path d="M 168,80 L 184,80" fill="none" stroke="black"></path>
+                <path d="M 368,80 L 392,80" fill="none" stroke="black"></path>
+                <path d="M 192,96 L 368,96" fill="none" stroke="black"></path>
+                <path d="M 192,128 L 368,128" fill="none" stroke="black"></path>
+                <path d="M 168,144 L 192,144" fill="none" stroke="black"></path>
+                <path d="M 192,160 L 368,160" fill="none" stroke="black"></path>
+                <path d="M 216,176 L 248,176" fill="none" stroke="black"></path>
+                <path d="M 264,176 L 296,176" fill="none" stroke="black"></path>
+                <path d="M 216,336 L 248,336" fill="none" stroke="black"></path>
+                <path d="M 264,336 L 296,336" fill="none" stroke="black"></path>
+                <path d="M 232,368 L 312,368" fill="none" stroke="black"></path>
+                <path d="M 192,400 L 368,400" fill="none" stroke="black"></path>
+                <path d="M 168,416 L 184,416" fill="none" stroke="black"></path>
+                <path d="M 192,448 L 368,448" fill="none" stroke="black"></path>
+                <path d="M 8,464 L 136,464" fill="none" stroke="black"></path>
+                <path d="M 152,464 L 408,464" fill="none" stroke="black"></path>
+                <path d="M 72,512 L 288,512" fill="none" stroke="black"></path>
+                <path d="M 8,560 L 408,560" fill="none" stroke="black"></path>
+                <path d="M 176,576 L 352,576" fill="none" stroke="black"></path>
+                <path d="M 360,592 L 392,592" fill="none" stroke="black"></path>
+                <path d="M 176,624 L 352,624" fill="none" stroke="black"></path>
+                <path d="M 8,640 L 408,640" fill="none" stroke="black"></path>
+                <polygon class="arrowhead" points="400,552 388,546.4 388,557.6" fill="black" transform="rotate(90,392,552)"></polygon>
+                <polygon class="arrowhead" points="368,592 356,586.4 356,597.6" fill="black" transform="rotate(180,360,592)"></polygon>
+                <polygon class="arrowhead" points="296,472 284,466.4 284,477.6" fill="black" transform="rotate(270,288,472)"></polygon>
+                <polygon class="arrowhead" points="192,416 180,410.4 180,421.6" fill="black" transform="rotate(0,184,416)"></polygon>
+                <polygon class="arrowhead" points="192,80 180,74.4 180,85.6" fill="black" transform="rotate(0,184,80)"></polygon>
+                <polygon class="arrowhead" points="104,552 92,546.4 92,557.6" fill="black" transform="rotate(90,96,552)"></polygon>
+                <polygon class="arrowhead" points="80,472 68,466.4 68,477.6" fill="black" transform="rotate(270,72,472)"></polygon>
                 <g class="text">
-                  <text x="228" y="52">DTLS</text>
-                  <text x="264" y="52">1.3</text>
-                  <text x="356" y="52">Keys</text>
-                  <text x="72" y="68">ULP</text>
-                  <text x="192" y="84">Key</text>
-                  <text x="252" y="84">Management</text>
-                  <text x="480" y="100">API</text>
-                  <text x="380" y="116">User</text>
-                  <text x="384" y="132">Level</text>
-                  <text x="36" y="148">SCTP</text>
-                  <text x="84" y="148">Chunks</text>
-                  <text x="144" y="148">Handler</text>
-                  <text x="396" y="148">Messages</text>
-                  <text x="244" y="180">SCTP</text>
-                  <text x="312" y="180">Unprotected</text>
-                  <text x="392" y="180">Payload</text>
-                  <text x="92" y="228">DTLS</text>
-                  <text x="300" y="228">DTLS</text>
-                  <text x="336" y="228">1.3</text>
-                  <text x="96" y="244">Chunk</text>
-                  <text x="96" y="260">Handler</text>
-                  <text x="276" y="260">Protection</text>
-                  <text x="356" y="260">Operator</text>
-                  <text x="36" y="308">SCTP</text>
-                  <text x="84" y="308">Header</text>
-                  <text x="144" y="308">Handler</text>
-                  <text x="244" y="308">SCTP</text>
-                  <text x="304" y="308">Protected</text>
-                  <text x="376" y="308">Payload</text>
+                  <text x="72" y="52">ULP</text>
+                  <text x="268" y="52">DTLS</text>
+                  <text x="304" y="52">1.3</text>
+                  <text x="240" y="84">Key</text>
+                  <text x="292" y="84">Exporter</text>
+                  <text x="240" y="148">Key</text>
+                  <text x="300" y="148">Management</text>
+                  <text x="232" y="196">H</text>
+                  <text x="232" y="212">a</text>
+                  <text x="184" y="228">k</text>
+                  <text x="232" y="228">n</text>
+                  <text x="280" y="228">A</text>
+                  <text x="376" y="228">k</text>
+                  <text x="184" y="244">e</text>
+                  <text x="232" y="244">d</text>
+                  <text x="280" y="244">l</text>
+                  <text x="376" y="244">e</text>
+                  <text x="184" y="260">y</text>
+                  <text x="232" y="260">s</text>
+                  <text x="280" y="260">e</text>
+                  <text x="344" y="260">...</text>
+                  <text x="376" y="260">y</text>
+                  <text x="184" y="276">s</text>
+                  <text x="232" y="276">h</text>
+                  <text x="280" y="276">r</text>
+                  <text x="376" y="276">s</text>
+                  <text x="232" y="292">a</text>
+                  <text x="280" y="292">t</text>
+                  <text x="232" y="308">k</text>
+                  <text x="232" y="324">e</text>
+                  <text x="324" y="372">..</text>
+                  <text x="224" y="388">ContentType</text>
+                  <text x="284" y="420">Record</text>
+                  <text x="244" y="436">Protection</text>
+                  <text x="324" y="436">Operator</text>
+                  <text x="420" y="516">keys</text>
+                  <text x="68" y="532">PPID</text>
+                  <text x="92" y="596">SCTP</text>
+                  <text x="272" y="596">Chunk</text>
+                  <text x="228" y="612">Protection</text>
+                  <text x="308" y="612">Operator</text>
                 </g>
-              </svg><a href="#section-1.2-9.1.1" class="pilcrow">¶</a>
+              </svg><a href="#section-1.2-8.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
@@ -1670,22 +1711,28 @@ overhead is dependent on the DTLS version and cipher suit.<a href="#section-1.3-
    epoch<a href="#section-1.4-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.7">Restart DTLS Key context:</dt>
+<dt id="section-1.4-2.7">Primary DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.8">
-            <p id="section-1.4-2.8.1">A DTLS Key context to be
-used for an SCTP Association Restart<a href="#section-1.4-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.8.1">A DTLS Key context used to
+    protect the regular SCTP traffic, i.e. not a restart DTLS Key context.<a href="#section-1.4-2.8.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.9">Stream:</dt>
+<dt id="section-1.4-2.9">Restart DTLS Key context:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.10">
-            <p id="section-1.4-2.10.1">A unidirectional stream of an SCTP association.  It is
-   uniquely identified by a stream identifier.<a href="#section-1.4-2.10.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.10.1">A DTLS Key context to be
+used for an SCTP Association Restart<a href="#section-1.4-2.10.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-1.4-2.11">Traffic DTLS Key context:</dt>
+<dt id="section-1.4-2.11">Stream:</dt>
           <dd style="margin-left: 1.5em" id="section-1.4-2.12">
-            <p id="section-1.4-2.12.1">A DTLS Key context used to
-    protect the regular SCTP traffic, i.e. not a restart DTLS Key context.<a href="#section-1.4-2.12.1" class="pilcrow">¶</a></p>
+            <p id="section-1.4-2.12.1">A unidirectional stream of an SCTP association.  It is
+   uniquely identified by a stream identifier.<a href="#section-1.4-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.4-2.13">Traffic:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.4-2.14">
+            <p id="section-1.4-2.14.1">The stream of DATA and Control chunks being sent on any stream between
+  SCTP Endpoints in the scope of an Association<a href="#section-1.4-2.14.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1878,9 +1925,12 @@ This allows the encrypted data to be 32 bit aligned.<a href="#section-2-3.8.1" c
       <h2 id="name-dtls-messages-over-sctp-use">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-dtls-messages-over-sctp-use" class="section-name selfRef">DTLS messages over SCTP User Messages</a>
       </h2>
-<p id="section-3-1">DTLS messages for the Handshake DTLS connection, i.e. that are not
+<p id="section-3-1">When DTLS in SCTP has completed the initialization, that is after
+PVALID message has been sent for triggering,
+DTLS messages for the Handshake DTLS connection, i.e. that are not
 DTLS records containing protected SCTP chunk payloads, will be sent as
-SCTP user messages using the format defined below. A DTLS handshake
+SCTP user messages using the format defined in <a href="#sctp-dtls-user-message" class="auto internal xref">Figure 3</a>.
+A DTLS handshake
 message may be fragmented by DTLS to a set of DTLS records of a
 maximum configured fragment size. Each DTLS message fragment is sent
 as a SCTP user message on the same stream where each message is
@@ -1888,11 +1938,12 @@ configured for reliable and in-order delivery with the PPID set to
 DTLS Chunk Key-Management Messages
 <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>. These user messages MAY
 contain one or more DTLS records. The SCTP stream ID used MAY be any
-stream ID that the ULP already uses, and if not know Stream 0. Note
+stream ID that the ULP already uses, and if not known Stream 0. Note
 that all fragments of a handshake message MUST be sent with the same
 stream ID to ensure the in-order delivery.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">The DTLS instance SHOULD NOT use DTLS retransmission to repair any
-packet losses of handshake message fragment. Note: If the DTLS
+packet losses of handshake message fragment.
+If the DTLS
 implementation supports configuring a MTU larger than the actual IP
 MTU it MAY be used as SCTP provides reliability and fragmentation.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <span id="name-dtls-user-message-structure"></span><div id="sctp-dtls-user-message">
@@ -2000,13 +2051,16 @@ needs to be changed.<a href="#section-3-5" class="pilcrow">¶</a></p>
       <h2 id="name-protection-valid-message">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-protection-valid-message" class="section-name selfRef">Protection Valid Message</a>
       </h2>
-<p id="section-4-1">The Protection Valid message is sent from the responder to the
-Initiator when the responder has confirmed reception of DTLS
+<p id="section-4-1">The Protection Valid message is sent from the Responder to the
+Initiator when the Responder has confirmed reception of DTLS
 chunk protected DTLS messages. This message triggers
-requiring protection at the Initiator when it has been received.<a href="#section-4-1" class="pilcrow">¶</a></p>
+requiring protection at the Initiator when it has been received.
+Once received from the Initiator, the Protection Valid Message
+is relayed back to the Responder. At reception of the message the
+Responder will be enabled at sending Traffic.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">The message SHALL be sent protected.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">The message is 2 bytes and is 0x4F4B. This SCTP user message MUST be sent reliable
-and on Stream 0 with in order delivery in relatio to any DTLS ACK message.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-3">The message is 2 bytes and is 0x4F4B. This SCTP user message MUST be sent
+reliably on Stream 0 with in order delivery in relation to any DTLS ACK message.<a href="#section-4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="dtls-chunk-integration">
@@ -2016,30 +2070,32 @@ and on Stream 0 with in order delivery in relatio to any DTLS ACK message.<a hre
       </h2>
 <p id="section-5-1">The <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span> contains a high-level
 description of the basic DTLS in SCTP architecture, this section deals
-with details related to the DTLS 1.3 inband key-establishment
+with details related to the DTLS 1.3 inband key-management
 integration with SCTP.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <div id="sctp-association-life-cycle">
 <section id="section-5.1">
         <h3 id="name-sctp-association-life-cycle">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-sctp-association-life-cycle" class="section-name selfRef">SCTP Association Life Cycle.</a>
         </h3>
-<p id="section-5.1-1">DTLS in SCTP uses inband key-establishment, thus the DTLS handshake
-for a Key-Management DTLS Connection establishes shared keys with the
-remote peer. As soon as the SCTP State Machine enters established
+<p id="section-5.1-1">DTLS in SCTP uses inband key-management, thus the DTLS handshake
+for a Key-Management DTLS Connection establishes a new DTLS
+Connection with the remote peer from which both peers will derive
+DTLS Key Contexts. As soon as the SCTP State Machine enters ESTABLISHED
 state, DTLS in SCTP is responsible for progressing to where the DTLS
 Chunk is fully configured and the ULP will be protected.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<div id="protection-initilization">
+<div id="protect-init">
 <section id="section-5.1.1">
-          <h4 id="name-protection-initilization">
-<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-protection-initilization" class="section-name selfRef">PROTECTION INITILIZATION</a>
+          <h4 id="name-protection-initialization">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-protection-initialization" class="section-name selfRef">Protection Initialization</a>
           </h4>
-<p id="section-5.1.1-1">When the SCTP Association enter ESTABLISHED state, the initator will
+<p id="section-5.1.1-1">When the SCTP Association enter ESTABLISHED state, the initiator will
 start the handshake according to <a href="#dtls-handshake" class="auto internal xref">Section 7.2</a>.<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.1-2">When a successful handshake has been completed, the Primary DTLS Key
 Context and the Restart DTLS Key Context will be created by deriving
 the keys and IVs from the key-management DTLS connection. These will
-be installed in the DTLS Chunks as defined in this document to
-avoid dead lock and ensure successful protection enabling the ULP<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
+be installed in the Chunks Protection Operator as defined in this document to
+avoid dead lock, ensure successful protection and enabling the ULP
+traffic.<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sctp-association-ongoing">
@@ -2047,7 +2103,7 @@ avoid dead lock and ensure successful protection enabling the ULP<a href="#secti
           <h4 id="name-sctp-association-ongoing">
 <a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-sctp-association-ongoing" class="section-name selfRef">SCTP Association Ongoing</a>
           </h4>
-<p id="section-5.1.2-1">When an SCTP Association is protected the establishe primary DTLS key
+<p id="section-5.1.2-1">When an SCTP Association is protected the established Primary DTLS key
 context is used for Chunk protection operation of the payload of SCTP
 chunks in each packet per the DTLS Chunk specification
 <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
@@ -2066,11 +2122,11 @@ DTLS Key contexts.<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
 <a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-shutdown-states" class="section-name selfRef">SHUTDOWN states</a>
           </h4>
 <p id="section-5.1.3-1">When the SCTP association leaves the ESTABLISHED state per <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span>
-to be shutdown the DTLS Chunk's key contexts are kept and continues to
+to be shutdown the DTLS Chunk's key contexts are kept and continue to
 protect the SCTP packet payloads through the shutdown process.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.3-2">When the association reaches the CLOSED state as part of the SCTP
-association closing process all DTLS connections existing (traffic and
-restart) for this association are terminated without further
+association closing process, all DTLS connections existing
+for this association are terminated without further
 transmissions, i.e. DTLS close_notify is not transmitted.<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2081,8 +2137,9 @@ transmissions, i.e. DTLS close_notify is not transmitted.<a href="#section-5.1.3
         <h3 id="name-dtls-connection-handling">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-dtls-connection-handling" class="section-name selfRef">DTLS Connection Handling</a>
         </h3>
-<p id="section-5.2-1">It's up to DTLS key-establishment function to manage the DTLS
-connections and their related DTLS Key context in the DTLS chunk.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">It's up to DTLS key-management function to manage the DTLS
+connections and their related DTLS Key context in the Chunk
+Protection Operator.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <div id="add-dtls-connection">
 <section id="section-5.2.1">
           <h4 id="name-add-a-new-dtls-connection">
@@ -2090,7 +2147,7 @@ connections and their related DTLS Key context in the DTLS chunk.<a href="#secti
           </h4>
 <p id="section-5.2.1-1">Either peer can add a new DTLS connection to the SCTP association at
 any time, but no more than 2 DTLS connections can exist at the same
-time. Details of the handshake are described in <a href="#dtls-handshake" class="auto internal xref">Section 7.2</a>.<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
+time. Details of the handshake are described in <a href="#further_dtls_connection" class="auto internal xref">Section 7.2.2</a>.<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.2.1-2">As either endpoint can initiate a DTLS handshake at the same time,
 either endpoint may receive a DTLS ClientHello message when it has
 sent its own ClientHello. In this case the ClientHello from the
@@ -2098,9 +2155,10 @@ endpoint that had the DTLS Client role in the establishment of the
 previous DTLS connection shall be continued to be processed and the
 other dropped.<a href="#section-5.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-5.2.1-3">When the handshake has been completed successfully, the new DTLS Key
-contexts are established by exporting keys and installing the in the
-DTLS Chunk, and the new DTLS Key context are immediately started to be
-used. If the handshake is not completed successfully, a new DTLS
+contexts are established by exporting keys and installing them in the
+Chunk Protection Operator, and the new DTLS Key context are
+immediately started to be used.
+If the handshake is not completed successfully, a new DTLS
 handshake attempt will be tried using the same DCI.<a href="#section-5.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2113,16 +2171,17 @@ handshake attempt will be tried using the same DCI.<a href="#section-5.2.1-3" cl
 newer DTLS connection is in use. It is RECOMMENDED to not initiate
 removal until at least one SCTP packet protected by the new DTLS Key Context
 has been received, and any transmitted packets protected
-using the new DTLS Key Context has been acknowledge, alternatively one
-Maximum Segment Lifetime (120 seconds) has passed since the last SCTP
-packet protected by the old DTLS connection was transmitted.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.2.2-2">Either peers can initialize the removal of a DTLS connection from the
+using the new DTLS Key Context has been acknowledged, alternatively
+waiting for one Maximum Segment Lifetime (120 seconds) has elapsed
+since the last SCTP packet protected by the old DTLS connection was
+transmitted.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-2">Either peers can initiate the removal of a DTLS connection from the
 current SCTP association when needed when a new have been established.
 The closing of the DTLS connection when the SCTP association is in
 PROTECTED and ESTABLISHED state is done by having the DTLS connection
-send a DTLS close_notify. When the DTLS closure of a DTLS connection
-is completed, the related DTLS Key Contexts (Traffic and Restart) in
-the DTLS chunk are released.<a href="#section-5.2.2-2" class="pilcrow">¶</a></p>
+sending a DTLS close_notify. When the DTLS closure of a DTLS connection
+is completed, the related DTLS Key Contexts (Primaryand Restart) in
+the Chunk Protection Operator are released.<a href="#section-5.2.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="removal_dtls_consideration">
@@ -2133,20 +2192,27 @@ the DTLS chunk are released.<a href="#section-5.2.2-2" class="pilcrow">¶</a></p
 <p id="section-5.2.3-1">Removal of a DTLS connection may happen under circumstances as
 described above in <a href="#remove-dtls-connection" class="auto internal xref">Section 5.2.2</a> in different states
 of the Association. This section describes how the implementation
-should take care of the DTLS connection removal in details.<a href="#section-5.2.3-1" class="pilcrow">¶</a></p>
-<p id="section-5.2.3-2">The initial DTLS connection exists as soon as Association reaches the
-PROTECTED state. As long as one DTLS connection only exists, that DTLS
+should take care of the DTLS connection removal in details:<a href="#section-5.2.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.2.3-2.1">
+              <p id="section-5.2.3-2.1.1">As long as one DTLS connection only exists, that DTLS
 connection SHALL NOT be removed as it won't be possible for the
-Association to proceed further.<a href="#section-5.2.3-2" class="pilcrow">¶</a></p>
-<p id="section-5.2.3-3">In general a DTLS connection can be removed when there's another
+Association to proceed further.<a href="#section-5.2.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.2.3-2.2">
+              <p id="section-5.2.3-2.2.1">A DTLS connection can be removed when there's another
 active DTLS connection with valid DTLS Key Contexts that can be used
-for negotiating further key-management DTLS 1.3 connections.  In case
-the DTLS connection is removed and no useable DTLS Key Context exist
+for negotiating further key-management DTLS 1.3 connections.<a href="#section-5.2.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.2.3-2.3">
+              <p id="section-5.2.3-2.3.1">In case the DTLS connection is removed and no useable DTLS Key Context exist
 for key-management DTLS 1.3 negotiation, the Association SHALL be
-ABORTED.<a href="#section-5.2.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.2.3-4">It is up to the implementation to guarantee that a DTLS Key Context exists
+ABORTED.<a href="#section-5.2.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-5.2.3-3">It is up to the implementation to guarantee that a DTLS Key Context exists
 all the time, for avoiding that undesired DTLS connection closure causes
-the Association abortion.<a href="#section-5.2.3-4" class="pilcrow">¶</a></p>
+the Association abortion.<a href="#section-5.2.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2157,8 +2223,8 @@ the Association abortion.<a href="#section-5.2.3-4" class="pilcrow">¶</a></p>
 <a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-dtls-key-update" class="section-name selfRef">DTLS Key Update</a>
         </h3>
 <p id="section-5.3-1">DTLS Key Update MUST NOT be used.  DTLS Key Context replacement MUST
-be used instead, by means creating a new DTLS connection as specified
-in <a href="#parallel-dtls" class="auto internal xref">Section 8</a>, deriving the new Traffic DTLS Key Context, the
+be used instead, by means of creating a new DTLS connection as specified
+in <a href="#parallel-dtls" class="auto internal xref">Section 8</a>, deriving the new Primary DTLS Key Context, the
 new Restart DTLS Key Context and then closing the old DTLS connection.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2170,15 +2236,15 @@ new Restart DTLS Key Context and then closing the old DTLS connection.<a href="#
 <p id="section-5.4-1">As DTLS has its own error reporting mechanism by exchanging DTLS alert
 messages no new DTLS related cause codes are defined to use the error
 handling defined in <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
-<p id="section-5.4-2">When Handshake DTLS connection encounters an error it may report that
+<p id="section-5.4-2">When the handshake of DTLS connection encounters an error it may report that
 issue using DTLS alert message to its peer by putting the created DTLS
-record in a SCTP user message (<a href="#dtls-user-message" class="auto internal xref">Section 3</a>) with the
+record in a SCTP user message (see <a href="#dtls-user-message" class="auto internal xref">Section 3</a>) with the
 Handshake PPID. This is independent of what to do in relation to the
-SCTP association.  Depending on the severance of the error different
-paths can be the result:<a href="#section-5.4-2" class="pilcrow">¶</a></p>
-<p id="section-5.4-3">However, as there is not expected that the key-management DTLS
-connection will at all have any activity between completing the
-handshake, and the DTLS connection closing, there is unlikely
+SCTP association.  Depending on the severity of the error different
+decisions can be taken.<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<p id="section-5.4-3">However, as it is not expected that the key-management DTLS
+connection will have any activity at all between completing the
+handshake, and the DTLS connection closing, it is unlikely
 that any error will occur.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2215,14 +2281,14 @@ that any error will occur.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
           <h4 id="name-general">
 <a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-general" class="section-name selfRef">General</a>
           </h4>
-<p id="section-6.2.1-1">The DTLS Connection ID SHOULD NOT be used in the Key-Management DTLS
-   Connection avoiding overhead and addition implementation
+<p id="section-6.2.1-1">The DTLS Connection ID SHOULD NOT be used in the Key-Management
+   avoiding overhead and addition implementation
    requirements on DTLS implementation.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-2">The DTLS record length field is normally not needed as the DTLS
    Chunk provides a length field unless multiple records are put in
-   same DTLS chunk payload or user message. If multiple DTLS records
-   are included in one DTLS chunk payload or user message the DTLS
-   record length field MUST be present in all but the last.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
+   same DTLS chunk payload or user message.
+   Note that bundling is NOT PERMITED and only one DTLS Chunk can
+   be transmitted in a SCTP Packet.<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-3">DTLS record replay detection MUST be used.<a href="#section-6.2.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-4">Sequence number size can be adapted based on how quickly it wraps.<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-5">Many of the TLS registries have a "Recommended" column. Parameters
@@ -2341,7 +2407,7 @@ provide ephemeral key exchange.<a href="#section-6.2.4-4" class="pilcrow">¶</a>
    Key-Management DTLS Connections and the DTLS Chunk
    <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <p id="section-7-2">A DTLS in SCTP Association is built up with a Key-Management DTLS
-   connection, from that DTLS connection Traffic DTLS Key Context and
+   connection, from that DTLS connection Primary DTLS Key Context and
    Restart DTLS Key Context are derived and the configures
    the DTLS Context.<a href="#section-7-2" class="pilcrow">¶</a></p>
 <p id="section-7-3">The Key-Management DTLS connection is established as part of extra
@@ -2355,16 +2421,16 @@ provide ephemeral key exchange.<a href="#section-6.2.4-4" class="pilcrow">¶</a>
 <p id="section-7.1-1">This section describes how DTLS Key Contexts are derived from the
   DTLS handshake using the TLS Exporter as defined by <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>. The
   TLS exporter label specifications below is following <span>[<a href="#RFC5705" class="cite xref">RFC5705</a>]</span>.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">There are two sets of keys one for the primary DTLS key context and
-  one for the restart DTLS Key Context. Each set consists of one
+<p id="section-7.1-2">There are two sets of keys one for the Primary DTLS key context and
+  one for the Restart DTLS Key Context. Each set consists of one
   client and one server side write key. In addition each key needs an
   Initilization Vector (IV) that is used by the record processing in
   TLS to create the nonce, See Section 5.3 of <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. The client
   and server roles are here in relation to key-management DTLS session
   roles. So the DTLS Client will install the key derived using the
   EXPORTER_DTLS_IN_SCTP_PRIMARY_CLIENT_KEY label as its write key for
-  the traffic context, and use the
-  EXPORTER_DTLS_IN_SCTP_PRIMARY_SERVER_KEY as its traffic DTLS context
+  the Primary DTLScontext, and use the
+  EXPORTER_DTLS_IN_SCTP_PRIMARY_SERVER_KEY as its Primary DTLS context
   read key. Correspondlingly the
   EXPORTER_DTLS_IN_SCTP_RESTART_CLIENT_KEY is used to export the key
   used by the endpoint that acted as DTLS Client as write key for the
@@ -2528,86 +2594,113 @@ provide ephemeral key exchange.<a href="#section-6.2.4-4" class="pilcrow">¶</a>
 <figure id="figure-5">
             <div id="section-7.2.1-4.1">
               <div class="alignCenter art-svg artwork" id="section-7.2.1-4.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="336" width="520" viewBox="0 0 520 336" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                  <path d="M 40,48 L 40,304" fill="none" stroke="black"></path>
-                  <path d="M 408,48 L 408,304" fill="none" stroke="black"></path>
-                  <path d="M 440,256 L 440,304" fill="none" stroke="black"></path>
-                  <path d="M 40,64 L 200,64" fill="none" stroke="black"></path>
-                  <path d="M 256,64 L 400,64" fill="none" stroke="black"></path>
-                  <path d="M 48,80 L 184,80" fill="none" stroke="black"></path>
-                  <path d="M 272,80 L 408,80" fill="none" stroke="black"></path>
-                  <path d="M 40,96 L 168,96" fill="none" stroke="black"></path>
-                  <path d="M 280,96 L 400,96" fill="none" stroke="black"></path>
-                  <path d="M 48,112 L 176,112" fill="none" stroke="black"></path>
-                  <path d="M 280,112 L 408,112" fill="none" stroke="black"></path>
-                  <path d="M 40,160 L 120,160" fill="none" stroke="black"></path>
-                  <path d="M 328,160 L 400,160" fill="none" stroke="black"></path>
-                  <path d="M 48,176 L 64,176" fill="none" stroke="black"></path>
-                  <path d="M 376,176 L 408,176" fill="none" stroke="black"></path>
-                  <path d="M 40,192 L 64,192" fill="none" stroke="black"></path>
-                  <path d="M 368,192 L 400,192" fill="none" stroke="black"></path>
-                  <path d="M 48,208 L 120,208" fill="none" stroke="black"></path>
-                  <path d="M 320,208 L 408,208" fill="none" stroke="black"></path>
-                  <path d="M 40,256 L 96,256" fill="none" stroke="black"></path>
-                  <path d="M 328,256 L 400,256" fill="none" stroke="black"></path>
-                  <path d="M 48,272 L 104,272" fill="none" stroke="black"></path>
-                  <path d="M 336,272 L 408,272" fill="none" stroke="black"></path>
-                  <path d="M 440,272 L 512,272" fill="none" stroke="black"></path>
-                  <polygon class="arrowhead" points="408,256 396,250.4 396,261.6" fill="black" transform="rotate(0,400,256)"></polygon>
-                  <polygon class="arrowhead" points="408,192 396,186.4 396,197.6" fill="black" transform="rotate(0,400,192)"></polygon>
-                  <polygon class="arrowhead" points="408,160 396,154.4 396,165.6" fill="black" transform="rotate(0,400,160)"></polygon>
-                  <polygon class="arrowhead" points="408,96 396,90.4 396,101.6" fill="black" transform="rotate(0,400,96)"></polygon>
-                  <polygon class="arrowhead" points="408,64 396,58.4 396,69.6" fill="black" transform="rotate(0,400,64)"></polygon>
-                  <polygon class="arrowhead" points="56,272 44,266.4 44,277.6" fill="black" transform="rotate(180,48,272)"></polygon>
-                  <polygon class="arrowhead" points="56,208 44,202.4 44,213.6" fill="black" transform="rotate(180,48,208)"></polygon>
-                  <polygon class="arrowhead" points="56,176 44,170.4 44,181.6" fill="black" transform="rotate(180,48,176)"></polygon>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="448" width="576" viewBox="0 0 576 448" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                  <path d="M 40,48 L 40,416" fill="none" stroke="black"></path>
+                  <path d="M 80,160 L 80,336" fill="none" stroke="black"></path>
+                  <path d="M 424,160 L 424,336" fill="none" stroke="black"></path>
+                  <path d="M 464,48 L 464,416" fill="none" stroke="black"></path>
+                  <path d="M 496,368 L 496,416" fill="none" stroke="black"></path>
+                  <path d="M 40,64 L 232,64" fill="none" stroke="black"></path>
+                  <path d="M 288,64 L 456,64" fill="none" stroke="black"></path>
+                  <path d="M 48,80 L 216,80" fill="none" stroke="black"></path>
+                  <path d="M 304,80 L 464,80" fill="none" stroke="black"></path>
+                  <path d="M 40,96 L 200,96" fill="none" stroke="black"></path>
+                  <path d="M 312,96 L 456,96" fill="none" stroke="black"></path>
+                  <path d="M 48,112 L 208,112" fill="none" stroke="black"></path>
+                  <path d="M 312,112 L 464,112" fill="none" stroke="black"></path>
+                  <path d="M 40,176 L 72,176" fill="none" stroke="black"></path>
+                  <path d="M 432,176 L 464,176" fill="none" stroke="black"></path>
+                  <path d="M 80,208 L 152,208" fill="none" stroke="black"></path>
+                  <path d="M 360,208 L 416,208" fill="none" stroke="black"></path>
+                  <path d="M 408,224 L 424,224" fill="none" stroke="black"></path>
+                  <path d="M 80,240 L 96,240" fill="none" stroke="black"></path>
+                  <path d="M 400,240 L 416,240" fill="none" stroke="black"></path>
+                  <path d="M 88,256 L 104,256" fill="none" stroke="black"></path>
+                  <path d="M 400,256 L 424,256" fill="none" stroke="black"></path>
+                  <path d="M 80,272 L 104,272" fill="none" stroke="black"></path>
+                  <path d="M 400,272 L 416,272" fill="none" stroke="black"></path>
+                  <path d="M 48,304 L 80,304" fill="none" stroke="black"></path>
+                  <path d="M 424,304 L 456,304" fill="none" stroke="black"></path>
+                  <path d="M 40,368 L 136,368" fill="none" stroke="black"></path>
+                  <path d="M 368,368 L 456,368" fill="none" stroke="black"></path>
+                  <path d="M 48,384 L 136,384" fill="none" stroke="black"></path>
+                  <path d="M 368,384 L 464,384" fill="none" stroke="black"></path>
+                  <path d="M 496,384 L 568,384" fill="none" stroke="black"></path>
+                  <path d="M 480,352 C 488.83064,352 496,359.16936 496,368" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="464,368 452,362.4 452,373.6" fill="black" transform="rotate(0,456,368)"></polygon>
+                  <polygon class="arrowhead" points="464,304 452,298.4 452,309.6" fill="black" transform="rotate(0,456,304)"></polygon>
+                  <polygon class="arrowhead" points="464,96 452,90.4 452,101.6" fill="black" transform="rotate(0,456,96)"></polygon>
+                  <polygon class="arrowhead" points="464,64 452,58.4 452,69.6" fill="black" transform="rotate(0,456,64)"></polygon>
+                  <polygon class="arrowhead" points="440,176 428,170.4 428,181.6" fill="black" transform="rotate(180,432,176)"></polygon>
+                  <polygon class="arrowhead" points="424,272 412,266.4 412,277.6" fill="black" transform="rotate(0,416,272)"></polygon>
+                  <polygon class="arrowhead" points="424,240 412,234.4 412,245.6" fill="black" transform="rotate(0,416,240)"></polygon>
+                  <polygon class="arrowhead" points="424,208 412,202.4 412,213.6" fill="black" transform="rotate(0,416,208)"></polygon>
+                  <polygon class="arrowhead" points="96,256 84,250.4 84,261.6" fill="black" transform="rotate(180,88,256)"></polygon>
+                  <polygon class="arrowhead" points="80,176 68,170.4 68,181.6" fill="black" transform="rotate(0,72,176)"></polygon>
+                  <polygon class="arrowhead" points="56,384 44,378.4 44,389.6" fill="black" transform="rotate(180,48,384)"></polygon>
+                  <polygon class="arrowhead" points="56,304 44,298.4 44,309.6" fill="black" transform="rotate(180,48,304)"></polygon>
                   <polygon class="arrowhead" points="56,112 44,106.4 44,117.6" fill="black" transform="rotate(180,48,112)"></polygon>
                   <polygon class="arrowhead" points="56,80 44,74.4 44,85.6" fill="black" transform="rotate(180,48,80)"></polygon>
                   <g class="text">
                     <text x="40" y="36">Initiator</text>
-                    <text x="408" y="36">Responder</text>
+                    <text x="464" y="36">Responder</text>
                     <text x="20" y="68">0.</text>
-                    <text x="228" y="68">[INIT]</text>
-                    <text x="228" y="84">[INIT-ACK]</text>
-                    <text x="200" y="100">[COOKIE</text>
-                    <text x="256" y="100">ECHO]</text>
-                    <text x="428" y="100">1.</text>
+                    <text x="260" y="68">[INIT]</text>
+                    <text x="260" y="84">[INIT-ACK]</text>
+                    <text x="232" y="100">[COOKIE</text>
+                    <text x="288" y="100">ECHO]</text>
+                    <text x="484" y="100">1.</text>
                     <text x="20" y="116">2.</text>
-                    <text x="208" y="116">[COOKIE</text>
-                    <text x="260" y="116">ACK]</text>
-                    <text x="20" y="164">3.</text>
-                    <text x="164" y="164">[DATA(DTLS</text>
-                    <text x="236" y="164">Client</text>
-                    <text x="296" y="164">Hello)]</text>
-                    <text x="428" y="164">4.</text>
-                    <text x="108" y="180">[DATA(DTLS</text>
-                    <text x="180" y="180">Server</text>
-                    <text x="232" y="180">Hello</text>
-                    <text x="272" y="180">...</text>
-                    <text x="332" y="180">Finished)]</text>
-                    <text x="428" y="180">5.</text>
-                    <text x="20" y="196">6.</text>
-                    <text x="108" y="196">[DATA(DTLS</text>
-                    <text x="200" y="196">Certificate</text>
-                    <text x="264" y="196">...</text>
-                    <text x="324" y="196">Finished)]</text>
-                    <text x="428" y="196">7.</text>
-                    <text x="20" y="212">9.</text>
-                    <text x="164" y="212">[DATA(DTLS</text>
-                    <text x="228" y="212">ACK,</text>
-                    <text x="284" y="212">PVALID)]</text>
-                    <text x="428" y="212">8.</text>
-                    <text x="16" y="260">10.</text>
-                    <text x="120" y="260">[DTLS</text>
-                    <text x="204" y="260">CHUNK(DATA(APP</text>
-                    <text x="296" y="260">DATA))]</text>
-                    <text x="464" y="260">APP</text>
-                    <text x="500" y="260">DATA</text>
+                    <text x="240" y="116">[COOKIE</text>
+                    <text x="292" y="116">ACK]</text>
+                    <text x="72" y="148">Key</text>
+                    <text x="120" y="148">Manager</text>
+                    <text x="376" y="148">Key</text>
+                    <text x="424" y="148">Manager</text>
+                    <text x="20" y="180">3.</text>
+                    <text x="116" y="180">CRYPTO</text>
+                    <text x="156" y="180">UP</text>
+                    <text x="364" y="180">CRYPTO</text>
+                    <text x="404" y="180">UP</text>
+                    <text x="196" y="212">[DATA(DTLS</text>
+                    <text x="268" y="212">Client</text>
+                    <text x="328" y="212">Hello)]</text>
+                    <text x="444" y="212">4.</text>
+                    <text x="132" y="228">&lt;-[DATA(DTLS</text>
+                    <text x="212" y="228">Server</text>
+                    <text x="264" y="228">Hello</text>
+                    <text x="304" y="228">...</text>
+                    <text x="364" y="228">Finished)]</text>
+                    <text x="444" y="228">5.</text>
+                    <text x="60" y="244">6.</text>
+                    <text x="140" y="244">[DATA(DTLS</text>
+                    <text x="232" y="244">Certificate</text>
+                    <text x="296" y="244">...</text>
+                    <text x="356" y="244">Finished)]</text>
+                    <text x="444" y="244">7.</text>
+                    <text x="128" y="260">[DTLS</text>
+                    <text x="216" y="260">CHUNK(DATA(DTLS</text>
+                    <text x="300" y="260">ACK,</text>
+                    <text x="360" y="260">PVALID))]</text>
+                    <text x="444" y="260">8.</text>
                     <text x="128" y="276">[DTLS</text>
-                    <text x="212" y="276">CHUNK(DATA(APP</text>
-                    <text x="304" y="276">DATA))]</text>
-                    <text x="216" y="292">...</text>
-                    <text x="216" y="308">...</text>
+                    <text x="216" y="276">CHUNK(DATA(DTLS</text>
+                    <text x="300" y="276">ACK,</text>
+                    <text x="360" y="276">PVALID))]</text>
+                    <text x="444" y="276">9.</text>
+                    <text x="128" y="308">VALIDATED</text>
+                    <text x="376" y="308">VALIDATED</text>
+                    <text x="16" y="372">10.</text>
+                    <text x="160" y="372">[DTLS</text>
+                    <text x="244" y="372">CHUNK(DATA(APP</text>
+                    <text x="336" y="372">DATA))]</text>
+                    <text x="520" y="372">APP</text>
+                    <text x="556" y="372">DATA</text>
+                    <text x="160" y="388">[DTLS</text>
+                    <text x="244" y="388">CHUNK(DATA(APP</text>
+                    <text x="336" y="388">DATA))]</text>
+                    <text x="256" y="404">...</text>
+                    <text x="256" y="420">...</text>
                   </g>
                 </svg><a href="#section-7.2.1-4.1.1" class="pilcrow">¶</a>
 </div>
@@ -2648,46 +2741,51 @@ and DTLS server is needed before one can progress to 5.<a href="#section-7.2.1-5
             <li id="section-7.2.1-5.6">
               <p id="section-7.2.1-5.6.1">Responder uses its the TLS Exporter on the DTLS Connection's
 state to derive the primary client write key and IV
-<a href="#dtls-key-derivation" class="auto internal xref">Section 7.1</a> and install them into the DTLS Chunk's
-primary Key Context. Then it sends the DTLS Server's response
-message(s).<a href="#section-7.2.1-5.6.1" class="pilcrow">¶</a></p>
+<a href="#dtls-key-derivation" class="auto internal xref">Section 7.1</a> and install them into the Chunk
+Protection Operator's Primary Key Context.
+Then it sends the DTLS Server's response message(s).<a href="#section-7.2.1-5.6.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-7.2.1-5.7">
               <p id="section-7.2.1-5.7.1">The DTLS client receives the DTLS server's messages (Server
 Hello etc.)  and can now export both the client and server write
-key for the primary and restart Key Contexts, however their usage
+key for the Primary and Restart Key Contexts, however their usage
 is not yet required and SCTP packets without DTLS chunks are still
 accepted. Then the DTLS Client next handshake message is sent.
-This message SHALL be protected by the DTLS Chunk using the primary
+This message SHALL be protected by the DTLS Chunk using the Primary
 key Context (Client Write key and IV).<a href="#section-7.2.1-5.7.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-7.2.1-5.8">
-              <p id="section-7.2.1-5.8.1">The responder's DTLS chunk will receive the SCTP packets containing
-the DTLS chunk protected DTLS messages. Concluding the main
-process of the DTLS handshake.<a href="#section-7.2.1-5.8.1" class="pilcrow">¶</a></p>
+              <p id="section-7.2.1-5.8.1">The responder's Chunk Protection Operator will receive the SCTP
+packets containing the DTLS chunk protected DTLS messages,
+concluding the main process of the DTLS handshake.<a href="#section-7.2.1-5.8.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-7.2.1-5.9">
-              <p id="section-7.2.1-5.9.1">The responder export the remaining keys and IVs and installs all
-primary and restart Server Write Key and IV, as well as restart
+              <p id="section-7.2.1-5.9.1">The responder exports the remaining keys and IVs and installs all
+Primary and Restart Server Write Key and IV, as well as restart
 client write key and IV. After that it requires all future SCTP
 Packets to be protected by DTLS Chunk. If any DTLS ACK message
 is to be sent, it SHOULD be sent next.  Then it sends a
 protected Protection Valid Message <a href="#PVALID-user-message" class="auto internal xref">Section 4</a> to
-the SCTP Association Initiators Key-Management. The
-key-management can now inform the ULP that the SCTP association
-is protected.<a href="#section-7.2.1-5.9.1" class="pilcrow">¶</a></p>
+the SCTP Association Initiators Key-Management.<a href="#section-7.2.1-5.9.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-7.2.1-5.10">
-              <p id="section-7.2.1-5.10.1">Upon successful reception of the Protection Valid Message the
+              <p id="section-7.2.1-5.10.1">Having received the Protection Valid Message, the initiator's
+key-management can now inform the ULP that the SCTP association
+is protected and verified. It shall also send a Protection Validation
+Message to the responder.
+Upon successful reception of the Protection Valid Message the
 Initiator's Key-Management configure the DTLS Chunk to
-only accept DTLS Chunk Protected SCTP packets.<a href="#section-7.2.1-5.10.1" class="pilcrow">¶</a></p>
+only accept DTLS Chunk Protected SCTP packets.
+Upon successful reception of the Protection Valid Message the
+Responder's Key-Management informs the SCTP stack that
+the Association is Validated and traffic can be sent.<a href="#section-7.2.1-5.10.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-7.2.1-5.11">
               <p id="section-7.2.1-5.11.1">The Initiator's ULP is notified that the SCTP association is
 Established and protected and it may generate user messages.<a href="#section-7.2.1-5.11.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
-<p id="section-7.2.1-6">If the DTLS handshake failed the SCTP association SHALL be aborted
+<p id="section-7.2.1-6">If the DTLS handshake fails the SCTP association SHALL be aborted
    and an ERROR chunk with the Error in Protection error cause, with
    the appropriate extra error causes is generated, the right
    selection of "Error During Protection Handshake" or "Timeout During
@@ -2700,68 +2798,73 @@ Established and protected and it may generate user messages.<a href="#section-7.
 <a href="#section-7.2.2" class="section-number selfRef">7.2.2. </a><a href="#name-handshake-of-further-dtls-c" class="section-name selfRef">Handshake of further DTLS connections</a>
           </h4>
 <p id="section-7.2.2-1">When the SCTP Association has entered the PROTECTED state, each of
-   the endpoint can initiate a DTLS handshake for rekeying when
+   the endpoint can initiate a DTLS handshake for Key-Management when
    necessary.<a href="#section-7.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.2.2-2">The DTLS endpoint will if necessary fragment the handshake into
-   multiple records. Each DTLS handshake message fragment
-   is sent as a SCTP user message <a href="#dtls-user-message" class="auto internal xref">Section 3</a>.
-   The DTLS instance SHOULD NOT use DTLS retransmission to repair any
-   packet losses of handshake message fragment. Note: If the DTLS
+<p id="section-7.2.2-2">The DTLS Key-Management will act as a User of SCTP, identified
+   with the Key-Management PPID 4242. DTLS handshake
+   is sent as a SCTP user message according to <a href="#dtls-user-message" class="auto internal xref">Section 3</a>.<a href="#section-7.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-7.2.2-3">The DTLS instance SHOULD NOT use DTLS retransmission to repair any
+   packet losses of handshake message fragment.
+   If the DTLS
    implementation support configuring a MTU larger than the actual IP
    MTU it could be used as SCTP provides reliability and
-   fragmentation.<a href="#section-7.2.2-2" class="pilcrow">¶</a></p>
-<p id="section-7.2.2-3">If the DTLS handshake failed the SCTP association SHALL generate
+   fragmentation.<a href="#section-7.2.2-3" class="pilcrow">¶</a></p>
+<p id="section-7.2.2-4">If the DTLS handshake fails the SCTP association SHALL generate
    an ERROR chunk with the Error in Protection error cause, with
-   extra error causes "Error During Protection Handshake".<a href="#section-7.2.2-3" class="pilcrow">¶</a></p>
+   extra error causes "Error During Protection Handshake".<a href="#section-7.2.2-4" class="pilcrow">¶</a></p>
 <span id="name-handshake-of-further-dtls-co"></span><div id="sctp-DTLS-further-dtls-connection">
 <figure id="figure-6">
-            <div id="section-7.2.2-4.1">
-              <div class="alignCenter art-svg artwork" id="section-7.2.2-4.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="160" width="448" viewBox="0 0 448 160" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+            <div id="section-7.2.2-5.1">
+              <div class="alignCenter art-svg artwork" id="section-7.2.2-5.1.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="144" width="528" viewBox="0 0 528 144" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                   <path d="M 40,48 L 40,128" fill="none" stroke="black"></path>
-                  <path d="M 408,48 L 408,128" fill="none" stroke="black"></path>
-                  <path d="M 40,64 L 120,64" fill="none" stroke="black"></path>
-                  <path d="M 328,64 L 400,64" fill="none" stroke="black"></path>
+                  <path d="M 488,48 L 488,128" fill="none" stroke="black"></path>
+                  <path d="M 40,64 L 104,64" fill="none" stroke="black"></path>
+                  <path d="M 408,64 L 480,64" fill="none" stroke="black"></path>
                   <path d="M 48,80 L 64,80" fill="none" stroke="black"></path>
-                  <path d="M 376,80 L 408,80" fill="none" stroke="black"></path>
+                  <path d="M 472,80 L 488,80" fill="none" stroke="black"></path>
                   <path d="M 40,96 L 64,96" fill="none" stroke="black"></path>
-                  <path d="M 368,96 L 400,96" fill="none" stroke="black"></path>
-                  <path d="M 48,112 L 152,112" fill="none" stroke="black"></path>
-                  <path d="M 288,112 L 408,112" fill="none" stroke="black"></path>
-                  <polygon class="arrowhead" points="408,96 396,90.4 396,101.6" fill="black" transform="rotate(0,400,96)"></polygon>
-                  <polygon class="arrowhead" points="408,64 396,58.4 396,69.6" fill="black" transform="rotate(0,400,64)"></polygon>
+                  <path d="M 464,96 L 480,96" fill="none" stroke="black"></path>
+                  <path d="M 48,112 L 144,112" fill="none" stroke="black"></path>
+                  <path d="M 376,112 L 488,112" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="488,96 476,90.4 476,101.6" fill="black" transform="rotate(0,480,96)"></polygon>
+                  <polygon class="arrowhead" points="488,64 476,58.4 476,69.6" fill="black" transform="rotate(0,480,64)"></polygon>
                   <polygon class="arrowhead" points="56,112 44,106.4 44,117.6" fill="black" transform="rotate(180,48,112)"></polygon>
                   <polygon class="arrowhead" points="56,80 44,74.4 44,85.6" fill="black" transform="rotate(180,48,80)"></polygon>
                   <g class="text">
                     <text x="40" y="36">Initiator</text>
-                    <text x="408" y="36">Responder</text>
-                    <text x="164" y="68">[DATA(DTLS</text>
-                    <text x="236" y="68">Client</text>
-                    <text x="296" y="68">Hello)]</text>
-                    <text x="108" y="84">[DATA(DTLS</text>
-                    <text x="180" y="84">Server</text>
-                    <text x="232" y="84">Hello</text>
-                    <text x="272" y="84">...</text>
-                    <text x="332" y="84">Finished)]</text>
-                    <text x="108" y="100">[DATA(DTLS</text>
-                    <text x="200" y="100">Certificate</text>
-                    <text x="264" y="100">...</text>
-                    <text x="324" y="100">Finished)]</text>
-                    <text x="196" y="116">[DATA(DTLS</text>
-                    <text x="264" y="116">ACK)]</text>
+                    <text x="488" y="36">Responder</text>
+                    <text x="128" y="68">[DTLS</text>
+                    <text x="216" y="68">CHUNK(DATA(DTLS</text>
+                    <text x="308" y="68">Client</text>
+                    <text x="372" y="68">Hello))]</text>
+                    <text x="88" y="84">[DTLS</text>
+                    <text x="176" y="84">CHUNK(DATA(DTLS</text>
+                    <text x="268" y="84">Server</text>
+                    <text x="320" y="84">Hello</text>
+                    <text x="360" y="84">...</text>
+                    <text x="424" y="84">Finished))]</text>
+                    <text x="88" y="100">[DTLS</text>
+                    <text x="176" y="100">CHUNK(DATA(DTLS</text>
+                    <text x="288" y="100">Certificate</text>
+                    <text x="352" y="100">...</text>
+                    <text x="416" y="100">Finished))]</text>
+                    <text x="168" y="116">[DTLS</text>
+                    <text x="256" y="116">CHUNK(DATA(DTLS</text>
+                    <text x="348" y="116">ACK))]</text>
                   </g>
-                </svg><a href="#section-7.2.2-4.1.1" class="pilcrow">¶</a>
+                </svg><a href="#section-7.2.2-5.1.1" class="pilcrow">¶</a>
 </div>
 </div>
 <figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
 <a href="#name-handshake-of-further-dtls-co" class="selfRef">Handshake of further DTLS connection</a>
             </figcaption></figure>
 </div>
-<p id="section-7.2.2-5">The <a href="#sctp-DTLS-further-dtls-connection" class="auto internal xref">Figure 6</a> shows a successful
+<p id="section-7.2.2-6">The <a href="#sctp-DTLS-further-dtls-connection" class="auto internal xref">Figure 6</a> shows a successful
 handshake of a further DTLS connection. Such connections can
-be initiated by any of the peers. Same as during the initial
-handshake, DTLS handshake messages are transported by means
-of DATA chunks with the DTLS Chunk Key-Management Messages PPID.<a href="#section-7.2.2-5" class="pilcrow">¶</a></p>
+be initiated by any of the peers. Here DTLS handshake messages
+are transported by means of DATA chunks with the DTLS Chunk
+Key-Management Messages PPID inside DTLS Chunks.<a href="#section-7.2.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2782,14 +2885,14 @@ the events leading to SCTP Restart request.<a href="#section-7.3-1" class="pilcr
           <h4 id="name-installation-of-initial-res">
 <a href="#section-7.3.1" class="section-number selfRef">7.3.1. </a><a href="#name-installation-of-initial-res" class="section-name selfRef">Installation of initial Restart DTLS Key Context</a>
           </h4>
-<p id="section-7.3.1-1">As soon as the Association has reached the PROTECTED INITILIZATION
-state, after the Traffic DTLS Key context have been installed a
+<p id="section-7.3.1-1">As soon as the Association has reached the ESTABLISHED state
+and before the Primary DTLS Key context have been installed a
 Restart DTLS Key Context SHALL be derived and then installed.<a href="#section-7.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.3.1-2">It MAY exist a short time gap where the Association has entered in
-PROTECTED state but no Restart DTLS Key Context has been installed
+<p id="section-7.3.1-2">It MAY exist a short time gap where the Association has already
+been validated state but no Restart DTLS Key Context has been installed
 yet. If a SCTP Restart procedure will be initiated during that time,
 it will fail and the Association will also fail. However, this is
-unlikely as the restart Init will be sent multiple times following a
+unlikely as the Restart Init will be sent multiple times following a
 exponential back-off timer and in that time the Restart DTLS Key Context is
 expected to be in place.<a href="#section-7.3.1-2" class="pilcrow">¶</a></p>
 <p id="section-7.3.1-3">Once installed, no traffic will be sent over the Restart DTLS Key Context
@@ -2803,8 +2906,8 @@ values for the epoch=3.<a href="#section-7.3.1-3" class="pilcrow">¶</a></p>
           <h4 id="name-installation-of-restart-dtl">
 <a href="#section-7.3.2" class="section-number selfRef">7.3.2. </a><a href="#name-installation-of-restart-dtl" class="section-name selfRef">Installation of Restart DTLS Key Context for further DTLS Connections</a>
           </h4>
-<p id="section-7.3.2-1">As each subsequent Key-Management DTLS connection complete the DTLS handshake
-and the Traffic DTLS Key context has been derived and installed also
+<p id="section-7.3.2-1">As each subsequent Key-Management DTLS connection completes the DTLS handshake
+and the Primary DTLS Key context has been derived and installed also
 the Restart DTLS Key context SHALL be installed. The closing of the previous
 DTLS connection SHALL NOT be initiated or completed until the Restart
 DTLS Key Context is in place.<a href="#section-7.3.2-1" class="pilcrow">¶</a></p>
@@ -2950,7 +3053,7 @@ SCTP Association Restart.<a href="#section-7.3.3-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.3.3-6.1">
               <p id="section-7.3.3-6.1.1">Initiator sends INIT (VTag=0), Responder replies INIT-ACK
-both encrypted using Restart DTLS Key Context<a href="#section-7.3.3-6.1.1" class="pilcrow">¶</a></p>
+in Plain Text as specified in <span>[<a href="#RFC9260" class="cite xref">RFC9260</a>]</span><a href="#section-7.3.3-6.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-7.3.3-6.2">
               <p id="section-7.3.3-6.2.1">Initiator sends COOKIE-ECHO using DTLS CHUNK encrypted with the Key
@@ -2961,27 +3064,23 @@ tied to the Restart DTLS Key Context<a href="#section-7.3.3-6.2.1" class="pilcro
 the Restart DTLS Key Context<a href="#section-7.3.3-6.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-7.3.3-6.4">
-              <p id="section-7.3.3-6.4.1">Initiator sends handshakes for new Traffic DTLS connection as well
-as new Restart DTLS connection.<a href="#section-7.3.3-6.4.1" class="pilcrow">¶</a></p>
+              <p id="section-7.3.3-6.4.1">Initiator and Responder handshake a new DTLS connection<a href="#section-7.3.3-6.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-7.3.3-6.5">
-              <p id="section-7.3.3-6.5.1">The SCTP Association goes into Established state and jumps directly
-to PROTECTED state, and the ULP can resume communication protected
+              <p id="section-7.3.3-6.5.1">The ULP can resume communication protected
 using the Restart DTLS Key Context.<a href="#section-7.3.3-6.5.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-7.3.3-6.6">
-              <p id="section-7.3.3-6.6.1">A new key-management DTLS handshake is initiated as soon as
-PROTECTED state has been reached. When the Key-management DTLS
-connection has been completed, new Traffic and Restart DTLS Key
-Contexts are derived and installed using Epoch=3. The new Traffic
-DTLS Key Context is being used for traffic as soon as the context
-have been installed. When Traffic Key Context has been installed
-the new Restart DTLS Key Context for epoch=3 are installed.<a href="#section-7.3.3-6.6.1" class="pilcrow">¶</a></p>
+              <p id="section-7.3.3-6.6.1">New Primary and Restart DTLS Key Context is derived and
+installed using Epoch=3. The new Traffic
+DTLS Key Context is being used for traffic.
+When Primary DTLS Key Context has been installed
+the new Restart DTLS Key Context for epoch=3 is installed.<a href="#section-7.3.3-6.6.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-7.3.3-7">User Data for any ULP traffic MAY be initiated immediately after
 COOKIE-ECHO/COOKIE-ACK handshake using the current Restart DTLS Key Context, that
-is even before a new Traffic DTLS Key Context or a Restart DTLS Key Context have been
+is even before a new Primary DTLS Key Context or a Restart DTLS Key Context have been
 derived.  If a problem occurs before the new Restart DTLS Key Context has been
 installed, the Association cannot be Restarted, thus it's RECOMMENDED
 the new Restart DTLS Key Context to be installed as early as possible.<a href="#section-7.3.3-7" class="pilcrow">¶</a></p>
@@ -3003,8 +3102,8 @@ created.<a href="#section-7.3.3-8" class="pilcrow">¶</a></p>
       </h2>
 <p id="section-8-1">Rekeying in this specification is implemented by replacing the DTLS
 connection getting old with a new one by first creating the new DTLS
-connection, derive the new DTLS Key contexts, start using it,
-then closing the old one.<a href="#section-8-1" class="pilcrow">¶</a></p>
+connection, derive the new DTLS Key contexts, start using them,
+then closing the old DTLS connection and revoking the old DTLS Key contexts.<a href="#section-8-1" class="pilcrow">¶</a></p>
 <div id="criteria-for-rekeying">
 <section id="section-8.1">
         <h3 id="name-criteria-for-rekeying">
@@ -3104,7 +3203,7 @@ The following state machine applies.<a href="#section-8.2-1" class="pilcrow">¶<
                   <text x="256" y="180">and</text>
                   <text x="308" y="180">deriving</text>
                   <text x="360" y="180">new</text>
-                  <text x="408" y="180">Traffic</text>
+                  <text x="408" y="180">Primary</text>
                   <text x="460" y="180">DTLS</text>
                   <text x="496" y="180">Key</text>
                   <text x="224" y="196">Context</text>
@@ -3135,7 +3234,7 @@ The following state machine applies.<a href="#section-8.2-1" class="pilcrow">¶<
                   <text x="460" y="308">to</text>
                   <text x="488" y="308">the</text>
                   <text x="520" y="308">new</text>
-                  <text x="224" y="324">Traffic</text>
+                  <text x="224" y="324">Primary</text>
                   <text x="276" y="324">DTLS</text>
                   <text x="312" y="324">Key</text>
                   <text x="360" y="324">Context</text>
@@ -3181,8 +3280,8 @@ DTLS Connection Index (next value) that would be used for new DTLS
 connection.  In such case a new DTLS connection shall be added
 according to <a href="#add-dtls-connection" class="auto internal xref">Section 5.2.1</a>.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
 <p id="section-8.2-4">As soon as the new DTLS connection completes handshaking, and the
-Traffic and Restart DTLS Key Contexts have been derived and installed,
-the protection of the SCTP packets is moved from the old Traffic DTLS
+Primary and Restart DTLS Key Contexts have been derived and installed,
+the protection of the SCTP packets is moved from the old Primary DTLS
 Key Context, then the procedure for closing the old DTLS connection is
 initiated, see <a href="#remove-dtls-connection" class="auto internal xref">Section 5.2.2</a>.<a href="#section-8.2-4" class="pilcrow">¶</a></p>
 </section>
