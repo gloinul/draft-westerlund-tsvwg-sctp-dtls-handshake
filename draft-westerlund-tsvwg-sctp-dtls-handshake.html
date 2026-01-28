@@ -1808,17 +1808,19 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
 <figure id="figure-2">
         <div id="section-2-2.1">
           <div class="alignLeft art-svg artwork" id="section-2-2.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="208" width="528" viewBox="0 0 528 208" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-              <path d="M 8,64 L 8,192" fill="none" stroke="black"></path>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="240" width="528" viewBox="0 0 528 240" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,64 L 8,224" fill="none" stroke="black"></path>
               <path d="M 136,64 L 136,96" fill="none" stroke="black"></path>
+              <path d="M 216,64 L 216,96" fill="none" stroke="black"></path>
               <path d="M 248,64 L 248,96" fill="none" stroke="black"></path>
-              <path d="M 264,64 L 264,96" fill="none" stroke="black"></path>
-              <path d="M 264,160 L 264,192" fill="none" stroke="black"></path>
-              <path d="M 520,64 L 520,192" fill="none" stroke="black"></path>
+              <path d="M 264,64 L 264,128" fill="none" stroke="black"></path>
+              <path d="M 264,192 L 264,224" fill="none" stroke="black"></path>
+              <path d="M 520,64 L 520,224" fill="none" stroke="black"></path>
               <path d="M 8,64 L 520,64" fill="none" stroke="black"></path>
               <path d="M 8,96 L 520,96" fill="none" stroke="black"></path>
-              <path d="M 264,160 L 520,160" fill="none" stroke="black"></path>
-              <path d="M 8,192 L 520,192" fill="none" stroke="black"></path>
+              <path d="M 8,128 L 264,128" fill="none" stroke="black"></path>
+              <path d="M 264,192 L 520,192" fill="none" stroke="black"></path>
+              <path d="M 8,224 L 520,224" fill="none" stroke="black"></path>
               <g class="text">
                 <text x="16" y="36">0</text>
                 <text x="176" y="36">1</text>
@@ -1859,12 +1861,14 @@ appear in all capitals, as shown here.<a href="#section-1.6-1" class="pilcrow">�
                 <text x="36" y="84">Type</text>
                 <text x="64" y="84">=</text>
                 <text x="92" y="84">0x4x</text>
-                <text x="172" y="84">reserved</text>
+                <text x="180" y="84">reserved</text>
+                <text x="232" y="84">P</text>
                 <text x="256" y="84">R</text>
                 <text x="360" y="84">Chunk</text>
                 <text x="412" y="84">Length</text>
-                <text x="264" y="132">Payload</text>
-                <text x="384" y="180">Padding</text>
+                <text x="120" y="116">Pre-Padding</text>
+                <text x="264" y="164">Payload</text>
+                <text x="372" y="212">Post-Padding</text>
               </g>
             </svg><a href="#section-2-2.1.1" class="pilcrow">¶</a>
 </div>
@@ -1891,19 +1895,26 @@ MUST be ignored on reception.<a href="#section-2-3.4.1" class="pilcrow">¶</a></
 with by a Restart DTLS Key context.<a href="#section-2-3.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-2-3.7">Chunk Length: 16 bits (unsigned integer)</dt>
+<dt id="section-2-3.7">P: 2 bit (0-3)</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.8">
-          <p id="section-2-3.8.1">This value holds the length of the Payload in bytes plus 4.<a href="#section-2-3.8.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.8.1">Payload Pre-Padding indicator. It indicates how many bytes
+are inserted for padding before the DTLSCiphertext.
+This allows the encrypted data to be 32 bit aligned.<a href="#section-2-3.8.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-2-3.9">Payload: variable length</dt>
+<dt id="section-2-3.9">Chunk Length: 16 bits (unsigned integer)</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.10">
-          <p id="section-2-3.10.1">This holds the encrypted data as one DTLS 1.3 Record <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-2-3.10.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.10.1">This value holds the length of the Payload in bytes plus 4.<a href="#section-2-3.10.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="section-2-3.11">Padding: 0, 8, 16, or 24 bits</dt>
+<dt id="section-2-3.11">Payload: variable length</dt>
         <dd style="margin-left: 1.5em" id="section-2-3.12">
-          <p id="section-2-3.12.1">To ensure the Chunk is whole 32-bit words long.<a href="#section-2-3.12.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.12.1">This holds the DTLSCiphertext as specified in DTLS 1.3 <span>[<a href="#RFC9147" class="cite xref">RFC9147</a>]</span>.<a href="#section-2-3.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-2-3.13">Post-Padding: 0, 8, 16, or 24 bits</dt>
+        <dd style="margin-left: 1.5em" id="section-2-3.14">
+          <p id="section-2-3.14.1">To ensure the Chunk is whole 32-bit words long.<a href="#section-2-3.14.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -2029,6 +2040,10 @@ initial value SHALL be three (3).<a href="#section-3-4.4.1" class="pilcrow">¶</
 </dd>
       <dd class="break"></dd>
 </dl>
+<p id="section-3-5">Since an octet has been added to the DTLS Message, in order to keep
+the 32 bit alignment the calculation of the Pre-padding the
+calculation described in the section 5.2 of <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>
+needs to be changed.<a href="#section-3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="PVALID-user-message">
@@ -2219,7 +2234,7 @@ new Restart DTLS Key Context and then closing the old DTLS connection.<a href="#
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-error-cases" class="section-name selfRef">Error Cases</a>
         </h3>
 <p id="section-5.4-1">As DTLS has its own error reporting mechanism by exchanging DTLS alert
-messages. No new DTLS related cause codes are defined to use the error
+messages no new DTLS related cause codes are defined to use the error
 handling defined in <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <p id="section-5.4-2">When the handshake of DTLS connection encounters an error it may report that
 issue using DTLS alert message to its peer by putting the created DTLS
@@ -2284,7 +2299,7 @@ that any error will occur.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-6">The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk. The DTLS
    Chunk is expected to have an API capability to determine the Cipher
-   Suit Capabilities, see Abstract API in Section 10 of
+   Suit Capabilities, see Abstract API in Section 10.1 of
    <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>.<a href="#section-6.2.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2914,121 +2929,116 @@ DTLS Key Context during the Restart procedure.<a href="#section-7.3.3-2" class="
 <figure id="figure-7">
             <div id="section-7.3.3-3.1">
               <div class="alignCenter art-svg artwork" id="section-7.3.3-3.1.1">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="576" width="568" viewBox="0 0 568 576" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
-                  <path d="M 40,48 L 40,544" fill="none" stroke="black"></path>
-                  <path d="M 432,48 L 432,544" fill="none" stroke="black"></path>
-                  <path d="M 464,64 L 464,112" fill="none" stroke="black"></path>
-                  <path d="M 464,160 L 464,320" fill="none" stroke="black"></path>
-                  <path d="M 464,368 L 464,448" fill="none" stroke="black"></path>
-                  <path d="M 464,496 L 464,544" fill="none" stroke="black"></path>
-                  <path d="M 464,64 L 560,64" fill="none" stroke="black"></path>
-                  <path d="M 40,80 L 216,80" fill="none" stroke="black"></path>
-                  <path d="M 272,80 L 424,80" fill="none" stroke="black"></path>
-                  <path d="M 48,96 L 200,96" fill="none" stroke="black"></path>
-                  <path d="M 288,96 L 432,96" fill="none" stroke="black"></path>
-                  <path d="M 464,112 L 560,112" fill="none" stroke="black"></path>
-                  <path d="M 464,160 L 560,160" fill="none" stroke="black"></path>
-                  <path d="M 40,208 L 136,208" fill="none" stroke="black"></path>
-                  <path d="M 344,208 L 424,208" fill="none" stroke="black"></path>
-                  <path d="M 48,224 L 136,224" fill="none" stroke="black"></path>
-                  <path d="M 336,224 L 432,224" fill="none" stroke="black"></path>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="544" width="544" viewBox="0 0 544 544" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                  <path d="M 40,48 L 40,512" fill="none" stroke="black"></path>
+                  <path d="M 408,48 L 408,512" fill="none" stroke="black"></path>
+                  <path d="M 440,64 L 440,96" fill="none" stroke="black"></path>
+                  <path d="M 440,144 L 440,176" fill="none" stroke="black"></path>
+                  <path d="M 440,240 L 440,288" fill="none" stroke="black"></path>
+                  <path d="M 440,336 L 440,416" fill="none" stroke="black"></path>
+                  <path d="M 440,464 L 440,512" fill="none" stroke="black"></path>
+                  <path d="M 440,64 L 496,64" fill="none" stroke="black"></path>
+                  <path d="M 40,80 L 208,80" fill="none" stroke="black"></path>
+                  <path d="M 248,80 L 400,80" fill="none" stroke="black"></path>
+                  <path d="M 48,96 L 192,96" fill="none" stroke="black"></path>
+                  <path d="M 264,96 L 408,96" fill="none" stroke="black"></path>
+                  <path d="M 440,96 L 496,96" fill="none" stroke="black"></path>
+                  <path d="M 440,144 L 496,144" fill="none" stroke="black"></path>
+                  <path d="M 40,160 L 112,160" fill="none" stroke="black"></path>
+                  <path d="M 320,160 L 400,160" fill="none" stroke="black"></path>
+                  <path d="M 48,176 L 112,176" fill="none" stroke="black"></path>
+                  <path d="M 312,176 L 408,176" fill="none" stroke="black"></path>
+                  <path d="M 440,176 L 496,176" fill="none" stroke="black"></path>
+                  <path d="M 40,240 L 120,240" fill="none" stroke="black"></path>
+                  <path d="M 328,240 L 400,240" fill="none" stroke="black"></path>
+                  <path d="M 48,256 L 64,256" fill="none" stroke="black"></path>
+                  <path d="M 376,256 L 408,256" fill="none" stroke="black"></path>
                   <path d="M 40,272 L 64,272" fill="none" stroke="black"></path>
-                  <path d="M 368,272 L 424,272" fill="none" stroke="black"></path>
-                  <path d="M 464,272 L 560,272" fill="none" stroke="black"></path>
-                  <path d="M 48,288 L 64,288" fill="none" stroke="black"></path>
-                  <path d="M 40,304 L 64,304" fill="none" stroke="black"></path>
-                  <path d="M 400,304 L 424,304" fill="none" stroke="black"></path>
-                  <path d="M 48,320 L 112,320" fill="none" stroke="black"></path>
-                  <path d="M 344,320 L 432,320" fill="none" stroke="black"></path>
-                  <path d="M 464,320 L 560,320" fill="none" stroke="black"></path>
-                  <path d="M 464,448 L 560,448" fill="none" stroke="black"></path>
-                  <path d="M 40,496 L 104,496" fill="none" stroke="black"></path>
-                  <path d="M 336,496 L 424,496" fill="none" stroke="black"></path>
-                  <path d="M 48,512 L 104,512" fill="none" stroke="black"></path>
-                  <path d="M 336,512 L 432,512" fill="none" stroke="black"></path>
-                  <path d="M 464,512 L 536,512" fill="none" stroke="black"></path>
-                  <path d="M 448,48 C 456.83064,48 464,55.16936 464,64" fill="none" stroke="black"></path>
-                  <path d="M 448,128 C 456.83064,128 464,120.83064 464,112" fill="none" stroke="black"></path>
-                  <path d="M 448,144 C 456.83064,144 464,151.16936 464,160" fill="none" stroke="black"></path>
-                  <path d="M 448,336 C 456.83064,336 464,328.83064 464,320" fill="none" stroke="black"></path>
-                  <path d="M 448,352 C 456.83064,352 464,359.16936 464,368" fill="none" stroke="black"></path>
-                  <path d="M 448,464 C 456.83064,464 464,456.83064 464,448" fill="none" stroke="black"></path>
-                  <path d="M 448,480 C 456.83064,480 464,487.16936 464,496" fill="none" stroke="black"></path>
-                  <polygon class="arrowhead" points="432,496 420,490.4 420,501.6" fill="black" transform="rotate(0,424,496)"></polygon>
-                  <polygon class="arrowhead" points="432,304 420,298.4 420,309.6" fill="black" transform="rotate(0,424,304)"></polygon>
-                  <polygon class="arrowhead" points="432,272 420,266.4 420,277.6" fill="black" transform="rotate(0,424,272)"></polygon>
-                  <polygon class="arrowhead" points="432,208 420,202.4 420,213.6" fill="black" transform="rotate(0,424,208)"></polygon>
-                  <polygon class="arrowhead" points="432,80 420,74.4 420,85.6" fill="black" transform="rotate(0,424,80)"></polygon>
-                  <polygon class="arrowhead" points="56,512 44,506.4 44,517.6" fill="black" transform="rotate(180,48,512)"></polygon>
-                  <polygon class="arrowhead" points="56,320 44,314.4 44,325.6" fill="black" transform="rotate(180,48,320)"></polygon>
+                  <path d="M 368,272 L 400,272" fill="none" stroke="black"></path>
+                  <path d="M 48,288 L 152,288" fill="none" stroke="black"></path>
+                  <path d="M 288,288 L 408,288" fill="none" stroke="black"></path>
+                  <path d="M 440,288 L 528,288" fill="none" stroke="black"></path>
+                  <path d="M 440,416 L 536,416" fill="none" stroke="black"></path>
+                  <path d="M 40,464 L 96,464" fill="none" stroke="black"></path>
+                  <path d="M 328,464 L 400,464" fill="none" stroke="black"></path>
+                  <path d="M 48,480 L 104,480" fill="none" stroke="black"></path>
+                  <path d="M 336,480 L 408,480" fill="none" stroke="black"></path>
+                  <path d="M 440,480 L 512,480" fill="none" stroke="black"></path>
+                  <path d="M 424,48 C 432.83064,48 440,55.16936 440,64" fill="none" stroke="black"></path>
+                  <path d="M 424,112 C 432.83064,112 440,104.83064 440,96" fill="none" stroke="black"></path>
+                  <path d="M 424,128 C 432.83064,128 440,135.16936 440,144" fill="none" stroke="black"></path>
+                  <path d="M 424,192 C 432.83064,192 440,184.83064 440,176" fill="none" stroke="black"></path>
+                  <path d="M 424,224 C 432.83064,224 440,231.16936 440,240" fill="none" stroke="black"></path>
+                  <path d="M 424,304 C 432.83064,304 440,296.83064 440,288" fill="none" stroke="black"></path>
+                  <path d="M 424,320 C 432.83064,320 440,327.16936 440,336" fill="none" stroke="black"></path>
+                  <path d="M 424,432 C 432.83064,432 440,424.83064 440,416" fill="none" stroke="black"></path>
+                  <path d="M 424,448 C 432.83064,448 440,455.16936 440,464" fill="none" stroke="black"></path>
+                  <polygon class="arrowhead" points="408,464 396,458.4 396,469.6" fill="black" transform="rotate(0,400,464)"></polygon>
+                  <polygon class="arrowhead" points="408,272 396,266.4 396,277.6" fill="black" transform="rotate(0,400,272)"></polygon>
+                  <polygon class="arrowhead" points="408,240 396,234.4 396,245.6" fill="black" transform="rotate(0,400,240)"></polygon>
+                  <polygon class="arrowhead" points="408,160 396,154.4 396,165.6" fill="black" transform="rotate(0,400,160)"></polygon>
+                  <polygon class="arrowhead" points="408,80 396,74.4 396,85.6" fill="black" transform="rotate(0,400,80)"></polygon>
+                  <polygon class="arrowhead" points="56,480 44,474.4 44,485.6" fill="black" transform="rotate(180,48,480)"></polygon>
                   <polygon class="arrowhead" points="56,288 44,282.4 44,293.6" fill="black" transform="rotate(180,48,288)"></polygon>
-                  <polygon class="arrowhead" points="56,224 44,218.4 44,229.6" fill="black" transform="rotate(180,48,224)"></polygon>
+                  <polygon class="arrowhead" points="56,256 44,250.4 44,261.6" fill="black" transform="rotate(180,48,256)"></polygon>
+                  <polygon class="arrowhead" points="56,176 44,170.4 44,181.6" fill="black" transform="rotate(180,48,176)"></polygon>
                   <polygon class="arrowhead" points="56,96 44,90.4 44,101.6" fill="black" transform="rotate(180,48,96)"></polygon>
                   <g class="text">
                     <text x="40" y="36">Initiator</text>
-                    <text x="432" y="36">Responder</text>
-                    <text x="244" y="84">[INIT]</text>
-                    <text x="496" y="84">Plain</text>
-                    <text x="244" y="100">[INIT-ACK]</text>
-                    <text x="492" y="100">Text</text>
-                    <text x="496" y="180">Using</text>
-                    <text x="492" y="196">DTLS</text>
-                    <text x="160" y="212">[DTLS</text>
-                    <text x="236" y="212">CHUNK(COOKIE</text>
-                    <text x="316" y="212">ECHO)]</text>
-                    <text x="500" y="212">Chunks</text>
-                    <text x="160" y="228">[DTLS</text>
-                    <text x="236" y="228">CHUNK(COOKIE</text>
-                    <text x="312" y="228">ACK)]</text>
-                    <text x="488" y="228">and</text>
-                    <text x="504" y="244">Restart</text>
-                    <text x="488" y="260">Key</text>
-                    <text x="536" y="260">Context</text>
-                    <text x="88" y="276">[DTLS</text>
-                    <text x="176" y="276">CHUNK(DATA(DTLS</text>
-                    <text x="268" y="276">Client</text>
-                    <text x="332" y="276">Hello))]</text>
-                    <text x="88" y="292">[DTLS</text>
-                    <text x="176" y="292">CHUNK(DATA(DTLS</text>
-                    <text x="268" y="292">Server</text>
-                    <text x="312" y="292">...</text>
-                    <text x="380" y="292">Finished))]-</text>
-                    <text x="488" y="292">New</text>
-                    <text x="524" y="292">DTLS</text>
-                    <text x="88" y="308">[DTLS</text>
-                    <text x="176" y="308">CHUNK(DATA(DTLS</text>
-                    <text x="272" y="308">Cert...</text>
-                    <text x="352" y="308">Finished))]</text>
-                    <text x="516" y="308">Connection</text>
-                    <text x="136" y="324">[DTLS</text>
-                    <text x="224" y="324">CHUNK(DATA(DTLS</text>
-                    <text x="316" y="324">ACK))]</text>
-                    <text x="240" y="356">...</text>
-                    <text x="240" y="372">...</text>
-                    <text x="500" y="372">Derive</text>
-                    <text x="544" y="372">new</text>
-                    <text x="240" y="388">...</text>
-                    <text x="504" y="388">Primary</text>
-                    <text x="552" y="388">and</text>
-                    <text x="240" y="404">...</text>
-                    <text x="504" y="404">Restart</text>
-                    <text x="240" y="420">...</text>
-                    <text x="492" y="420">DTLS</text>
-                    <text x="528" y="420">Key</text>
-                    <text x="240" y="436">...</text>
-                    <text x="508" y="436">Contexts</text>
-                    <text x="240" y="452">...</text>
-                    <text x="240" y="468">...</text>
-                    <text x="128" y="500">[DTLS</text>
-                    <text x="212" y="500">CHUNK(DATA(APP</text>
-                    <text x="304" y="500">DATA))]</text>
-                    <text x="488" y="500">APP</text>
-                    <text x="524" y="500">DATA</text>
-                    <text x="128" y="516">[DTLS</text>
-                    <text x="212" y="516">CHUNK(DATA(APP</text>
-                    <text x="304" y="516">DATA))]</text>
-                    <text x="240" y="532">...</text>
-                    <text x="240" y="548">...</text>
+                    <text x="408" y="36">Responder</text>
+                    <text x="228" y="84">INIT</text>
+                    <text x="472" y="84">Plain</text>
+                    <text x="228" y="100">INIT-ACK</text>
+                    <text x="136" y="164">[DTLS</text>
+                    <text x="212" y="164">CHUNK(COOKIE</text>
+                    <text x="292" y="164">ECHO)]</text>
+                    <text x="488" y="164">Protected</text>
+                    <text x="136" y="180">[DTLS</text>
+                    <text x="212" y="180">CHUNK(COOKIE</text>
+                    <text x="288" y="180">ACK)]</text>
+                    <text x="164" y="244">[DATA(DTLS</text>
+                    <text x="236" y="244">Client</text>
+                    <text x="296" y="244">Hello)]</text>
+                    <text x="108" y="260">[DATA(DTLS</text>
+                    <text x="180" y="260">Server</text>
+                    <text x="232" y="260">Hello</text>
+                    <text x="272" y="260">...</text>
+                    <text x="332" y="260">Finished)]</text>
+                    <text x="464" y="260">New</text>
+                    <text x="500" y="260">DTLS</text>
+                    <text x="108" y="276">[DATA(DTLS</text>
+                    <text x="200" y="276">Certificate</text>
+                    <text x="264" y="276">...</text>
+                    <text x="324" y="276">Finished)]</text>
+                    <text x="492" y="276">Connection</text>
+                    <text x="196" y="292">[DATA(DTLS</text>
+                    <text x="264" y="292">ACK)]</text>
+                    <text x="216" y="324">...</text>
+                    <text x="216" y="340">...</text>
+                    <text x="476" y="340">Derive</text>
+                    <text x="520" y="340">new</text>
+                    <text x="216" y="356">...</text>
+                    <text x="480" y="356">Traffic</text>
+                    <text x="528" y="356">and</text>
+                    <text x="216" y="372">...</text>
+                    <text x="480" y="372">Restart</text>
+                    <text x="216" y="388">...</text>
+                    <text x="468" y="388">DTLS</text>
+                    <text x="504" y="388">Key</text>
+                    <text x="216" y="404">...</text>
+                    <text x="484" y="404">Contexts</text>
+                    <text x="216" y="420">...</text>
+                    <text x="216" y="436">...</text>
+                    <text x="120" y="468">[DTLS</text>
+                    <text x="204" y="468">CHUNK(DATA(APP</text>
+                    <text x="296" y="468">DATA))]</text>
+                    <text x="464" y="468">APP</text>
+                    <text x="500" y="468">DATA</text>
+                    <text x="128" y="484">[DTLS</text>
+                    <text x="212" y="484">CHUNK(DATA(APP</text>
+                    <text x="304" y="484">DATA))]</text>
+                    <text x="216" y="500">...</text>
+                    <text x="216" y="516">...</text>
                   </g>
                 </svg><a href="#section-7.3.3-3.1.1" class="pilcrow">¶</a>
 </div>
