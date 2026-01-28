@@ -1990,11 +1990,9 @@ initial value SHALL be three (3).<a href="#section-3-4.4.1" class="pilcrow">¶</
       <dd class="break"></dd>
 </dl>
 <p id="section-3-5">Since an octet has been added to the DTLS Message, in order to keep
-the 32 bit alignment the calculation of the Pre-padding is changed,
-whereas the value of the size takes the extra octet into account:<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">size = (1 + (1 + (B &amp; 0x08) ? 1 : 2 + (B &amp; 0x04) ? 0 : 2 + (B &amp; 0x10) ? 0 : CID_size)) &amp; 0x3<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">This is a change towards the calculation as described in
-the section 5.2 of <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span><a href="#section-3-7" class="pilcrow">¶</a></p>
+the 32 bit alignment the calculation of the Pre-padding the
+calculation described in the section 5.2 of <span>[<a href="#I-D.draft-ietf-tsvwg-sctp-dtls-chunk" class="cite xref">I-D.draft-ietf-tsvwg-sctp-dtls-chunk</a>]</span>
+needs to be changed.<a href="#section-3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="PVALID-user-message">

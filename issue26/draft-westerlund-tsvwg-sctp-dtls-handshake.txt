@@ -483,14 +483,9 @@ Table of Contents
       field in each record.
 
    Since an octet has been added to the DTLS Message, in order to keep
-   the 32 bit alignment the calculation of the Pre-padding is changed,
-   whereas the value of the size takes the extra octet into account:
-
-   size = (1 + (1 + (B & 0x08) ? 1 : 2 + (B & 0x04) ? 0 : 2 + (B & 0x10)
-   ? 0 : CID_size)) & 0x3
-
-   This is a change towards the calculation as described in the section
-   5.2 of [I-D.draft-ietf-tsvwg-sctp-dtls-chunk]
+   the 32 bit alignment the calculation of the Pre-padding the
+   calculation described in the section 5.2 of
+   [I-D.draft-ietf-tsvwg-sctp-dtls-chunk] needs to be changed.
 
 4.  Protection Valid Message
 
