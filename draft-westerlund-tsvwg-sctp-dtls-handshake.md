@@ -498,6 +498,14 @@ DTLS Message: variable length
    specified in DTLS 1.3 {{RFC9147}} will always include the length
    field in each record.
 
+Since an octet has been added to the DTLS Message, in order to keep
+the 32 bit alignment the calculation of the Pre-padding is changed,
+whereas the value of the size takes the extra octet into account:
+
+size = (1 + (1 + (B & 0x08) ? 1 : 2 + (B & 0x04) ? 0 : 2 + (B & 0x10) ? 0 : CID_size)) & 0x3
+
+This is a change towards the calculation as described in
+the section 5.2 of {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}
 
 # Protection Valid Message {#PVALID-user-message}
 
@@ -1078,13 +1086,16 @@ DTLS Key Context during the Restart procedure.
 
 Initiator                                     Responder
     |                                             | -.
-    +------------[DTLS CHUNK(INIT)]-------------->|   |
-    |<---------[DTLS CHUNK(INIT-ACK)]-------------+   +-------
-    |                                             |   | Using
-    |                                             |   | SCTP
-    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
+    |                                             |   +-------
+    +--------------------(INIT)------------------>|   | Plain
+    |<-----------------(INIT-ACK)-----------------+   +-------
+    |                                             | -'
+    |                                             | -.
+    |                                             |   +-------
+    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Protected
     |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
     |                                             | -'
+    |                                             |
     |                                             | -.
     +----------[DATA(DTLS Client Hello)]--------->|   |
     |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
