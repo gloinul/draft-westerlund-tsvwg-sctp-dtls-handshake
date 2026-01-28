@@ -415,13 +415,15 @@ in regard to SCTP and upper layer protocol"}
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Type = 0x4x   |reserved     |R|         Chunk Length          |
+| Type = 0x4x   | reserved| P |R|         Chunk Length          |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|        Pre-Padding            |                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
 |                                                               |
 |                            Payload                            |
 |                                                               |
 |                               +-------------------------------+
-|                               |           Padding             |
+|                               |       Post-Padding            |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~~
 {: #sctp-dtls-chunk-structure title="DTLS Chunk Structure"}
@@ -437,13 +439,19 @@ R: 1 bit (boolean)
 : Restart indicator. If this bit is set this DTLS chunk is protected
   with by a Restart DTLS Key context.
 
+P: 2 bit (0-3)
+
+: Payload Pre-Padding indicator. It indicates how many bytes
+are inserted for padding before the DTLSCiphertext.
+This allows the encrypted data to be 32 bit aligned.
+
 Chunk Length: 16 bits (unsigned integer)
 : This value holds the length of the Payload in bytes plus 4.
 
 Payload: variable length
-: This holds the encrypted data as one DTLS 1.3 Record {{RFC9147}}.
+: This holds the DTLSCiphertext as specified in DTLS 1.3 {{RFC9147}}.
 
-Padding: 0, 8, 16, or 24 bits
+Post-Padding: 0, 8, 16, or 24 bits
 : To ensure the Chunk is whole 32-bit words long.
 
 # DTLS messages over SCTP User Messages  {#dtls-user-message}
@@ -514,6 +522,10 @@ DTLS Message: variable length
    specified in DTLS 1.3 {{RFC9147}} will always include the length
    field in each record.
 
+Since an octet has been added to the DTLS Message, in order to keep
+the 32 bit alignment the calculation of the Pre-padding the
+calculation described in the section 5.2 of {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}
+needs to be changed.
 
 # Protection Valid Message {#PVALID-user-message}
 
@@ -665,7 +677,7 @@ new Restart DTLS Key Context and then closing the old DTLS connection.
 ## Error Cases
 
 As DTLS has its own error reporting mechanism by exchanging DTLS alert
-messages. No new DTLS related cause codes are defined to use the error
+messages no new DTLS related cause codes are defined to use the error
 handling defined in {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
 When the handshake of DTLS connection encounters an error it may report that
@@ -723,7 +735,7 @@ that any error will occur.
    The Cipher suites negotiated in the Key-Management DTLS Connection
    SHALL only include those supported by the DTLS Chunk. The DTLS
    Chunk is expected to have an API capability to determine the Cipher
-   Suit Capabilities, see Abstract API in Section 10 of
+   Suit Capabilities, see Abstract API in Section 10.1 of
    {{I-D.draft-ietf-tsvwg-sctp-dtls-chunk}}.
 
 ### Authentication and Policy Decisions
@@ -1112,39 +1124,37 @@ DTLS Key Context during the Restart procedure.
 
 ~~~~~~~~~~~ aasvg
 
-Initiator                                        Responder
-    |                                                | -.
-    |                                                |   +------------
-    +----------------------[INIT]------------------->|   | Plain
-    |<-------------------[INIT-ACK]------------------+   | Text
-    |                                                |   +------------
-    |                                                | -'
-    |                                                | -.
-    |                                                |   +------------
-    |                                                |   | Using
-    |                                                |   | DTLS
-    +------------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Chunks
-    |<-----------[DTLS CHUNK(COOKIE ACK)]------------+   | and
-    |                                                |   | Restart
-    |                                                |   | Key Context
-    +---[DTLS CHUNK(DATA(DTLS Client Hello))]------->|   +------------
-    |<--[DTLS CHUNK(DATA(DTLS Server ... Finished))]-+   | New DTLS
-    +---[DTLS CHUNK(DATA(DTLS Cert... Finished))]--->|   | Connection
-    |<--------[DTLS CHUNK(DATA(DTLS ACK))]-----------+   +------------
-    |                                                | -'
-    |                       ...                      | -.
-    |                       ...                      |   | Derive new
-    |                       ...                      |   | Primary and
-    |                       ...                      |   | Restart
-    |                       ...                      |   | DTLS Key
-    |                       ...                      |   | Contexts
-    |                       ...                      |   +------------
-    |                       ...                      | -'
-    |                                                | -.
-    +--------[DTLS CHUNK(DATA(APP DATA))]----------->|   | APP DATA
-    +<-------[DTLS CHUNK(DATA(APP DATA))]------------+   +---------
-    |                       ...                      |   |
-    |                       ...                      |   |
+Initiator                                     Responder
+    |                                             | -.
+    |                                             |   +-------
+    +--------------------(INIT)------------------>|   | Plain
+    |<-----------------(INIT-ACK)-----------------+   +-------
+    |                                             | -'
+    |                                             | -.
+    |                                             |   +-------
+    +---------[DTLS CHUNK(COOKIE ECHO)]---------->|   | Protected
+    |<--------[DTLS CHUNK(COOKIE ACK)]------------+   +-------
+    |                                             | -'
+    |                                             |
+    |                                             | -.
+    +----------[DATA(DTLS Client Hello)]--------->|   |
+    |<--[DATA(DTLS Server Hello ... Finished)]----+   | New DTLS
+    +---[DATA(DTLS Certificate ... Finished)]---->|   | Connection
+    |<-------------[DATA(DTLS ACK)]---------------+   +-----------
+    |                                             | -'
+    |                    ...                      | -.
+    |                    ...                      |   | Derive new
+    |                    ...                      |   | Traffic and
+    |                    ...                      |   | Restart
+    |                    ...                      |   | DTLS Key
+    |                    ...                      |   | Contexts
+    |                    ...                      |   +------------
+    |                    ...                      | -'
+    |                                             | -.
+    +-------[DTLS CHUNK(DATA(APP DATA))]--------->|   | APP DATA
+    +<-------[DTLS CHUNK(DATA(APP DATA))]---------+   +---------
+    |                    ...                      |   |
+    |                    ...                      |   |
 
 ~~~~~~~~~~~
 {: #sctp-assoc-restart-sequence title="SCTP Restart sequence for DTLS in SCTP" artwork-align="center"}
