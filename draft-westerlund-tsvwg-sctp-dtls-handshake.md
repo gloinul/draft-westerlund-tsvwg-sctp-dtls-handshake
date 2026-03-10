@@ -782,27 +782,33 @@ by new attacks.
 Allowing new connections can enable denial-of-service attacks. The
 endpoints MUST limit the number of simultaneous connections to two.
 
-To force attackers to do dynamic key exfiltration and limit the
-amount of compromised data due to key compromise, implementations MUST
-have policies for how often to set up new connections with ephemeral
-key exchange such as ECDHE. Implementations SHOULD set up new
-connections frequently to force attackers to dynamic key
-extraction. E.g., at least every hour and every 100 GB of data which
-is a common policy for IPsec [ANSSI-DAT-NT-003]. See
-[I-D.ietf-tls-rfc8446bis] for a more detailed discussion on key
-compromise and key exfiltration in (D)TLS. As recommended in
-{{KTH-NCSA}}, resumption can be used to chain the connections,
-increasing security by forcing an adversary to break them in sequence.
+To limit the amount of data exposed in the event of key compromise,
+implementations MUST define policies that limit the lifetime of
+connections and require the establishment of new connections using
+ephemeral key exchange (e.g., X25519MLKEM768). Implementations SHOULD establish
+new connections frequently; for example, at least every hour or after
+transmitting 100 GB of data, which is a common policy for IPsec
+deployments [ANSSI-DAT-NT-003]. See RFC [I-D.ietf-tls-rfc8446bis] for a more detailed
+discussion of key compromise and key exfiltration in (D)TLS.
 
-For many DTLS in SCTP deployments the SCTP association is expected to
-have a very long lifetime of months or even years. For associations
-with such long lifetimes there is a need to frequently re-authenticate
-both client and server by setting up a new connection using a full
-handshake. TLS Certificate
-lifetimes significantly shorter than a year are common which is
-shorter than many expected SCTP associations protected by DTLS in
-SCTP.
+Resumption limits the impact of static key exfiltration. After a
+resumption handshake, an attacker that has compromised a session key
+can no longer remain purely passive and must instead either perform dynamic
+key exfiltration or act as an active MITM to continue
+accessing future traffic. As described in {{KTH-NCSA}}, chaining
+successive connections through resumption forces an adversary to break
+them sequentially. Periodic full handshakes further ensure that an
+attacker who has not compromised the authentication key (e.g., the
+signature key) must perform dynamic key exfiltration to maintain access.
 
+In many DTLS over SCTP deployments, the SCTP association is expected to
+remain active for very long periods, potentially months or even years.
+For associations with such long lifetimes, both client and server SHOULD
+be periodically re-authenticated by establishing a new connection using a
+full handshake to prove that they still have access to the private key.
+In practice, TLS certificate lifetimes are often significantly shorter
+than one year, which is shorter than the expected lifetime of many SCTP
+associations protected by DTLS over SCTP.
 
 ### DTLS 1.3
 
